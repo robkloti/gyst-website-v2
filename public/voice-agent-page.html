@@ -135,11 +135,40 @@
                             */}
                             <div className="w-full h-full min-h-[600px] overflow-hidden bg-[#0A0A0A] relative flex items-center justify-center">
 
-                                {/* Retell AI Web Widget */}
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                    <retell-web-call
-                                        agent-id="agent_9405019d9dce5375c8059a6639"
-                                    ></retell-web-call>
+                                {/* Retell AI Voice Agent */}
+                                <div className="absolute inset-0 flex flex-col items-center justify-center space-y-8 px-6">
+                                    {/* Status indicator */}
+                                    <div className="text-center">
+                                        <motion.div
+                                            className="relative mx-auto mb-6"
+                                            initial={{ scale: 1 }}
+                                            animate={{ scale: [1, 1.05, 1] }}
+                                            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                                        >
+                                            <div className="w-32 h-32 rounded-full bg-gradient-to-br from-[#FFB224]/20 to-[#FFB224]/5 border border-[#FFB224]/30 flex items-center justify-center">
+                                                <Icon name="Mic" size={48} className="text-[#FFB224]" />
+                                            </div>
+                                            <div className="absolute inset-0 rounded-full bg-[#FFB224]/10 animate-ping"></div>
+                                        </motion.div>
+                                        <h3 className="text-2xl font-semibold text-white mb-2">AI Voice Agent</h3>
+                                        <p className="text-sm text-neutral-400">Experience a live conversation with our AI</p>
+                                    </div>
+
+                                    {/* Call Button */}
+                                    <a
+                                        href={`https://app.retellai.com/agent/agent_9405019d9dce5375c8059a6639/call`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="group relative flex items-center justify-center bg-gradient-to-r from-[#FFB224] to-[#FFD573] text-black px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wider shadow-[0_0_30px_rgba(255,178,36,0.4)] hover:shadow-[0_0_50px_rgba(255,178,36,0.6)] hover:scale-105 active:scale-95 transition-all duration-300 no-underline"
+                                    >
+                                        <Icon name="Mic" size={20} className="mr-3" />
+                                        <span>Start Voice Call</span>
+                                    </a>
+
+                                    <p className="text-xs text-neutral-500 text-center max-w-md">
+                                        Click to open the voice agent in a new window.<br/>
+                                        Allow microphone access when prompted.
+                                    </p>
                                 </div>
 
                             </div>
@@ -154,8 +183,6 @@
         root.render(<VoiceAgentPage />);
     </script>
 
-    <!-- Retell AI Web Widget Script -->
-    <script src="https://cdn.jsdelivr.net/npm/@retellai/web-client@latest"></script>
 
 </body>
 </html>
