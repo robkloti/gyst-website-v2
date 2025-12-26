@@ -247,44 +247,48 @@ overflow-x: hidden;
             return (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl mt-12 relative z-20">
                     {/* Protection Option */}
-                    <motion.div 
-                        whileHover={{ y: -5 }}
-                        className="group relative bg-[#0A0A0A] border border-white/10 rounded-2xl p-8 cursor-pointer overflow-hidden transition-all duration-300 hover:border-emerald-500/50 hover:shadow-[0_0_30px_rgba(16,185,129,0.15)]"
-                    >
-                        <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                        <div className="relative z-10 flex flex-col h-full items-center text-center">
-                            <div className="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 border border-emerald-500/20">
-                                <Icon name="ShieldCheck" size={32} className="text-emerald-500" />
+                    <a href="/caelum-form-page.html" className="no-underline">
+                        <motion.div
+                            whileHover={{ y: -5 }}
+                            className="group relative bg-[#0A0A0A] border border-white/10 rounded-2xl p-8 cursor-pointer overflow-hidden transition-all duration-300 hover:border-emerald-500/50 hover:shadow-[0_0_30px_rgba(16,185,129,0.15)]"
+                        >
+                            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                            <div className="relative z-10 flex flex-col h-full items-center text-center">
+                                <div className="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 border border-emerald-500/20">
+                                    <Icon name="ShieldCheck" size={32} className="text-emerald-500" />
+                                </div>
+                                <h3 className="text-2xl font-semibold text-white mb-3 tracking-tight">Protection & Health</h3>
+                                <p className="text-neutral-400 text-sm leading-relaxed mb-8">
+                                    Secure your family and assets. Life insurance, health coverage, and risk management.
+                                </p>
+                                <div className="mt-auto inline-flex items-center gap-2 text-emerald-500 text-xs font-bold tracking-widest uppercase opacity-80 group-hover:opacity-100">
+                                    Secure Now <Icon name="ArrowRight" size={12} />
+                                </div>
                             </div>
-                            <h3 className="text-2xl font-semibold text-white mb-3 tracking-tight">Protection & Health</h3>
-                            <p className="text-neutral-400 text-sm leading-relaxed mb-8">
-                                Secure your family and assets. Life insurance, health coverage, and risk management.
-                            </p>
-                            <div className="mt-auto inline-flex items-center gap-2 text-emerald-500 text-xs font-bold tracking-widest uppercase opacity-80 group-hover:opacity-100">
-                                Secure Now <Icon name="ArrowRight" size={12} />
-                            </div>
-                        </div>
-                    </motion.div>
+                        </motion.div>
+                    </a>
 
                     {/* Investment Option */}
-                    <motion.div 
-                        whileHover={{ y: -5 }}
-                        className="group relative bg-[#0A0A0A] border border-white/10 rounded-2xl p-8 cursor-pointer overflow-hidden transition-all duration-300 hover:border-[#FFB224]/50 hover:shadow-[0_0_30px_rgba(255,178,36,0.15)]"
-                    >
-                        <div className="absolute inset-0 bg-gradient-to-br from-[#FFB224]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                        <div className="relative z-10 flex flex-col h-full items-center text-center">
-                            <div className="w-16 h-16 rounded-full bg-[#FFB224]/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 border border-[#FFB224]/20">
-                                <Icon name="TrendingUp" size={32} className="text-[#FFB224]" />
+                    <a href="/caelum-form-page.html" className="no-underline">
+                        <motion.div
+                            whileHover={{ y: -5 }}
+                            className="group relative bg-[#0A0A0A] border border-white/10 rounded-2xl p-8 cursor-pointer overflow-hidden transition-all duration-300 hover:border-[#FFB224]/50 hover:shadow-[0_0_30px_rgba(255,178,36,0.15)]"
+                        >
+                            <div className="absolute inset-0 bg-gradient-to-br from-[#FFB224]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                            <div className="relative z-10 flex flex-col h-full items-center text-center">
+                                <div className="w-16 h-16 rounded-full bg-[#FFB224]/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 border border-[#FFB224]/20">
+                                    <Icon name="TrendingUp" size={32} className="text-[#FFB224]" />
+                                </div>
+                                <h3 className="text-2xl font-semibold text-white mb-3 tracking-tight">Savings & Investment</h3>
+                                <p className="text-neutral-400 text-sm leading-relaxed mb-8">
+                                    Grow your wealth. Automated portfolios, tax optimization, and long-term compounding.
+                                </p>
+                                <div className="mt-auto inline-flex items-center gap-2 text-[#FFB224] text-xs font-bold tracking-widest uppercase opacity-80 group-hover:opacity-100">
+                                    Start Investing <Icon name="ArrowRight" size={12} />
+                                </div>
                             </div>
-                            <h3 className="text-2xl font-semibold text-white mb-3 tracking-tight">Savings & Investment</h3>
-                            <p className="text-neutral-400 text-sm leading-relaxed mb-8">
-                                Grow your wealth. Automated portfolios, tax optimization, and long-term compounding.
-                            </p>
-                            <div className="mt-auto inline-flex items-center gap-2 text-[#FFB224] text-xs font-bold tracking-widest uppercase opacity-80 group-hover:opacity-100">
-                                Start Investing <Icon name="ArrowRight" size={12} />
-                            </div>
-                        </div>
-                    </motion.div>
+                        </motion.div>
+                    </a>
                 </div>
             );
         };
