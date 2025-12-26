@@ -850,7 +850,7 @@ overflow-x: hidden;
                             className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 backdrop-blur-md hover:bg-white/10 transition-colors cursor-pointer group"
                         >
                             <span className="px-1.5 py-0.5 rounded bg-[#FFB224] text-[9px] font-bold text-black uppercase tracking-wider">New</span>
-                            <span className="text-[11px] text-neutral-300 group-hover:text-white transition-colors">2024 Tax Harvesting Updates Live</span>
+                            <span className="text-[11px] text-neutral-300 group-hover:text-white transition-colors">2026 Investment Updates Live</span>
                             <Icon name="ChevronRight" size={12} className="text-neutral-500 group-hover:text-white" />
                         </motion.div>
 
@@ -894,24 +894,13 @@ overflow-x: hidden;
                         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03]"></div>
                     </div>
 
-                    {/* Navigation */}
-                    <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4 flex justify-between items-center backdrop-blur-sm border-b border-white/5 bg-[#050505]/80">
-                        <div className="flex items-center gap-2 text-white">
+                    {/* Simple Logo Header */}
+                    <div className="fixed top-0 left-0 z-50 p-8">
+                        <a href="/" className="flex items-center gap-2 text-white hover:opacity-80 transition-opacity no-underline">
                             <Icon name="GystLogo" size={24} className="text-[#FFB224]" />
                             <span className="font-bold tracking-tight text-lg">GYST</span>
-                        </div>
-                        <div className="hidden md:flex items-center gap-8 text-sm font-medium text-neutral-400">
-                            <a href="#" className="hover:text-white transition-colors">Products</a>
-                            <a href="#" className="hover:text-white transition-colors">Advisors</a>
-                            <a href="#" className="hover:text-white transition-colors">Pricing</a>
-                        </div>
-                        <div className="flex items-center gap-4">
-                            <a href="#" className="text-sm font-medium text-white hover:text-[#FFB224] transition-colors hidden sm:block">Log in</a>
-                            <button className="px-4 py-2 rounded-full bg-white text-black text-xs font-bold uppercase tracking-wider hover:bg-neutral-200 transition-colors">
-                                Get Started
-                            </button>
-                        </div>
-                    </nav>
+                        </a>
+                    </div>
                     
                     {/* Loop Visualizer Fixed Background */}
                     <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-0 pointer-events-none hidden lg:block">
