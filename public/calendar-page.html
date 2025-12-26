@@ -1,0 +1,229 @@
+<html lang="en" class="bg-[#050505] text-neutral-100 antialiased selection:bg-[#FFB224]/30 selection:text-[#FFB224]"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GYST - Schedule Audit</title>
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+<!-- CSS Dependencies -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- JS Dependencies -->
+<script crossorigin="" src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin="" src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+<!-- Styles -->
+<style>
+body {
+font-family: 'Inter', sans-serif;
+background-color: #050505;
+overflow-x: hidden;
+}
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #050505; }
+::-webkit-scrollbar-thumb { background: #262626; border-radius: 99px; }
+.font-mono { font-family: 'JetBrains Mono', monospace; }
+</style>
+</head>
+<body class="">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        // --- 1. GLOBALS & SETUP ---
+        const { useState, useEffect } = React;
+        const { motion } = window.Motion;
+
+        // --- 2. ICONS ---
+        const Icons = {
+            ArrowLeft: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>,
+            Check: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"/></svg>,
+            Globe: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" x2="22" y1="12" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1 4-10z"/></svg>,
+            Clock: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>,
+            Video: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg>,
+            Calendar: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>,
+            GystLogo: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><defs><path id="SVGSzlFdebm" fill="currentColor" d="M20.654 16.88c-.111-1.057-.958-1.88-1.987-1.88c-.845 0-1.568.555-1.861 1.34a2.22 2.22 0 0 0-.015 1.513a1.46 1.46 0 0 0-1.4.49A1.63 1.63 0 0 0 15 19.412c0 .877.672 1.588 1.5 1.588H20c1.105 0 2-.948 2-2.118c0-.927-.562-1.714-1.346-2.001"/></defs><path fill="currentColor" fillRule="evenodd" d="M3.172 19.828C4.343 21 6.229 21 10 21h3.93a3.17 3.17 0 0 1-.43-1.588c0-.816.32-1.592.857-2.162H13.5a.75.75 0 0 1 0-1.5h1.928c.511-1.29 1.727-2.25 3.239-2.25c1.56 0 2.81 1.028 3.288 2.38l.014.01C22 15.074 22 14.12 22 13v-.25H2V13c0 3.771 0 5.657 1.172 6.828M6 18.25a.75.75 0 0 1-.75-.75v-2a.75.75 0 0 1 1.5 0v2a.75.75 0 0 1-.75.75m3 0a.75.75 0 0 1-.75-.75v-2a.75.75 0 0 1 1.5 0v2a.75.75 0 0 1-.75.75M3.172 4.172C2 5.343 2 7.229 2 11v.25h20V11c0-3.771 0-5.657-1.172-6.828S17.771 3 14 3h-4C6.229 3 4.343 3 3.172 4.172M9 9.25a.75.75 0 0 1-.75-.75v-2a.75.75 0 0 1 1.5 0v2a.75.75 0 0 1-.75.75M5.25 8.5a.75.75 0 0 0 1.5 0v-2a.75.75 0 0 0-1.5 0zm7.5-1a.75.75 0 0 1 .75-.75H18a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1-.75-.75" clipRule="evenodd"/><use href="#SVGSzlFdebm" fillRule="evenodd" clipRule="evenodd"/><use href="#SVGSzlFdebm"/></svg>
+        };
+
+        const Icon = ({ name, size = 16, className }) => {
+            const IconComponent = Icons[name];
+            return IconComponent ? <IconComponent width={size} height={size} className={className} /> : null;
+        };
+
+        // --- 3. CALENDAR PAGE (With Embed Slot) ---
+        const CalendarPage = ({ onBack }) => {
+
+            return (
+                <div className="min-h-screen bg-[#050505] text-neutral-200 flex flex-col items-center pt-20 pb-12 px-4 md:px-6 relative overflow-hidden">
+                    {/* Background Noise */}
+                    <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'url("https://grainy-gradients.vercel.app/noise.svg")' }}></div>
+                    
+                    {/* Navigation */}
+                    <div className="absolute top-6 left-6 z-50">
+                        <button onClick={onBack} className="flex items-center gap-2 text-xs font-medium text-neutral-500 hover:text-white transition-colors group">
+                            <div className="w-8 h-8 rounded-full border border-white/10 bg-[#0A0A0A] flex items-center justify-center group-hover:border-[#FFB224]/50 transition-colors">
+                                <Icon name="ArrowLeft" size={14} />
+                            </div>
+                            <span>Back to Home</span>
+                        </button>
+                    </div>
+
+                    <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6 }}
+                        className="w-full max-w-6xl bg-[#0A0A0A] border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row min-h-[650px] relative z-20"
+                    >
+                        {/* Sidebar (Context) */}
+                        <div className="w-full md:w-[320px] lg:w-[360px] border-b md:border-b-0 md:border-r border-white/5 bg-[#080808] p-8 flex flex-col relative shrink-0">
+                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#FFB224] to-transparent"></div>
+                            
+                            <div className="mb-8">
+                                <div className="text-[#FFB224] mb-4"><Icon name="GystLogo" size={32} /></div>
+                                <h2 className="text-xl font-semibold text-white tracking-tight mb-1">Systems Architecture Audit</h2>
+                                <p className="text-sm text-neutral-500 font-medium">with GYST Engineering Team</p>
+                            </div>
+
+                            <div className="space-y-5 mb-10">
+                                <div className="flex items-center gap-3 text-sm text-neutral-400">
+                                    <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0">
+                                        <Icon name="Clock" size={14} className="text-neutral-300" />
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <span className="text-xs text-neutral-500 font-medium">Duration</span>
+                                        <span className="text-neutral-200">45 Minutes</span>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-3 text-sm text-neutral-400">
+                                    <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0">
+                                        <Icon name="Video" size={14} className="text-neutral-300" />
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <span className="text-xs text-neutral-500 font-medium">Location</span>
+                                        <span className="text-neutral-200">Google Meet</span>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-3 text-sm text-neutral-400">
+                                    <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0">
+                                        <Icon name="Globe" size={14} className="text-neutral-300" />
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <span className="text-xs text-neutral-500 font-medium">Time Zone</span>
+                                        <span className="text-neutral-200">Global (Remote)</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="mt-auto pt-8 border-t border-white/5">
+                                <p className="text-[11px] font-bold text-neutral-400 uppercase tracking-widest mb-4">Session Goals</p>
+                                <ul className="space-y-4">
+                                    {['Analysis of current workflows', 'Identification of intent leaks', 'Preliminary architecture map'].map((item, i) => (
+                                        <li key={i} className="flex items-start gap-3 text-xs text-neutral-300 leading-relaxed">
+                                            <Icon name="Check" size={12} className="text-[#FFB224] mt-0.5 shrink-0" />
+                                            {item}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+
+                        {/* Main Content Area - EMBED SLOT */}
+                        <div className="flex-1 bg-[#0A0A0A] relative flex flex-col min-h-[600px] h-full">
+                            {/* 
+                                -----------------------------------------------------
+                                INSTRUCTIONS FOR USER:
+                                Paste your iframe or embed script code inside the div below.
+                                If using an iframe, ensure it has w-full and h-full classes.
+                                -----------------------------------------------------
+                            */}
+                            <div className="w-full h-full min-h-[600px] overflow-hidden bg-[#0A0A0A] relative">
+
+                                {/* Calendar Embed */}
+                                <iframe
+                                    src="https://link.1prompt.com/widget/booking/0KHQ2dAcLgIg7Ak4sy34"
+                                    style={{width: '100%', border: 'none', overflow: 'hidden', minHeight: '600px', height: '100%'}}
+                                    scrolling="no"
+                                    id="0KHQ2dAcLgIg7Ak4sy34_1766728014873">
+                                </iframe>
+
+                            </div>
+                        </div>
+                    </motion.div>
+                </div>
+            );
+        };
+
+        // --- 4. APP ROOT & NAV ---
+        
+        const Button = ({ children, variant = 'primary', className = '', onClick }) => {
+            if (variant === 'primary') {
+                return (
+                    <button onClick={onClick} className={`relative group flex items-center justify-center gap-2 px-8 py-3.5 font-semibold rounded-full transition-all duration-300 tracking-tight text-xs shadow-[0_0_20px_-5px_rgba(251,191,36,0.6)] hover:shadow-[0_0_30px_-5px_rgba(251,191,36,0.8)] hover:scale-[1.02] active:scale-[0.98] ${className}`} style={{ background: 'linear-gradient(180deg, #FFD573 0%, #FFB224 100%)', color: '#1a1a1a' }}>
+                        <span className="relative z-10 flex items-center gap-2">{children}</span>
+                    </button>
+                );
+            }
+            return (
+                <button onClick={onClick} className={`group flex items-center justify-center gap-2 px-8 py-3.5 text-neutral-300 font-medium rounded-full border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 hover:text-white transition-all duration-300 tracking-tight text-xs backdrop-blur-sm ${className}`}>
+                    {children}
+                </button>
+            );
+        };
+
+        const Nav = ({ onBook }) => (
+            <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4 transition-all duration-300">
+                <div className="max-w-7xl mx-auto flex items-center justify-between p-2 rounded-full border border-white/5 bg-[#0A0A0A]/50 backdrop-blur-md">
+                    <div className="flex items-center gap-2 px-4 cursor-pointer" onClick={() => window.location.reload()}>
+                        <div className="text-[#FFB224]"><Icon name="GystLogo" size={24} /></div>
+                        <span className="font-bold text-white tracking-tight">GYST</span>
+                    </div>
+                    <div className="hidden md:flex items-center gap-8 text-xs font-medium text-neutral-400">
+                        <a href="#" className="hover:text-white transition-colors">Methodology</a>
+                        <a href="#" className="hover:text-white transition-colors">Stack</a>
+                        <a href="#" className="hover:text-white transition-colors">Results</a>
+                    </div>
+                    <div className="flex items-center gap-3 pr-1">
+                        <button onClick={onBook} className="px-5 py-2 rounded-full bg-white/5 border border-white/10 text-neutral-200 text-xs font-medium hover:bg-white/10 transition-colors">
+                            Login
+                        </button>
+                        <button onClick={onBook} className="px-5 py-2 rounded-full bg-[#FFB224] text-black text-xs font-bold hover:bg-[#FFD573] transition-colors">
+                            Book Audit
+                        </button>
+                    </div>
+                </div>
+            </nav>
+        );
+
+        const App = () => {
+            const [currentPage, setCurrentPage] = useState('calendar');
+
+            if (currentPage === 'calendar') {
+                return <CalendarPage onBack={() => setCurrentPage('home')} />;
+            }
+
+            return (
+                <div className="relative w-full text-neutral-200 selection:bg-[#FFB224]/30 selection:text-[#FFB224]">
+                    <Nav onBook={() => setCurrentPage('calendar')} />
+                    <main className="flex flex-col items-center justify-center min-h-screen">
+                        <div className="text-center space-y-6 max-w-2xl px-6">
+                            <h1 className="text-5xl font-bold text-white tracking-tighter">Turn Business Intent<br/>Into Verified Outcomes</h1>
+                            <p className="text-neutral-400">Autonomous systems that plan, execute, and verify.</p>
+                            <div className="flex justify-center gap-4">
+                                <Button onClick={() => setCurrentPage('calendar')}>See how the system works</Button>
+                            </div>
+                        </div>
+                    </main>
+                    <footer className="w-full py-12 border-t border-white/10 text-center text-xs text-neutral-600 mt-20">
+                        © 2024 GYST Inc.
+                    </footer>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+
+    <script src="https://link.1prompt.com/js/form_embed.js" type="text/javascript"></script>
+
+</body></html>

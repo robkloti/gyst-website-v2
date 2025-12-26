@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-[#050505] text-neutral-100 antialiased selection:bg-[#FFB224]/30 selection:text-[#FFB224]">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GYST - Autonomous Systems</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              mono: ['JetBrains Mono', 'monospace'],
+            },
+            colors: {
+              brand: {
+                DEFAULT: '#FFB224',
+                light: '#FFD573',
+                dark: '#B45309',
+              }
+            },
+            animation: {
+              'sonar': 'sonar 2s linear infinite',
+              'sonar-delay': 'sonar 2s linear infinite 1s',
+            },
+            keyframes: {
+              sonar: {
+                '0%': { transform: 'scale(0.9)', opacity: '0.5' },
+                '100%': { transform: 'scale(2)', opacity: '0' },
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar { width: 6px; }
+      ::-webkit-scrollbar-track { background: #050505; }
+      ::-webkit-scrollbar-thumb { background: #262626; border-radius: 99px; }
+      .perspective-1000 { perspective: 1000px; }
+      .perspective-2000 { perspective: 2000px; }
+      .mask-image-gradient { mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent); }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "framer-motion": "https://esm.sh/framer-motion@^12.23.26",
+    "gsap": "https://esm.sh/gsap@3.12.5",
+    "gsap/ScrollTrigger": "https://esm.sh/gsap@3.12.5/ScrollTrigger",
+    "gsap/": "https://esm.sh/gsap@^3.14.2/"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
