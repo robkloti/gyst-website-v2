@@ -133,7 +133,7 @@ export const ProblemSection: React.FC<ProblemSectionProps> = ({ content, onInVie
   }, [isFinished]);
 
   return (
-    <div ref={componentRef} className="relative bg-[#050505] z-20">
+    <div ref={componentRef} id="problem-section" className="relative bg-[#050505] z-20">
       <section ref={triggerRef} className="h-screen flex items-center justify-center overflow-hidden">
         
         <div className="w-full max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center h-full">

@@ -19,6 +19,13 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ content, onInView }) =
         if (isInView) onInView(content.id);
     }, [isInView, content.id, onInView]);
 
+    const scrollToProblemSection = () => {
+        const problemSection = document.getElementById('problem-section');
+        if (problemSection) {
+            problemSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    };
+
     return (
         <section ref={ref} id={content.id} className="min-h-screen pt-32 pb-20 flex flex-col items-center justify-start px-6 md:px-12 relative z-10 w-full overflow-hidden">
             <div className="max-w-5xl mx-auto flex flex-col items-center text-center space-y-8 relative z-20">
@@ -47,7 +54,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ content, onInView }) =
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                    <Button variant="primary">See how the system works</Button>
+                    <Button variant="primary" onClick={scrollToProblemSection}>See how the system works</Button>
                     <a href="/voice-agent-page.html">
                         <Button variant="secondary" className="pl-6 pr-4">
                             Try an agent <Icon name="ArrowRight" size={14} className="ml-2" />
