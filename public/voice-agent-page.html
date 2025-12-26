@@ -167,8 +167,8 @@
     </script>
 
     <!-- Retell AI Voice Call Integration with Web Client SDK -->
-    <script type="module">
-        import { RetellWebClient } from 'https://cdn.jsdelivr.net/npm/retell-client-js-sdk@latest/dist/web-client.js';
+    <script src="https://unpkg.com/retell-client-js-sdk@2.3.0/dist/web-call.min.js"></script>
+    <script>
 
         // API key removed for security - will be moved to backend
         const AGENT_ID = 'agent_9405019d9dce5375c8059a6639';
@@ -287,6 +287,11 @@
         // Initialize Retell client
         async function initializeRetellClient() {
             try {
+                // Check if RetellWebClient is available
+                if (typeof RetellWebClient === 'undefined') {
+                    console.error('RetellWebClient is not loaded');
+                    return;
+                }
                 retellClient = new RetellWebClient();
 
                 retellClient.on("call_started", () => {
