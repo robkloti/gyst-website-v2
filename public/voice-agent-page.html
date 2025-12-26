@@ -150,7 +150,7 @@
                                             <div className="absolute inset-0 rounded-full bg-[#FFB224]/10 animate-ping"></div>
                                         </motion.div>
                                         <h3 className="text-2xl font-semibold text-white mb-2">AI Voice Agent</h3>
-                                        <p className="text-sm text-neutral-400">Click the "Talk to GYST AI" button in the bottom right corner</p>
+                                        <p className="text-sm text-neutral-400">Look for the voice widget in the bottom right corner</p>
                                     </div>
                                 </div>
 
@@ -166,11 +166,9 @@
         root.render(<VoiceAgentPage />);
     </script>
 
-    <!-- Retell AI Voice Call Integration with Web Client SDK -->
-    <!-- Try jsdelivr CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/retell-client-js-sdk@2.0.7/dist/retell-client-js-sdk.min.js"></script>
-    <!-- Load voice widget script -->
-    <script src="/retell-voice-widget.js"></script>
+    <!-- ElevenLabs Conversational AI Widget -->
+    <elevenlabs-convai agent-id="agent_0101kdcrvddhftere74tg5vva6r4"></elevenlabs-convai>
+    <script src="https://unpkg.com/@elevenlabs/convai-widget-embed" async type="text/javascript"></script>
 
 </body>
 </html>
