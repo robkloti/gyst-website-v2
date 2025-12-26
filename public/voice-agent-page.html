@@ -135,11 +135,11 @@
                             */}
                             <div className="w-full h-full min-h-[600px] overflow-hidden bg-[#0A0A0A] relative flex items-center justify-center">
 
-                                {/* Retell AI Voice Agent Widget will appear here */}
+                                {/* ElevenLabs Voice Agent Widget will appear here */}
                                 <div className="absolute inset-0 flex items-center justify-center">
-                                    <div className="text-center space-y-4">
+                                    <div className="flex flex-col items-center text-center space-y-6">
                                         <motion.div
-                                            className="relative mx-auto mb-6"
+                                            className="relative"
                                             initial={{ scale: 1 }}
                                             animate={{ scale: [1, 1.05, 1] }}
                                             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
@@ -149,8 +149,10 @@
                                             </div>
                                             <div className="absolute inset-0 rounded-full bg-[#FFB224]/10 animate-ping"></div>
                                         </motion.div>
-                                        <h3 className="text-2xl font-semibold text-white mb-2">AI Voice Agent</h3>
-                                        <p className="text-sm text-neutral-400">Look for the voice widget in the bottom right corner</p>
+                                        <div className="space-y-2">
+                                            <h3 className="text-2xl font-semibold text-white">AI Voice Agent</h3>
+                                            <p className="text-sm text-neutral-400">Look for the voice widget in the bottom right corner</p>
+                                        </div>
                                     </div>
                                 </div>
 
