@@ -135,41 +135,47 @@
                             */}
                             <div className="w-full h-full min-h-[600px] overflow-hidden bg-[#0A0A0A] relative flex items-center justify-center">
 
-                                {/* Placeholder Visual (Remove this when adding actual embed) */}
-                                <div className="absolute inset-0 flex flex-col items-center justify-center text-neutral-600 space-y-6">
-                                    {/* Animated Microphone Icon */}
-                                    <motion.div
-                                        className="relative"
-                                        initial={{ scale: 1 }}
-                                        animate={{ scale: [1, 1.1, 1] }}
-                                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                                {/* Retell AI Voice Agent Integration */}
+                                <div className="absolute inset-0 flex flex-col items-center justify-center space-y-8 px-6">
+                                    {/* Status indicator */}
+                                    <div id="call-status" className="text-center">
+                                        <motion.div
+                                            className="relative mx-auto mb-6"
+                                            initial={{ scale: 1 }}
+                                            animate={{ scale: [1, 1.05, 1] }}
+                                            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                                        >
+                                            <div className="w-32 h-32 rounded-full bg-gradient-to-br from-[#FFB224]/20 to-[#FFB224]/5 border border-[#FFB224]/30 flex items-center justify-center">
+                                                <Icon name="Mic" size={48} className="text-[#FFB224]" />
+                                            </div>
+                                            <div className="absolute inset-0 rounded-full bg-[#FFB224]/10 animate-ping"></div>
+                                        </motion.div>
+                                        <h3 className="text-2xl font-semibold text-white mb-2">AI Voice Agent</h3>
+                                        <p className="text-sm text-neutral-400">Click below to start a conversation</p>
+                                    </div>
+
+                                    {/* Start Call Button */}
+                                    <button
+                                        id="start-call-btn"
+                                        onClick={() => window.startRetellCall()}
+                                        className="group relative flex items-center justify-center bg-gradient-to-r from-[#FFB224] to-[#FFD573] text-black px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wider shadow-[0_0_30px_rgba(255,178,36,0.4)] hover:shadow-[0_0_50px_rgba(255,178,36,0.6)] hover:scale-105 active:scale-95 transition-all duration-300"
                                     >
-                                        <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#FFB224]/20 to-[#FFB224]/5 border border-[#FFB224]/30 flex items-center justify-center">
-                                            <Icon name="Mic" size={40} className="text-[#FFB224]" />
-                                        </div>
-                                        {/* Pulse rings */}
-                                        <div className="absolute inset-0 rounded-full bg-[#FFB224]/10 animate-ping"></div>
-                                    </motion.div>
+                                        <Icon name="Mic" size={20} className="mr-3" />
+                                        <span>Start Voice Call</span>
+                                    </button>
 
-                                    <div className="text-center space-y-2">
-                                        <p className="text-sm font-medium text-neutral-400">Voice Agent Ready</p>
-                                        <p className="text-xs text-neutral-600">Embed your voice AI widget here</p>
-                                    </div>
+                                    {/* Call status message */}
+                                    <div id="status-message" className="text-center text-sm text-neutral-500 min-h-[24px]"></div>
 
-                                    {/* Instructions Box */}
-                                    <div className="mt-8 max-w-md p-6 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm">
-                                        <p className="text-xs text-neutral-500 leading-relaxed">
-                                            <span className="text-[#FFB224] font-semibold">Integration Instructions:</span><br/>
-                                            Replace the placeholder content in the div above with your voice agent embed code.
-                                            Supported formats include iframes, script tags, or custom widgets.
-                                        </p>
-                                    </div>
+                                    {/* End Call Button (hidden by default) */}
+                                    <button
+                                        id="end-call-btn"
+                                        onClick={() => window.endRetellCall()}
+                                        className="hidden bg-red-500/20 border border-red-500/50 text-red-300 px-6 py-3 rounded-full font-semibold text-sm hover:bg-red-500/30 transition-all duration-300"
+                                    >
+                                        End Call
+                                    </button>
                                 </div>
-
-                                {/* Example of where voice agent embed goes: */}
-                                {/* <iframe src="YOUR_VOICE_AGENT_URL" width="100%" height="100%" frameBorder="0"></iframe> */}
-                                {/* OR */}
-                                {/* <div id="voice-agent-widget"></div> */}
 
                             </div>
                         </div>
@@ -181,6 +187,111 @@
         // --- 4. RENDER APP ---
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<VoiceAgentPage />);
+    </script>
+
+    <!-- Retell AI Integration Script -->
+    <script>
+        let retellWebClient;
+
+        // Load Retell SDK
+        (function() {
+            const script = document.createElement("script");
+            script.src = "https://cdn.jsdelivr.net/npm/retell-client-js-sdk@2.3.0/dist/web-call.min.js";
+            script.onload = function() {
+                // Initialize Retell client
+                retellWebClient = new RetellWebClient();
+
+                // Event handlers
+                retellWebClient.on("call_started", () => {
+                    console.log("Call started");
+                    updateCallStatus("connected");
+                });
+
+                retellWebClient.on("call_ended", () => {
+                    console.log("Call ended");
+                    updateCallStatus("ended");
+                });
+
+                retellWebClient.on("error", (error) => {
+                    console.error("Retell error:", error);
+                    updateCallStatus("error");
+                });
+
+                console.log("Retell AI client loaded");
+            };
+            document.body.appendChild(script);
+        })();
+
+        // Start call function
+        window.startRetellCall = async function() {
+            if (!retellWebClient) {
+                alert("Voice client is loading, please try again in a moment.");
+                return;
+            }
+
+            try {
+                updateCallStatus("connecting");
+
+                await retellWebClient.startCall({
+                    agentId: "agent_9405019d9dce5375c8059a6639",
+                    // Optional: Add custom data
+                    // metadata: { user_id: "123" }
+                });
+
+            } catch (error) {
+                console.error("Failed to start call:", error);
+                updateCallStatus("error");
+            }
+        };
+
+        // End call function
+        window.endRetellCall = function() {
+            if (retellWebClient) {
+                retellWebClient.stopCall();
+            }
+        };
+
+        // Update UI based on call status
+        function updateCallStatus(status) {
+            const startBtn = document.getElementById("start-call-btn");
+            const endBtn = document.getElementById("end-call-btn");
+            const statusMsg = document.getElementById("status-message");
+
+            if (!startBtn || !endBtn || !statusMsg) return;
+
+            switch(status) {
+                case "connecting":
+                    startBtn.disabled = true;
+                    startBtn.style.opacity = "0.5";
+                    statusMsg.textContent = "Connecting to agent...";
+                    statusMsg.className = "text-center text-sm text-[#FFB224] min-h-[24px]";
+                    break;
+
+                case "connected":
+                    startBtn.classList.add("hidden");
+                    endBtn.classList.remove("hidden");
+                    statusMsg.textContent = "Call in progress - Speak now!";
+                    statusMsg.className = "text-center text-sm text-emerald-400 min-h-[24px]";
+                    break;
+
+                case "ended":
+                    startBtn.classList.remove("hidden");
+                    startBtn.disabled = false;
+                    startBtn.style.opacity = "1";
+                    endBtn.classList.add("hidden");
+                    statusMsg.textContent = "Call ended. Click to start a new conversation.";
+                    statusMsg.className = "text-center text-sm text-neutral-500 min-h-[24px]";
+                    break;
+
+                case "error":
+                    startBtn.disabled = false;
+                    startBtn.style.opacity = "1";
+                    endBtn.classList.add("hidden");
+                    statusMsg.textContent = "Error connecting. Please try again.";
+                    statusMsg.className = "text-center text-sm text-red-400 min-h-[24px]";
+                    break;
+            }
+        }
     </script>
 
 </body>
