@@ -35,10 +35,10 @@ export const Footer = () => {
                     <div>
                         <h4 className="text-white font-semibold mb-6 text-sm">Product</h4>
                         <ul className="space-y-4 text-sm text-neutral-500">
-                            <li><a href="#" className="hover:text-white transition-colors">Features</a></li>
-                            <li><a href="#" className="hover:text-white transition-colors">Integrations</a></li>
-                            <li><a href="#" className="hover:text-white transition-colors">Enterprise</a></li>
-                            <li><a href="#" className="hover:text-white transition-colors">Success Stories</a></li>
+                            <li><a href="/" className="hover:text-white transition-colors">Home</a></li>
+                            <li><a href="/voice-agent-page.html" className="hover:text-white transition-colors">Voice Agent</a></li>
+                            <li><a href="/caelum-landing-page.html" className="hover:text-white transition-colors">Finance</a></li>
+                            <li><a href="/calendar-page.html" className="hover:text-white transition-colors">Book a Call</a></li>
                             <li><a href="#" className="hover:text-white transition-colors">Pricing</a></li>
                         </ul>
                     </div>
