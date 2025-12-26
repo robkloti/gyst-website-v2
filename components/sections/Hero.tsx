@@ -48,9 +48,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ content, onInView }) =
 
                 <div className="flex flex-col sm:flex-row gap-4 pt-4">
                     <Button variant="primary">See how the system works</Button>
-                    <Button variant="secondary" className="pl-6 pr-4">
-                        Try an agent <Icon name="ArrowRight" size={14} className="ml-2" />
-                    </Button>
+                    <a href="/voice-agent-page.html">
+                        <Button variant="secondary" className="pl-6 pr-4">
+                            Try an agent <Icon name="ArrowRight" size={14} className="ml-2" />
+                        </Button>
+                    </a>
                 </div>
 
                 <div className="flex items-center gap-1 text-[10px] text-neutral-500 font-medium tracking-wide pt-2">

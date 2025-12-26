@@ -10,9 +10,11 @@ export const Navbar = () => {
                 <span className="font-bold tracking-tighter text-lg hidden sm:block">GYST</span>
             </div>
             <div className="pointer-events-auto">
-                <Button variant="secondary" className="!px-5 !py-2 !text-[10px] uppercase tracking-widest backdrop-blur-md bg-black/20">
-                    Get Access
-                </Button>
+                <a href="/calendar-page.html">
+                    <Button variant="secondary" className="!px-5 !py-2 !text-[10px] uppercase tracking-widest backdrop-blur-md bg-black/20">
+                        Let's Chat
+                    </Button>
+                </a>
             </div>
         </nav>
     );

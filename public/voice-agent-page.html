@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-[#050505] text-neutral-100 antialiased selection:bg-[#FFB224]/30 selection:text-[#FFB224]">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GYST - Voice AI Agent</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- CSS Dependencies -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- JS Dependencies -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+    <!-- Styles -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #050505;
+            overflow-x: hidden;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: #262626; border-radius: 99px; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        // --- 1. GLOBALS & SETUP ---
+        const { useState, useEffect } = React;
+        const { motion } = window.Motion;
+
+        // --- 2. ICONS ---
+        const Icons = {
+            ArrowLeft: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>,
+            Mic: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>,
+            Waves: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></svg>,
+            GystLogo: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><defs><path id="SVGSzlFdebm" fill="currentColor" d="M20.654 16.88c-.111-1.057-.958-1.88-1.987-1.88c-.845 0-1.568.555-1.861 1.34a2.22 2.22 0 0 0-.015 1.513a1.46 1.46 0 0 0-1.4.49A1.63 1.63 0 0 0 15 19.412c0 .877.672 1.588 1.5 1.588H20c1.105 0 2-.948 2-2.118c0-.927-.562-1.714-1.346-2.001"/></defs><path fill="currentColor" fillRule="evenodd" d="M3.172 19.828C4.343 21 6.229 21 10 21h3.93a3.17 3.17 0 0 1-.43-1.588c0-.816.32-1.592.857-2.162H13.5a.75.75 0 0 1 0-1.5h1.928c.511-1.29 1.727-2.25 3.239-2.25c1.56 0 2.81 1.028 3.288 2.38l.014.01C22 15.074 22 14.12 22 13v-.25H2V13c0 3.771 0 5.657 1.172 6.828M6 18.25a.75.75 0 0 1-.75-.75v-2a.75.75 0 0 1 1.5 0v2a.75.75 0 0 1-.75.75m3 0a.75.75 0 0 1-.75-.75v-2a.75.75 0 0 1 1.5 0v2a.75.75 0 0 1-.75.75M3.172 4.172C2 5.343 2 7.229 2 11v.25h20V11c0-3.771 0-5.657-1.172-6.828S17.771 3 14 3h-4C6.229 3 4.343 3 3.172 4.172M9 9.25a.75.75 0 0 1-.75-.75v-2a.75.75 0 0 1 1.5 0v2a.75.75 0 0 1-.75.75M5.25 8.5a.75.75 0 0 0 1.5 0v-2a.75.75 0 0 0-1.5 0zm7.5-1a.75.75 0 0 1 .75-.75H18a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1-.75-.75" clipRule="evenodd"/><use href="#SVGSzlFdebm" fillRule="evenodd" clipRule="evenodd"/><use href="#SVGSzlFdebm"/></svg>
+        };
+
+        const Icon = ({ name, size = 16, className }) => {
+            const IconComponent = Icons[name];
+            return IconComponent ? <IconComponent width={size} height={size} className={className} /> : null;
+        };
+
+        // --- 3. VOICE AGENT PAGE ---
+        const VoiceAgentPage = () => {
+            return (
+                <div className="min-h-screen bg-[#050505] text-neutral-200 flex flex-col items-center pt-20 pb-12 px-4 md:px-6 relative overflow-hidden">
+                    {/* Background Noise */}
+                    <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'url("https://grainy-gradients.vercel.app/noise.svg")' }}></div>
+
+                    {/* Navigation */}
+                    <div className="absolute top-6 left-6 z-50">
+                        <a href="/" className="flex items-center gap-2 text-xs font-medium text-neutral-500 hover:text-white transition-colors group no-underline">
+                            <div className="w-8 h-8 rounded-full border border-white/10 bg-[#0A0A0A] flex items-center justify-center group-hover:border-[#FFB224]/50 transition-colors">
+                                <Icon name="ArrowLeft" size={14} />
+                            </div>
+                            <span>Back to Home</span>
+                        </a>
+                    </div>
+
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6 }}
+                        className="w-full max-w-6xl bg-[#0A0A0A] border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row min-h-[650px] relative z-20"
+                    >
+                        {/* Sidebar (Context) */}
+                        <div className="w-full md:w-[320px] lg:w-[360px] border-b md:border-b-0 md:border-r border-white/5 bg-[#080808] p-8 flex flex-col relative shrink-0">
+                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#FFB224] to-transparent"></div>
+
+                            <div className="mb-8">
+                                <div className="text-[#FFB224] mb-4"><Icon name="GystLogo" size={32} /></div>
+                                <h2 className="text-xl font-semibold text-white tracking-tight mb-1">Voice AI Agent Demo</h2>
+                                <p className="text-sm text-neutral-500 font-medium">Experience intelligent conversation</p>
+                            </div>
+
+                            <div className="space-y-5 mb-10">
+                                <div className="flex items-center gap-3 text-sm text-neutral-400">
+                                    <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0">
+                                        <Icon name="Mic" size={14} className="text-neutral-300" />
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <span className="text-xs text-neutral-500 font-medium">Voice Enabled</span>
+                                        <span className="text-neutral-200">Natural conversation</span>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-3 text-sm text-neutral-400">
+                                    <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0">
+                                        <Icon name="Waves" size={14} className="text-neutral-300" />
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <span className="text-xs text-neutral-500 font-medium">Real-time</span>
+                                        <span className="text-neutral-200">Instant responses</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="mt-auto pt-8 border-t border-white/5">
+                                <p className="text-[11px] font-bold text-neutral-400 uppercase tracking-widest mb-4">How to Use</p>
+                                <ul className="space-y-3">
+                                    {[
+                                        'Click to activate microphone',
+                                        'Speak your questions naturally',
+                                        'Listen to AI responses',
+                                        'Continue the conversation'
+                                    ].map((item, i) => (
+                                        <li key={i} className="flex items-start gap-3 text-xs text-neutral-400 leading-relaxed">
+                                            <div className="w-5 h-5 rounded-full bg-white/5 flex items-center justify-center shrink-0 text-[10px] font-bold text-[#FFB224]">
+                                                {i + 1}
+                                            </div>
+                                            {item}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+
+                        {/* Main Content Area - VOICE AGENT EMBED SLOT */}
+                        <div className="flex-1 bg-[#0A0A0A] relative flex flex-col min-h-[600px] h-full">
+                            {/*
+                                -----------------------------------------------------
+                                VOICE AGENT EMBED AREA:
+                                Paste your voice AI agent embed code below.
+                                This could be an iframe, script tag, or custom widget.
+                                -----------------------------------------------------
+                            */}
+                            <div className="w-full h-full min-h-[600px] overflow-hidden bg-[#0A0A0A] relative flex items-center justify-center">
+
+                                {/* Placeholder Visual (Remove this when adding actual embed) */}
+                                <div className="absolute inset-0 flex flex-col items-center justify-center text-neutral-600 space-y-6">
+                                    {/* Animated Microphone Icon */}
+                                    <motion.div
+                                        className="relative"
+                                        initial={{ scale: 1 }}
+                                        animate={{ scale: [1, 1.1, 1] }}
+                                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                                    >
+                                        <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#FFB224]/20 to-[#FFB224]/5 border border-[#FFB224]/30 flex items-center justify-center">
+                                            <Icon name="Mic" size={40} className="text-[#FFB224]" />
+                                        </div>
+                                        {/* Pulse rings */}
+                                        <div className="absolute inset-0 rounded-full bg-[#FFB224]/10 animate-ping"></div>
+                                    </motion.div>
+
+                                    <div className="text-center space-y-2">
+                                        <p className="text-sm font-medium text-neutral-400">Voice Agent Ready</p>
+                                        <p className="text-xs text-neutral-600">Embed your voice AI widget here</p>
+                                    </div>
+
+                                    {/* Instructions Box */}
+                                    <div className="mt-8 max-w-md p-6 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm">
+                                        <p className="text-xs text-neutral-500 leading-relaxed">
+                                            <span className="text-[#FFB224] font-semibold">Integration Instructions:</span><br/>
+                                            Replace the placeholder content in the div above with your voice agent embed code.
+                                            Supported formats include iframes, script tags, or custom widgets.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Example of where voice agent embed goes: */}
+                                {/* <iframe src="YOUR_VOICE_AGENT_URL" width="100%" height="100%" frameBorder="0"></iframe> */}
+                                {/* OR */}
+                                {/* <div id="voice-agent-widget"></div> */}
+
+                            </div>
+                        </div>
+                    </motion.div>
+                </div>
+            );
+        };
+
+        // --- 4. RENDER APP ---
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<VoiceAgentPage />);
+    </script>
+
+</body>
+</html>
