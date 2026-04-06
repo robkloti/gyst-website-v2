@@ -15,6 +15,7 @@
 <script crossorigin="" src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+<script src="https://link.1prompt.com/js/form_embed.js"></script>
 <!-- Styles -->
 <style>
 body {
@@ -245,13 +246,24 @@ Explain in 3 sentences how results/ folders create compound learning. Include a 
                         {/* Configure GHL form redirect URL to:           */}
                         {/* https://yourdomain.com/lead-magnet.html?submitted=true */}
                         {/* ============================================= */}
-                        <div id="ghl-form-container">
-                            <div className="border-2 border-dashed border-[#FFB224]/30 rounded-xl p-8 text-center">
-                                <Icon name="FileText" size={24} className="text-neutral-600 mx-auto mb-3" />
-                                <p className="text-neutral-500 text-sm">GHL Form Embed Placeholder</p>
-                                <p className="text-neutral-600 text-xs mt-1">Replace this div with your GHL embed code</p>
-                                <p className="text-neutral-700 text-[10px] mt-3 font-mono">Redirect URL: ...lead-magnet.html?submitted=true</p>
-                            </div>
+                        <div id="ghl-form-container" style={{minHeight: '450px'}}>
+                            <iframe
+                                src="https://link.1prompt.com/widget/form/uW0AdUSP5vSIgeNvGche"
+                                style={{width:'100%',height:'450px',border:'none',borderRadius:'3px'}}
+                                id="inline-uW0AdUSP5vSIgeNvGche"
+                                data-layout="{'id':'INLINE'}"
+                                data-trigger-type="alwaysShow"
+                                data-trigger-value=""
+                                data-activation-type="alwaysActivated"
+                                data-activation-value=""
+                                data-deactivation-type="neverDeactivate"
+                                data-deactivation-value=""
+                                data-form-name="Simple Opt-In"
+                                data-height="450"
+                                data-layout-iframe-id="inline-uW0AdUSP5vSIgeNvGche"
+                                data-form-id="uW0AdUSP5vSIgeNvGche"
+                                title="Simple Opt-In"
+                            ></iframe>
                         </div>
                     </div>
                 </motion.div>
