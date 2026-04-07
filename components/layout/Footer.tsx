@@ -18,15 +18,11 @@ export const Footer = () => {
                         <div className="flex flex-col gap-4 text-sm text-neutral-400 mt-2">
                             <div className="flex items-center gap-3">
                                 <Icon name="Mail" size={16} />
-                                <span className="hover:text-white transition-colors cursor-pointer">hello@gyst.ai</span>
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <Icon name="Phone" size={16} />
-                                <span className="hover:text-white transition-colors cursor-pointer">+1 (555) GYST-AI</span>
+                                <a href="mailto:rob@gyst-ai.com" className="hover:text-white transition-colors">rob@gyst-ai.com</a>
                             </div>
                             <div className="flex items-center gap-3">
                                 <Icon name="MapPin" size={16} />
-                                <span className="hover:text-white transition-colors cursor-pointer">Enterprise AI Solutions, Global</span>
+                                <span className="text-neutral-500 text-xs leading-relaxed">30 N Gould St, STE R<br/>Sheridan, WY 82801, USA</span>
                             </div>
                         </div>
                     </div>
@@ -39,7 +35,8 @@ export const Footer = () => {
                             <li><a href="/voice-agent-page.html" className="hover:text-white transition-colors">Voice Agent</a></li>
                             <li><a href="/caelum-landing-page.html" className="hover:text-white transition-colors">Finance</a></li>
                             <li><a href="/calendar-page.html" className="hover:text-white transition-colors">Book a Call</a></li>
-                            <li><a href="#" className="hover:text-white transition-colors">Pricing</a></li>
+                            <li><a href="/ai-exec.html" className="hover:text-white transition-colors">AI Executive Board</a></li>
+                            <li><a href="/lead-magnet.html" className="hover:text-white transition-colors">Free Prompt</a></li>
                         </ul>
                     </div>
 
@@ -69,7 +66,7 @@ export const Footer = () => {
                 </div>
 
                 <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <p className="text-neutral-600 text-xs">© 2024 GYST Inc. All rights reserved.</p>
+                    <p className="text-neutral-600 text-xs">© 2025 GYST AI. All rights reserved.</p>
                     <div className="flex gap-4">
                         <a href="#" className="text-neutral-500 hover:text-white transition-colors"><Icon name="Twitter" size={18} /></a>
                         <a href="#" className="text-neutral-500 hover:text-white transition-colors"><Icon name="Linkedin" size={18} /></a>
