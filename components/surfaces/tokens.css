@@ -1,0 +1,125 @@
+/*
+ * GYST system-surface design tokens + shared primitive styles.
+ * Spec: COMPONENT_SPEC_HERO_SURFACES (HVAC funnel).
+ * Tokens are scoped under .gyst-surface so they never leak into the rest of the site.
+ * Accent is tradesman orange #D45D00 (NOT the punk-zine yellow used in content/carousels).
+ */
+
+.gyst-surface {
+  --surface-bg: #0a0a0b;
+  --surface-border: #1f1f22;
+  --surface-inner-glow: rgba(212, 93, 0, 0.04);
+
+  --text-primary: #f5f5f5;
+  --text-secondary: #a8a8ac;
+  --text-muted: #6b6b70;
+  --text-mono-accent: #d4d4d8;
+
+  --accent-orange: #d45d00;
+  --accent-orange-glow: rgba(212, 93, 0, 0.25);
+  --accent-green-status: #22c55e;
+  --accent-green-glow: rgba(34, 197, 94, 0.4);
+
+  --font-display: "Inter Display", "Inter", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  font-family: var(--font-body);
+  color: var(--text-secondary);
+  -webkit-font-smoothing: antialiased;
+}
+
+.gyst-surface *,
+.gyst-surface *::before,
+.gyst-surface *::after {
+  box-sizing: border-box;
+}
+
+.surface-tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Shared: SurfaceCard ---- */
+.surface-card {
+  background: var(--surface-bg);
+  border: 1px solid var(--surface-border);
+  border-radius: 12px;
+  box-shadow: inset 0 0 0 1px var(--surface-inner-glow);
+  padding: 32px;
+}
+@media (min-width: 768px) {
+  .surface-card {
+    padding: 48px;
+  }
+}
+
+/* ---- Shared: TerminalPath ---- */
+.surface-terminal-path {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-muted);
+  letter-spacing: 0.01em;
+}
+
+/* ---- Shared: StatusPill ---- */
+.surface-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 12px;
+  border: 1px solid var(--surface-border);
+  border-radius: 999px;
+  background: var(--surface-bg);
+  white-space: nowrap;
+}
+.surface-status-pill__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-green-status);
+  flex: 0 0 auto;
+  animation: surface-status-pulse 2s ease-in-out infinite;
+}
+.surface-status-pill__label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+@keyframes surface-status-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 var(--accent-green-glow);
+  }
+  50% {
+    box-shadow: 0 0 0 6px transparent;
+  }
+}
+
+/* ---- Shared: headline emphasis (italic word + orange underline) ---- */
+.surface-emphasis {
+  font-style: italic;
+  position: relative;
+  white-space: nowrap;
+}
+.surface-emphasis::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -4px;
+  height: 2px;
+  background: var(--accent-orange);
+}
+/* keep a trailing period outside the underline: wrap it in .surface-emphasis__tail */
+.surface-emphasis__tail {
+  font-style: italic;
+}
+
+/* ---- Reduced motion: freeze everything ---- */
+@media (prefers-reduced-motion: reduce) {
+  .gyst-surface * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

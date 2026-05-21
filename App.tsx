@@ -11,12 +11,16 @@ import { FeatureSection } from './components/sections/FeatureSection';
 import { CaseStudiesSection } from './components/sections/CaseStudies';
 import { Testimonials } from './components/sections/Testimonials';
 import HvacCalculatorPage from './hvac-calculator';
+import SqueezePage from './hvac-calculator/SqueezePage';
+
+const currentPath = () =>
+    typeof window !== 'undefined' ? window.location.pathname.replace(/\/$/, '') : '';
 
 // Lightweight path routing — no router dep. Static HTML pages in /public
-// handle every other "route"; this branch covers the SPA-served calculator.
-const isHvacCalculatorRoute = () =>
-    typeof window !== 'undefined' &&
-    window.location.pathname.replace(/\/$/, '') === '/find-leaks';
+// handle every other "route"; these branches cover the SPA-served funnel.
+// Page 1 (squeeze) → /find-leaks/start; Page 2 (calculator + sales) → /find-leaks.
+const isSqueezeRoute = () => currentPath() === '/find-leaks/start';
+const isHvacCalculatorRoute = () => currentPath() === '/find-leaks';
 
 const MainApp = () => {
     const [activeSection, setActiveSection] = useState<SectionId>(SectionId.HERO);
@@ -81,6 +85,13 @@ const MainApp = () => {
     );
 };
 
-const App = () => (isHvacCalculatorRoute() ? <HvacCalculatorPage /> : <MainApp />);
+const App = () =>
+    isSqueezeRoute() ? (
+        <SqueezePage />
+    ) : isHvacCalculatorRoute() ? (
+        <HvacCalculatorPage />
+    ) : (
+        <MainApp />
+    );
 
 export default App;

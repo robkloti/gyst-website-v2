@@ -2,21 +2,11 @@ import React, { useMemo, useState } from 'react';
 import { Calculator } from './Calculator';
 import { ResultView } from './ResultView';
 import { EmailCapture } from './EmailCapture';
+import { SalesPage } from './SalesPage';
 import { calculate } from './calculations';
 import { DEFAULT_INPUTS, ACCENT_HEX } from './constants';
 import { CalculatorInputs } from './types';
 import './styles.css';
-
-const Page2Placeholder: React.FC = () => (
-  <section className="w-full max-w-3xl mx-auto px-5 py-16 border-t border-white/5">
-    <div className="bg-[#0A0A0A] border border-dashed border-white/15 rounded-2xl p-8 text-center">
-      <p className="text-neutral-400 text-sm leading-relaxed">
-        Page 2 content placeholder — see HVAC_FUNNEL_COPY_V2_0.md sections 2–10.
-        Build with follow-up PRP.
-      </p>
-    </div>
-  </section>
-);
 
 const HvacCalculatorPage: React.FC = () => {
   const [inputs, setInputs] = useState<CalculatorInputs>(DEFAULT_INPUTS);
@@ -39,7 +29,7 @@ const HvacCalculatorPage: React.FC = () => {
         <Calculator inputs={inputs} onChange={setInputs} />
         <ResultView result={result} />
         <EmailCapture result={result} />
-        <Page2Placeholder />
+        <SalesPage />
       </main>
       <footer className="w-full px-5 py-6 border-t border-white/5 text-center text-neutral-600 text-xs">
         © GYST AI 2026 · <a href="#" className="hover:text-neutral-400">Privacy</a> ·{' '}

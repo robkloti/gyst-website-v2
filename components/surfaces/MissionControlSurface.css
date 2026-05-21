@@ -1,0 +1,180 @@
+/*
+ * MissionControlSurface — Page 2 §7 showroom. ATELIER edition.
+ * Matches the slide-system.html mockup: Newsreader serif headline, amber accent,
+ * real Mission Control screenshot in a styled panel. Overrides the deep-orange
+ * spec for this section per Rob's direction (2026-05-21).
+ */
+
+.mc-atelier {
+  --bg: #0a0a0b;
+  --card: #15151a;
+  --border: #26262b;
+  --border-strong: #35353b;
+  --text: #f0ece3;
+  --muted: #8e867a;
+  --faint: #5a554b;
+  --amber: #ffb224;
+  --ok: #4ade80;
+  --serif: "Newsreader", Georgia, serif;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+  --sans: "Inter", system-ui, sans-serif;
+
+  /* feed the shared StatusPill primitive so it adopts the ATELIER look */
+  --surface-bg: var(--card);
+  --surface-border: var(--border);
+  --accent-green-status: var(--ok);
+  --accent-green-glow: rgba(74, 222, 128, 0.45);
+  --text-secondary: var(--muted);
+  --font-mono: var(--mono);
+
+  width: 100%;
+  font-family: var(--sans);
+  color: var(--text);
+}
+
+.mc-atelier__top {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.mc-atelier__crumb {
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+.mc-atelier__crumb .slash {
+  color: var(--faint);
+  margin: 0 8px;
+}
+.mc-atelier__crumb .last {
+  color: var(--amber);
+}
+.mc-atelier__top .surface-status-pill {
+  margin-left: auto;
+}
+
+.mc-atelier__headline {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(40px, 6vw, 84px);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin: clamp(20px, 3vw, 44px) 0 clamp(24px, 3vw, 36px);
+}
+.mc-atelier__headline .it {
+  font-style: italic;
+  color: var(--amber);
+}
+
+.mc-atelier__body {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+@media (min-width: 960px) {
+  .mc-atelier__body {
+    flex-direction: row;
+    gap: 56px;
+    align-items: center;
+  }
+}
+
+/* Left: mechanism rows */
+.mc-atelier__rows {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  min-width: 0;
+}
+.mc-atelier__row {
+  display: flex;
+  align-items: flex-start;
+  gap: 22px;
+}
+.mc-atelier__num {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(34px, 4vw, 52px);
+  line-height: 1;
+  color: var(--amber);
+  width: 52px;
+  flex-shrink: 0;
+}
+.mc-atelier__name {
+  font-family: var(--mono);
+  font-size: 15px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.mc-atelier__desc {
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--muted);
+  max-width: 420px;
+}
+
+/* Right: dashboard panel */
+.mc-atelier__panel {
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--border-strong);
+  border-radius: 20px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+}
+@media (min-width: 960px) {
+  .mc-atelier__panel {
+    width: 760px;
+    max-width: 56%;
+    flex-shrink: 0;
+  }
+}
+.mc-atelier__panel-head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 8px 12px 16px;
+}
+.mc-atelier__panel-title {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 24px;
+  color: var(--text);
+}
+.mc-atelier__panel-tag {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--faint);
+}
+.mc-atelier__shot {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: #000;
+}
+.mc-atelier__shot img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.mc-atelier__cap {
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  padding: 14px 12px 6px;
+}
+.mc-atelier__cap b {
+  color: var(--amber);
+  font-weight: 500;
+}
