@@ -1,5 +1,5 @@
 {
   "rewrites": [
-    { "source": "/hvac/calculator", "destination": "/index.html" }
+    { "source": "/find-leaks", "destination": "/index.html" }
   ]
 }

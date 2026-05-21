@@ -16,7 +16,7 @@ import HvacCalculatorPage from './hvac-calculator';
 // handle every other "route"; this branch covers the SPA-served calculator.
 const isHvacCalculatorRoute = () =>
     typeof window !== 'undefined' &&
-    window.location.pathname.replace(/\/$/, '') === '/hvac/calculator';
+    window.location.pathname.replace(/\/$/, '') === '/find-leaks';
 
 const MainApp = () => {
     const [activeSection, setActiveSection] = useState<SectionId>(SectionId.HERO);
