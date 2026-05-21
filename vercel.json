@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/hvac/calculator", "destination": "/index.html" }
+  ]
+}
