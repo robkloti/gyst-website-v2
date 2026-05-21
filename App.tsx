@@ -10,8 +10,15 @@ import { TechStackSection } from './components/sections/TechStack';
 import { FeatureSection } from './components/sections/FeatureSection';
 import { CaseStudiesSection } from './components/sections/CaseStudies';
 import { Testimonials } from './components/sections/Testimonials';
+import HvacCalculatorPage from './hvac-calculator';
 
-const App = () => {
+// Lightweight path routing — no router dep. Static HTML pages in /public
+// handle every other "route"; this branch covers the SPA-served calculator.
+const isHvacCalculatorRoute = () =>
+    typeof window !== 'undefined' &&
+    window.location.pathname.replace(/\/$/, '') === '/hvac/calculator';
+
+const MainApp = () => {
     const [activeSection, setActiveSection] = useState<SectionId>(SectionId.HERO);
 
     const handleInView = (id: SectionId) => {
@@ -73,5 +80,7 @@ const App = () => {
         </div>
     );
 };
+
+const App = () => (isHvacCalculatorRoute() ? <HvacCalculatorPage /> : <MainApp />);
 
 export default App;
