@@ -10,9 +10,9 @@ interface EmailCaptureProps {
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // GoHighLevel inbound-webhook URL (GHL Workflow → "Inbound Webhook" trigger).
-// Set as VITE_GHL_WEBHOOK_URL in Vercel env (Production + Preview). Posted as a
-// no-cors request so the cross-origin call goes through without a CORS preflight;
-// the response is opaque, so success is confirmed on send.
+// Set as VITE_GHL_WEBHOOK_URL in Vercel env (Production + Preview). GHL requires
+// an application/json body and returns permissive CORS headers (verified), so a
+// normal cross-origin POST works and we can read the response.
 const GHL_WEBHOOK_URL = (import.meta as any).env?.VITE_GHL_WEBHOOK_URL as
   | string
   | undefined;
@@ -40,10 +40,9 @@ export const EmailCapture: React.FC<EmailCaptureProps> = ({ result }) => {
         throw new Error('not_configured');
       }
       // Flat payload so GHL can map each field to a contact field directly.
-      await fetch(GHL_WEBHOOK_URL, {
+      const res = await fetch(GHL_WEBHOOK_URL, {
         method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+        headers: { 'Content-Type': 'application/json' },
         keepalive: true,
         body: JSON.stringify({
           email,
@@ -55,6 +54,7 @@ export const EmailCapture: React.FC<EmailCaptureProps> = ({ result }) => {
           ad_tracking_leak: result.adTrackingLeak,
         }),
       });
+      if (!res.ok) throw new Error(`webhook_${res.status}`);
       if (
         typeof window !== 'undefined' &&
         typeof (window as any).gtag === 'function'
