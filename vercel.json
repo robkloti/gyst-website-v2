@@ -1,5 +1,6 @@
 {
   "rewrites": [
-    { "source": "/find-leaks", "destination": "/index.html" }
+    { "source": "/find-leaks", "destination": "/index.html" },
+    { "source": "/find-leaks/start", "destination": "/index.html" }
   ]
 }
