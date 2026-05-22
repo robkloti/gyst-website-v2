@@ -9,6 +9,14 @@ interface EmailCaptureProps {
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// GoHighLevel inbound-webhook URL (GHL Workflow → "Inbound Webhook" trigger).
+// Set as VITE_GHL_WEBHOOK_URL in Vercel env (Production + Preview). GHL requires
+// an application/json body and returns permissive CORS headers (verified), so a
+// normal cross-origin POST works and we can read the response.
+const GHL_WEBHOOK_URL = (import.meta as any).env?.VITE_GHL_WEBHOOK_URL as
+  | string
+  | undefined;
+
 export const EmailCapture: React.FC<EmailCaptureProps> = ({ result }) => {
   const [expanded, setExpanded] = useState(false);
   const [email, setEmail] = useState('');
@@ -25,18 +33,28 @@ export const EmailCapture: React.FC<EmailCaptureProps> = ({ result }) => {
     }
     setSubmitting(true);
     try {
-      // TODO: wire to the real email capture backend. No existing pattern in
-      // repo today — currently logging and POSTing to a placeholder endpoint.
-      console.log('[hvac-calculator] email_capture', { email, result });
-      try {
-        await fetch('/api/email-capture', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, result, source: 'hvac_calculator' }),
-        });
-      } catch {
-        // ignore — placeholder endpoint may not exist yet
+      if (!GHL_WEBHOOK_URL) {
+        console.error(
+          '[hvac-calculator] VITE_GHL_WEBHOOK_URL is not set — lead not captured.'
+        );
+        throw new Error('not_configured');
       }
+      // Flat payload so GHL can map each field to a contact field directly.
+      const res = await fetch(GHL_WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        keepalive: true,
+        body: JSON.stringify({
+          email,
+          source: 'hvac_calculator',
+          page_url: typeof window !== 'undefined' ? window.location.href : '',
+          monthly_leak_total: result.totalMonthlyLeak,
+          after_hours_leak: result.afterHoursLeak,
+          dead_quote_leak: result.deadQuoteLeak,
+          ad_tracking_leak: result.adTrackingLeak,
+        }),
+      });
+      if (!res.ok) throw new Error(`webhook_${res.status}`);
       if (
         typeof window !== 'undefined' &&
         typeof (window as any).gtag === 'function'
@@ -48,6 +66,9 @@ export const EmailCapture: React.FC<EmailCaptureProps> = ({ result }) => {
         });
       }
       setDone(true);
+    } catch (err) {
+      console.error('[hvac-calculator] email capture failed', err);
+      setError('Couldn’t send that just now. Mind trying again?');
     } finally {
       setSubmitting(false);
     }
