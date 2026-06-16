@@ -1,6 +1,8 @@
 {
   "rewrites": [
     { "source": "/find-leaks", "destination": "/index.html" },
-    { "source": "/find-leaks/start", "destination": "/index.html" }
+    { "source": "/find-leaks/start", "destination": "/index.html" },
+    { "source": "/find-leaks-au", "destination": "/index.html" },
+    { "source": "/find-leaks-au/start", "destination": "/index.html" }
   ]
 }

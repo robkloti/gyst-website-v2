@@ -12,6 +12,8 @@ import { CaseStudiesSection } from './components/sections/CaseStudies';
 import { Testimonials } from './components/sections/Testimonials';
 import HvacCalculatorPage from './hvac-calculator';
 import SqueezePage from './hvac-calculator/SqueezePage';
+import HvacCalculatorPageAU from './hvac-calculator-au';
+import SqueezePageAU from './hvac-calculator-au/SqueezePage';
 
 const currentPath = () =>
     typeof window !== 'undefined' ? window.location.pathname.replace(/\/$/, '') : '';
@@ -21,6 +23,9 @@ const currentPath = () =>
 // Page 1 (squeeze) → /find-leaks/start; Page 2 (calculator + sales) → /find-leaks.
 const isSqueezeRoute = () => currentPath() === '/find-leaks/start';
 const isHvacCalculatorRoute = () => currentPath() === '/find-leaks';
+// AU variant (feat/find-leaks-au) — separate routes, US funnel untouched.
+const isAuSqueezeRoute = () => currentPath() === '/find-leaks-au/start';
+const isAuCalculatorRoute = () => currentPath() === '/find-leaks-au';
 
 const MainApp = () => {
     const [activeSection, setActiveSection] = useState<SectionId>(SectionId.HERO);
@@ -86,7 +91,11 @@ const MainApp = () => {
 };
 
 const App = () =>
-    isSqueezeRoute() ? (
+    isAuSqueezeRoute() ? (
+        <SqueezePageAU />
+    ) : isAuCalculatorRoute() ? (
+        <HvacCalculatorPageAU />
+    ) : isSqueezeRoute() ? (
         <SqueezePage />
     ) : isHvacCalculatorRoute() ? (
         <HvacCalculatorPage />

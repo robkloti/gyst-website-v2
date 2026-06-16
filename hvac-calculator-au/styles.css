@@ -1,0 +1,57 @@
+/* Air-con calculator — slider thumb styling (44px touch target for mobile) */
+.hvac-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+}
+
+.hvac-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #D45D00;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+  margin-top: 0;
+}
+
+.hvac-slider::-moz-range-thumb {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #D45D00;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+}
+
+.hvac-slider::-webkit-slider-runnable-track {
+  height: 12px;
+  border-radius: 999px;
+}
+
+.hvac-slider::-moz-range-track {
+  height: 12px;
+  border-radius: 999px;
+  background: transparent;
+}
+
+/* Wider invisible hit-box for mobile — tap-friendly */
+@media (pointer: coarse) {
+  .hvac-slider {
+    padding: 12px 0;
+  }
+}
+
+@media print {
+  /* Strip dark theme for PDF print */
+  body, .min-h-screen {
+    background: #fff !important;
+    color: #111 !important;
+  }
+  button, form, .hvac-slider { display: none !important; }
+  input[type='range'] { display: none !important; }
+}
