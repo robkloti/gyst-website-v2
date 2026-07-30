@@ -36,6 +36,7 @@ gtag('config', 'G-FB31T08DWQ');
 <script crossorigin="" src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+<script type="text/javascript" src="https://app.iclosed.io/assets/widget.js" async></script>
 <!-- Styles -->
 <style>
 body {
@@ -164,11 +165,12 @@ overflow-x: hidden;
                             <div className="w-full h-full min-h-[600px] bg-[#0A0A0A] relative">
 
                                 {/* Calendar Embed */}
-                                <iframe
-                                    src="https://link.1prompt.com/widget/booking/0KHQ2dAcLgIg7Ak4sy34"
-                                    style={{width: '100%', border: 'none', minHeight: '800px', height: '100%'}}
-                                    id="0KHQ2dAcLgIg7Ak4sy34_1766728014873">
-                                </iframe>
+                                <div
+                                    className="iclosed-widget"
+                                    data-url="https://app.iclosed.io/e/gyst/vsl-funnel"
+                                    title="Book a Call"
+                                    style={{width: '100%', minHeight: '800px', height: '100%'}}>
+                                </div>
 
                             </div>
                         </div>
@@ -247,7 +249,5 @@ overflow-x: hidden;
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
     </script>
-
-    <script src="https://link.1prompt.com/js/form_embed.js" type="text/javascript"></script>
 
 </body></html>
