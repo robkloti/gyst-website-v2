@@ -1,22 +1,18 @@
 export enum SectionId {
   HERO = 'hero',
   PROBLEM = 'problem',
-  TECH_STACK = 'tech_stack',
-  WHY = 'why',
-  INTENT = 'intent',
-  DIAGNOSIS = 'diagnosis',
-  MEMORY = 'memory',
-  PLANNING = 'planning',
-  EXECUTION = 'execution',
-  VERIFICATION = 'verification',
+  ROUTE = 'route',
+  REMEMBER = 'remember',
+  DO = 'do',
+  RUN = 'run',
   CTA = 'cta',
-  ITERATION = 'iteration',
   OFFER = 'offer',
   FINAL = 'final'
 }
 
 export interface SectionContent {
   id: SectionId;
+  eyebrow?: string;
   headline?: string;
   subheadline?: string;
   copy?: string[];
@@ -26,22 +22,15 @@ export interface SectionContent {
   type?: 'cta';
 }
 
-export interface Testimonial {
+export interface ShowroomBrand {
   name: string;
   role: string;
-  quote: string;
-  avatar: string;
+  room: string;
+  receipts: string[];
 }
 
-export interface CaseStudy {
-  tag: string;
-  featured: boolean;
-  title: string;
-  duration: string;
-  challenge: string;
-  solution: string;
-  metrics: { value: string; label: string }[];
-  tags: string[];
-  quote: string;
-  author: string;
+export interface OfferVehicle {
+  name: string;
+  detail: string;
+  value: string;
 }

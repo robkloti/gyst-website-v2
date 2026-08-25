@@ -6,10 +6,9 @@ import { Footer } from './components/layout/Footer';
 import { LoopVisualizer } from './components/visuals/LoopVisualizer';
 import { HeroSection } from './components/sections/Hero';
 import { ProblemSection } from './components/sections/Problem';
-import { TechStackSection } from './components/sections/TechStack';
+import { HarnessStrip } from './components/sections/HarnessStrip';
 import { FeatureSection } from './components/sections/FeatureSection';
-import { CaseStudiesSection } from './components/sections/CaseStudies';
-import { Testimonials } from './components/sections/Testimonials';
+import { Showroom } from './components/sections/Showroom';
 import HvacCalculatorPage from './hvac-calculator';
 import SqueezePage from './hvac-calculator/SqueezePage';
 
@@ -30,7 +29,7 @@ const MainApp = () => {
     };
 
     return (
-        <div className="min-h-screen w-full bg-[#050505] text-neutral-200 selection:bg-[#FFB224]/30 selection:text-[#FFB224] overflow-x-hidden">
+        <div className="min-h-screen w-full bg-charcoal text-paper selection:bg-hazard/30 selection:text-hazard overflow-x-hidden font-sans">
             <Navbar />
 
             {/* Fixed Background Visualizer */}
@@ -47,7 +46,7 @@ const MainApp = () => {
                         return (
                             <React.Fragment key={section.id}>
                                 <HeroSection content={section} onInView={handleInView} />
-                                <TechStackSection />
+                                <HarnessStrip />
                             </React.Fragment>
                         );
                     }
@@ -59,12 +58,11 @@ const MainApp = () => {
                         );
                     }
 
-                    // 3. CTA & SOCIAL PROOF INSERTION
+                    // 3. SHOWROOM + OFFER
                     if (section.id === SectionId.OFFER) {
                         return (
-                            <React.Fragment key="social-proof-wrapper">
-                                <CaseStudiesSection />
-                                <Testimonials />
+                            <React.Fragment key="showroom-offer-wrapper">
+                                <Showroom />
                                 <FeatureSection key={section.id} content={section} onInView={handleInView} />
                             </React.Fragment>
                         );

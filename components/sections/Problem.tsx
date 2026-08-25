@@ -14,28 +14,28 @@ interface ProblemSectionProps {
 
 const cards = [
   {
-    icon: "Activity",
-    title: "Context Blindness",
-    text: "They skip context that should be standardized.",
-    subtext: "Most automations execute steps but miss the 'why'.",
+    icon: "Database",
+    title: "No memory",
+    text: "Every chat starts from zero. Last week's decisions live in a tab someone closed.",
+    subtext: "Nothing carries over.",
   },
   {
-    icon: "ZapOff",
-    title: "Misaligned Pipelines",
-    text: "They push users through pipelines without alignment.",
-    subtext: "Action happens before understanding is confirmed.",
+    icon: "MessageSquare",
+    title: "No voice",
+    text: "The brand rules get pasted in again. And again. Slightly different each time.",
+    subtext: "Ten people, ten versions of on-brand.",
+  },
+  {
+    icon: "GitBranch",
+    title: "No routing",
+    text: "Nobody knows which prompt, which doc, which tool. So they guess.",
+    subtext: "The right context is somewhere. Not here.",
   },
   {
     icon: "XCircle",
-    title: "No Verification",
-    text: "They act without verifying whether the outcome actually mattered.",
-    subtext: "Did it work? The system doesn't know.",
-  },
-  {
-    icon: "AlertTriangle",
-    title: "Silent Degradation",
-    text: "No feedback. No testing. No loop to correct what quietly breaks over time.",
-    subtext: "This doesn't scale. It degrades.",
+    title: "No verification",
+    text: "It shipped. Was it right? The system doesn't know, and neither does anyone else.",
+    subtext: "This doesn't scale. It resets.",
   }
 ];
 
@@ -133,7 +133,7 @@ export const ProblemSection: React.FC<ProblemSectionProps> = ({ content, onInVie
   }, [isFinished]);
 
   return (
-    <div ref={componentRef} id="problem-section" className="relative bg-[#050505] z-20">
+    <div ref={componentRef} id="problem-section" className="relative bg-charcoal z-20">
       <section ref={triggerRef} className="h-screen flex items-center justify-center overflow-hidden">
         
         <div className="w-full max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center h-full">
@@ -151,24 +151,24 @@ export const ProblemSection: React.FC<ProblemSectionProps> = ({ content, onInVie
                              <Icon name="Activity" size={12} className="text-neutral-400" />
                         )}
                         <span className={`text-[10px] font-mono uppercase tracking-widest transition-colors duration-500 ${isFinished ? 'text-red-400' : 'text-neutral-400'}`}>
-                            {isFinished ? "System Failure Confirmed" : "Scanning System..."}
+                            {isFinished ? "Context loss confirmed" : "Scanning workflow..."}
                         </span>
                     </div>
                 </div>
                 
-                <h2 className="text-3xl md:text-5xl font-semibold tracking-tighter text-white leading-[1.1] mb-6">
+                <h2 className="font-display text-4xl md:text-6xl text-paper mb-6">
                   {content.headline}
                 </h2>
                 
                 <div className="space-y-6 text-xl text-neutral-400 leading-relaxed font-light mb-12">
-                   <p>Most automations execute steps. <br />Very few operate from an agreed understanding of <span className="text-white italic">why</span> those steps exist.</p>
-                   <p>This doesn't scale. It degrades.</p>
+                   <p>Most teams use AI all day. <br />Almost none of it is <span className="text-paper">remembered</span>.</p>
+                   <p>This doesn't scale. It resets.</p>
                 </div>
 
                 {/* Progress Indicator */}
                 <div className="mt-auto w-full">
                     <div className="flex items-center gap-4 mb-2">
-                        <span className="text-xs font-mono text-neutral-500 uppercase tracking-widest">Diagnosis Progress</span>
+                        <span className="text-xs font-mono text-neutral-500 uppercase tracking-widest">Diagnosis</span>
                         {/* Direct DOM manipulation for percentage to avoid re-renders */}
                         <span ref={percentageRef} className={`text-xs font-mono ml-auto transition-colors duration-300 ${isFinished ? 'text-red-500 font-bold' : 'text-neutral-400'}`}>
                             0%
@@ -196,7 +196,7 @@ export const ProblemSection: React.FC<ProblemSectionProps> = ({ content, onInVie
                         className="absolute top-0 left-0 w-full h-full"
                         style={{ zIndex: i }}
                     >
-                        <div className="w-full h-full bg-[#0A0A0A] border border-white/10 rounded-3xl p-8 flex flex-col justify-between shadow-2xl relative overflow-hidden group">
+                        <div className="w-full h-full bg-[#141416] border border-paper/10 rounded-sm p-8 flex flex-col justify-between shadow-2xl relative overflow-hidden group">
                             
                             {/* Background Gradient */}
                             <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent opacity-50" />
