@@ -1,8 +1,10 @@
+import { trackBookClick } from '../../lib/track';
 import React, { useEffect } from 'react';
+import { motion, useInView } from 'framer-motion';
 import { SectionContent } from '../../types';
 import { Button } from '../ui/Button';
 import { Icon } from '../ui/Icons';
-import { useInView } from 'framer-motion';
+import { TerminalMockup } from '../visuals/TerminalMockup';
 
 interface HeroSectionProps {
     content: SectionContent;
@@ -17,40 +19,46 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ content, onInView }) =
         if (isInView) onInView(content.id);
     }, [isInView, content.id, onInView]);
 
-    const scrollToProblemSection = () => {
-        const problemSection = document.getElementById('problem-section');
-        if (problemSection) {
-            problemSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
+    const scrollToTerminal = () => {
+        document.getElementById('hero-terminal')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     };
+
+    const [line1, line2] = (content.headline || '').split('. ').map((s, i) => (i === 0 ? s + '.' : s));
 
     return (
         <section ref={ref} id={content.id} className="min-h-screen pt-32 pb-20 flex flex-col items-center justify-start px-6 md:px-12 relative z-10 w-full overflow-hidden">
-            <div className="max-w-5xl mx-auto flex flex-col items-center text-center space-y-8 relative z-20">
-                <h1 className="text-4xl md:text-5xl lg:text-7xl font-semibold tracking-tighter text-white leading-[1.05] max-w-4xl">
-                    Turn Business Intent <br />
-                    <span className="group relative inline-block cursor-default md:whitespace-nowrap">
-                        <span className="relative z-10 transition-all duration-300 group-hover:text-[#FFB224] group-hover:drop-shadow-[0_0_15px_rgba(255,178,36,0.5)]">
-                            Into Verified Outcomes
-                        </span>
-                    </span>
+            <div className="max-w-5xl mx-auto flex flex-col items-center text-center space-y-7 relative z-20">
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8 }}
+                    className="inline-flex items-center gap-3 font-mono text-[10px] md:text-[11px] uppercase tracking-[0.16em] text-hazard"
+                >
+                    <span className="hidden sm:block w-6 h-[2px] bg-hazard" />
+                    {content.eyebrow}
+                    <span className="hidden sm:block w-6 h-[2px] bg-hazard" />
+                </motion.div>
+
+                <h1 className="font-display text-[54px] sm:text-7xl md:text-8xl lg:text-[112px] text-paper max-w-5xl">
+                    {line1}<br />
+                    <span className="text-hazard">{line2}</span>
                 </h1>
 
-                <p className="text-lg md:text-xl text-neutral-400 font-light leading-relaxed max-w-2xl">
-                    At GYST we design fully autonomous systems that understand your goals, plan your strategy, execute with the right tools and verify results.
+                <p className="text-base md:text-lg text-steel leading-relaxed max-w-2xl">
+                    {content.subheadline}
                 </p>
 
-                <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                    <Button variant="primary" onClick={scrollToProblemSection}>See how the system works</Button>
-                    <a href="/voice-agent-page.html">
-                        <Button variant="secondary" className="pl-6 pr-4">
-                            Try an agent <Icon name="ArrowRight" size={14} className="ml-2" />
-                        </Button>
+                <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                    <a href="/calendar-page.html" onClick={() => trackBookClick('home_hero')}>
+                        <Button variant="primary">{content.cta}</Button>
                     </a>
+                    <Button variant="secondary" onClick={scrollToTerminal} className="pl-6 pr-4">
+                        Watch it run <Icon name="ArrowRight" size={14} className="ml-2 rotate-90" />
+                    </Button>
                 </div>
-
             </div>
 
+            <TerminalMockup id="hero-terminal" />
         </section>
     );
 };

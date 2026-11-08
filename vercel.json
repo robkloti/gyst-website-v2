@@ -1,10 +1,6 @@
 {
   "rewrites": [
     {
-      "source": "/work",
-      "destination": "/index.html"
-    },
-    {
       "source": "/work/:slug",
       "destination": "/index.html"
     },
@@ -30,6 +26,11 @@
     }
   ],
   "redirects": [
+    {
+      "source": "/work",
+      "destination": "/#work",
+      "permanent": false
+    },
     {
       "source": "/show",
       "destination": "/recital?utm_source=led&utm_medium=qr&utm_campaign=badside-recital-2026",

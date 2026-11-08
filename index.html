@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="bg-[#050505] text-neutral-100 antialiased selection:bg-[#FFB224]/30 selection:text-[#FFB224]">
+<html lang="en" class="bg-[#1A1B1D] text-[#F2F0EB] antialiased selection:bg-[#F0B429]/30 selection:text-[#F0B429]">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -28,17 +28,18 @@
       gtag('config', 'G-FB31T08DWQ');
     </script>
     <!-- End Google tag -->
-    <title>GYST - Autonomous Systems</title>
+    <title>GYST — Automated Systems</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&family=Cormorant+Garamond:wght@300;400;500&family=Jost:wght@300;400;500&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Newsreader:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&family=Cormorant+Garamond:wght@300;400;500&family=Jost:wght@300;400;500&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Newsreader:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
         theme: {
           extend: {
             fontFamily: {
-              sans: ['Inter', 'sans-serif'],
+              sans: ['Archivo', 'system-ui', 'sans-serif'],
+              display: ['Anton', 'Impact', 'sans-serif'],
               mono: ['JetBrains Mono', 'monospace'],
               archivo: ['Archivo', 'system-ui', 'sans-serif'],
               anton: ['Anton', 'Impact', 'sans-serif'],
@@ -46,16 +47,13 @@
               jost: ['Jost', 'system-ui', 'sans-serif'],
             },
             colors: {
-              // BRAND.md (2026-08 rebrand) - used by /work pages
+              // BRAND.md (2026-08 rebrand)
               charcoal: '#1A1B1D',
               paper: '#F2F0EB',
               hazard: '#F0B429',
               steel: { DEFAULT: '#8A9099', dark: '#6B7078' },
-              brand: {
-                DEFAULT: '#FFB224',
-                light: '#FFD573',
-                dark: '#B45309',
-              }
+              olive: '#5C4A12',
+              brand: { DEFAULT: '#F0B429' }
             },
             animation: {
               'sonar': 'sonar 2s linear infinite',
@@ -74,8 +72,9 @@
     <style>
       /* Custom Scrollbar */
       ::-webkit-scrollbar { width: 6px; }
-      ::-webkit-scrollbar-track { background: #050505; }
-      ::-webkit-scrollbar-thumb { background: #262626; border-radius: 99px; }
+      ::-webkit-scrollbar-track { background: #1A1B1D; }
+      ::-webkit-scrollbar-thumb { background: #3A3C40; border-radius: 99px; }
+      .font-display { font-family: Anton, Impact, sans-serif; text-transform: uppercase; letter-spacing: -0.005em; line-height: 0.95; }
       .perspective-1000 { perspective: 1000px; }
       .perspective-2000 { perspective: 2000px; }
       .room-pulse { transform-box: fill-box; transform-origin: center; animation: roomPulse 1.6s ease-out infinite; }
