@@ -1,4 +1,4 @@
-import { SectionId, SectionContent, Testimonial, CaseStudy } from './types';
+import { SectionId, SectionContent, CaseStudy } from './types';
 
 export const SECTIONS: SectionContent[] = [
     {
@@ -107,15 +107,6 @@ export const SECTIONS: SectionContent[] = [
     }
 ];
 
-export const TESTIMONIALS: Testimonial[] = [
-    { name: "Marcus Davis", role: "Product Lead at Acme", quote: "The automated insights have saved us from burnout multiple times. It's like having a nervous system for your engineering team.", avatar: "https://picsum.photos/100/100?random=1" },
-    { name: "Elena Rodriguez", role: "CTO at Hyperbase", quote: "We've reduced our cycle time by 40% since adopting GYST. The CLI integration allows our devs to stay in flow state.", avatar: "https://picsum.photos/100/100?random=2" },
-    { name: "Sarah Jenkins", role: "VP of Eng at Starlight", quote: "GYST has completely changed how we plan our quarterly goals. It bridges the gap between strategy and execution.", avatar: "https://picsum.photos/100/100?random=3" },
-    { name: "James O'Connor", role: "Director of Eng at Flux", quote: "Implementation was seamless. The context-aware approach meant we didn't have to rewrite our entire stack.", avatar: "https://picsum.photos/100/100?random=4" },
-    { name: "Sophie Turner", role: "Senior PM at Apex", quote: "I love how the deep context search works. I can find why a decision was made six months ago instantly.", avatar: "https://picsum.photos/100/100?random=5" },
-    { name: "David Kim", role: "Staff Engineer at Nexus", quote: "The verification loops are not just eye candy—they actually prevent shipping broken code to production.", avatar: "https://picsum.photos/100/100?random=6" },
-];
-
 export const CASE_STUDIES: CaseStudy[] = [
     {
         tag: "Property Management",
@@ -161,7 +152,7 @@ export const CASE_STUDIES: CaseStudy[] = [
         metrics: [
             { value: "1,000+", label: "High-value crypto investors identified" },
             { value: "90%", label: "Reduction in customer support workload" },
-            { value: "2$M", label: "Value of new opportunities" },
+            { value: "$2M", label: "Value of new opportunities" },
             { value: "95%", label: "Customer satisfaction score" }
         ],
         tags: ["On-chain Analysis", "Lead Generation AI", "RAG Solutions", "+1"],

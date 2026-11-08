@@ -20,7 +20,7 @@ git push
 4. Vercel will auto-detect it's a Vite project
 5. **Before deploying**, add environment variable:
    - Click "Environment Variables"
-   - Add: `RETELL_API_KEY` = `key_fbab827c8478188ed676cf74892b`
+   - Add: `RETELL_API_KEY` = `<your-retell-api-key>`
    - Click "Add"
 6. Click "Deploy"
 
@@ -51,7 +51,7 @@ To test locally:
 
 1. Create `.env` file:
 ```bash
-echo "RETELL_API_KEY=key_fbab827c8478188ed676cf74892b" > .env
+echo "RETELL_API_KEY=<your-retell-api-key>" > .env
 ```
 
 2. Install Vercel CLI:

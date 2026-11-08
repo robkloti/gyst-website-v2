@@ -26,7 +26,7 @@ const CtaCard = () => {
     return (
         <Reveal className="w-full pt-16 pb-8 relative z-20">
             <div className="relative w-full bg-black border border-white/10 rounded-2xl overflow-hidden shadow-2xl group">
-                 <div className="absolute inset-0 opacity-[0.1] mix-blend-overlay" style={{ backgroundImage: 'url("https://grainy-gradients.vercel.app/noise.svg")' }}></div>
+                 <div className="absolute inset-0 opacity-[0.1] mix-blend-overlay" style={{ backgroundImage: 'url("/noise.svg")' }}></div>
                  
                  <div className="relative px-8 py-20 md:px-16 md:py-24 flex flex-col items-center justify-center text-center z-10">
                     <div className="absolute top-0 left-0 flex flex-col">

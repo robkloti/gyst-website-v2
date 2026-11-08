@@ -81,7 +81,7 @@ overflow-x: hidden;
             return (
                 <div className="min-h-screen bg-[#050505] text-neutral-200 flex flex-col items-center pt-20 pb-12 px-4 md:px-6 relative overflow-hidden">
                     {/* Background Noise */}
-                    <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'url("https://grainy-gradients.vercel.app/noise.svg")' }}></div>
+                    <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'url("/noise.svg")' }}></div>
                     
                     {/* Navigation */}
                     <div className="absolute top-6 left-6 z-50">
@@ -116,7 +116,7 @@ overflow-x: hidden;
                                     </div>
                                     <div className="flex flex-col">
                                         <span className="text-xs text-neutral-500 font-medium">Duration</span>
-                                        <span className="text-neutral-200">45 Minutes</span>
+                                        <span className="text-neutral-200">30 Minutes</span>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-3 text-sm text-neutral-400">
@@ -161,12 +161,12 @@ overflow-x: hidden;
                                 If using an iframe, ensure it has w-full and h-full classes.
                                 -----------------------------------------------------
                             */}
-                            <div className="w-full h-full min-h-[600px] bg-[#0A0A0A] relative">
+                            <div className="w-full h-full min-h-[600px] bg-[#F2F0EB] relative">
 
                                 {/* Calendar Embed */}
                                 <iframe
                                     src="https://link.1prompt.com/widget/booking/0KHQ2dAcLgIg7Ak4sy34"
-                                    style={{width: '100%', border: 'none', minHeight: '800px', height: '100%'}}
+                                    style={{width: '100%', border: 'none', minHeight: '1000px', height: '100%', background: '#F2F0EB', display: 'block'}}
                                     id="0KHQ2dAcLgIg7Ak4sy34_1766728014873">
                                 </iframe>
 
