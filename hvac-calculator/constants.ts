@@ -55,4 +55,4 @@ export const DEFAULT_INPUTS: CalculatorInputs = {
   oldQuotes: 400,
 };
 
-export const ACCENT_HEX = '#D45D00'; // deep tradesman orange (per PRP Task 10)
+export const ACCENT_HEX = '#F0B429'; // BRAND.md hazard

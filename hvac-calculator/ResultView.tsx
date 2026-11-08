@@ -127,7 +127,7 @@ export const ResultView: React.FC<ResultViewProps> = ({ result }) => {
         {rows.map((row) => (
           <div
             key={row.label}
-            className="flex items-center justify-between gap-4 bg-[#0A0A0A] border border-white/10 rounded-xl p-4 md:p-5"
+            className="flex items-center justify-between gap-4 bg-[#202124] border border-white/10 rounded-xl p-4 md:p-5"
           >
             <div className="flex items-center gap-3 min-w-0">
               <span
@@ -154,7 +154,7 @@ export const ResultView: React.FC<ResultViewProps> = ({ result }) => {
         ))}
       </div>
 
-      <div className="bg-[#0A0A0A] border border-white/5 rounded-xl p-5 text-neutral-400 text-xs md:text-sm italic leading-relaxed">
+      <div className="bg-[#202124] border border-white/5 rounded-xl p-5 text-neutral-400 text-xs md:text-sm italic leading-relaxed">
         "This is a calculator estimate based on industry benchmarks and your
         inputs. Real number will vary. We'll get to the actual number on the
         call. But this is the floor — it's not lower than this."

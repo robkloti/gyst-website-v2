@@ -5,7 +5,7 @@ import { ACCENT_HEX } from './constants';
 /*
  * Page 2 sales page — everything below the calculator result on /find-leaks.
  * Copy is the linted funnel doc (ads/funnels/hvac-lead-engine/v2.md, §2–§10).
- * Deep-orange #D45D00 system to match the calculator above. The §7 showroom
+ * Brand hazard (ACCENT_HEX) system to match the calculator above. The §7 showroom
  * embeds the amber ATELIER MissionControlSurface (intentional palette break).
  *
  * CTAs point at the site's own calendar page (public/calendar-page.html), the same
@@ -45,7 +45,7 @@ const BookButton: React.FC<{ children: React.ReactNode }> = ({ children }) => (
     href={BOOKING_URL}
     onClick={fireBookClick}
     className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-semibold text-base transition-all hover:opacity-90"
-    style={{ backgroundColor: ACCENT_HEX, color: '#fff' }}
+    style={{ backgroundColor: ACCENT_HEX, color: '#1A1B1D' }}
   >
     {children}
   </a>
@@ -175,10 +175,9 @@ export const SalesPage: React.FC = () => (
       </p>
       <div className="space-y-3">
         {MECHANISM.map((m) => (
-          <div key={m.n} className="bg-[#0A0A0A] border border-white/10 rounded-xl p-5 md:p-6 flex gap-4">
+          <div key={m.n} className="bg-[#202124] border border-white/10 rounded-xl p-5 md:p-6 flex gap-4">
             <span
-              className="flex-shrink-0 font-mono text-lg font-semibold"
-              style={{ color: ACCENT_HEX }}
+              className="flex-shrink-0 font-mono text-lg font-semibold text-steel"
             >
               {m.n}
             </span>
@@ -202,7 +201,7 @@ export const SalesPage: React.FC = () => (
         {OFFER_STACK.map((row) => (
           <div
             key={row.name}
-            className="flex items-center justify-between gap-4 bg-[#0A0A0A] border border-white/10 rounded-xl p-4 md:p-5"
+            className="flex items-center justify-between gap-4 bg-[#202124] border border-white/10 rounded-xl p-4 md:p-5"
           >
             <div className="min-w-0">
               <p className="text-white font-medium text-sm md:text-base">{row.name}</p>
@@ -210,7 +209,7 @@ export const SalesPage: React.FC = () => (
             </div>
             <span
               className="font-semibold text-sm md:text-base whitespace-nowrap tabular-nums"
-              style={{ color: ACCENT_HEX, fontVariantNumeric: 'tabular-nums' }}
+              style={{ color: '#F2F0EB', fontVariantNumeric: 'tabular-nums' }}
             >
               {row.value}
             </span>
@@ -229,7 +228,7 @@ export const SalesPage: React.FC = () => (
         {BONUSES.map((row) => (
           <div
             key={row.name}
-            className="flex items-center justify-between gap-4 bg-[#0A0A0A] border border-white/10 rounded-xl p-4 md:p-5"
+            className="flex items-center justify-between gap-4 bg-[#202124] border border-white/10 rounded-xl p-4 md:p-5"
           >
             <div className="min-w-0">
               <p className="text-white font-medium text-sm md:text-base">{row.name}</p>
@@ -237,7 +236,7 @@ export const SalesPage: React.FC = () => (
             </div>
             <span
               className="font-semibold text-sm md:text-base whitespace-nowrap tabular-nums"
-              style={{ color: ACCENT_HEX, fontVariantNumeric: 'tabular-nums' }}
+              style={{ color: '#F2F0EB', fontVariantNumeric: 'tabular-nums' }}
             >
               {row.value}
             </span>
@@ -255,13 +254,13 @@ export const SalesPage: React.FC = () => (
       <H2>Three guarantees. Stacked. Not one.</H2>
       <div className="space-y-3 mb-8">
         {GUARANTEES.map((g) => (
-          <div key={g.title} className="bg-[#0A0A0A] border border-white/10 rounded-xl p-5 md:p-6">
+          <div key={g.title} className="bg-[#202124] border border-white/10 rounded-xl p-5 md:p-6">
             <p className="text-white font-semibold mb-2">{g.title}</p>
             <p className="text-neutral-400 text-sm md:text-base leading-relaxed">{g.body}</p>
           </div>
         ))}
       </div>
-      <div className="bg-[#0A0A0A] border border-white/5 rounded-xl p-5 text-neutral-300 text-sm md:text-base">
+      <div className="bg-[#202124] border border-white/5 rounded-xl p-5 text-neutral-300 text-sm md:text-base">
         <ul className="space-y-1.5">
           <li>Days 1&ndash;14: Full refund, no questions.</li>
           <li>Days 15&ndash;90: Performance-based &mdash; we work free until the result lands.</li>
@@ -279,7 +278,7 @@ export const SalesPage: React.FC = () => (
           { t: 'Public content engine output.', d: 'Scroll @robtheops on Instagram or LinkedIn. That’s the engine running, publicly, dated.' },
           { t: 'Open skills catalog.', d: 'The skills installed in your business are published publicly before you buy. No black box.' },
         ].map((b) => (
-          <div key={b.t} className="bg-[#0A0A0A] border border-white/10 rounded-xl p-5">
+          <div key={b.t} className="bg-[#202124] border border-white/10 rounded-xl p-5">
             <p className="text-white font-medium text-sm mb-1">{b.t}</p>
             <p className="text-neutral-500 text-xs leading-relaxed">{b.d}</p>
           </div>
@@ -319,7 +318,7 @@ export const SalesPage: React.FC = () => (
       <H2>Questions other HVAC operators have asked.</H2>
       <div className="space-y-4">
         {FAQ.map((item) => (
-          <div key={item.q} className="bg-[#0A0A0A] border border-white/10 rounded-xl p-5 md:p-6">
+          <div key={item.q} className="bg-[#202124] border border-white/10 rounded-xl p-5 md:p-6">
             <p className="text-white font-semibold mb-2">{item.q}</p>
             <p className="text-neutral-400 text-sm md:text-base leading-relaxed">{item.a}</p>
           </div>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Wordmark } from '../components/ui/Lockup';
 import { Clock, FileText, BarChart3 } from 'lucide-react';
 import { CalculatorPreviewSurface } from '../components/surfaces/CalculatorPreviewSurface';
 import { ACCENT_HEX } from './constants';
@@ -25,7 +26,7 @@ const StartButton: React.FC = () => (
     href={CALC_URL}
     onClick={fireStartClick}
     className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-semibold text-base transition-all hover:opacity-90"
-    style={{ backgroundColor: ACCENT_HEX, color: '#fff' }}
+    style={{ backgroundColor: ACCENT_HEX, color: '#1A1B1D' }}
   >
     Start the calculator &rarr;
   </a>
@@ -50,10 +51,10 @@ const LEAKS = [
 ];
 
 const SqueezePage: React.FC = () => (
-  <div className="min-h-screen w-full bg-[#050505] text-neutral-200 overflow-x-hidden">
+  <div className="min-h-screen w-full bg-charcoal text-neutral-200 overflow-x-hidden">
     <header className="w-full px-5 py-4">
       <span className="inline-flex items-center gap-2 font-bold tracking-tight text-white">
-        <span style={{ color: ACCENT_HEX }}>GYST</span>
+        <Wordmark size={24} />
       </span>
     </header>
 
@@ -86,7 +87,7 @@ const SqueezePage: React.FC = () => (
         </h2>
         <div className="grid md:grid-cols-3 gap-4">
           {LEAKS.map((leak) => (
-            <div key={leak.title} className="bg-[#0A0A0A] border border-white/10 rounded-xl p-5 md:p-6">
+            <div key={leak.title} className="bg-[#202124] border border-white/10 rounded-xl p-5 md:p-6">
               <span
                 className="flex w-10 h-10 rounded-lg items-center justify-center mb-4"
                 style={{ backgroundColor: `${ACCENT_HEX}15`, color: ACCENT_HEX }}

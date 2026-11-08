@@ -57,7 +57,7 @@
 .calc-preview__row-num {
   font-family: var(--font-mono);
   font-size: 13px;
-  color: var(--accent-orange);
+  color: var(--text-muted);
 }
 
 .calc-preview__row-label {

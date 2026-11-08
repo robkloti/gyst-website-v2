@@ -11,8 +11,8 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: #D45D00;
-  border: 3px solid #fff;
+  background: #F0B429;
+  border: 3px solid #1A1B1D;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
   cursor: pointer;
   margin-top: 0;
@@ -22,8 +22,8 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: #D45D00;
-  border: 3px solid #fff;
+  background: #F0B429;
+  border: 3px solid #1A1B1D;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
   cursor: pointer;
 }
