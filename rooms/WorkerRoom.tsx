@@ -288,7 +288,7 @@ export const WorkerRoom: React.FC<{ room: RoomData }> = ({ room }) => {
 
             <div className="bg-charcoal min-w-0 flex flex-col">
                 <div className="px-4 py-3 border-b border-paper/10 font-mono text-[10px] uppercase tracking-[0.18em] text-steel">What the agents just did</div>
-                <ol className="flex-1 divide-y divide-paper/10 min-h-[220px]" aria-live="polite">
+                <ol className="flex-1 divide-y divide-paper/10 min-h-[120px] lg:min-h-[220px]" aria-live="polite">
                     {feed.length === 0 && <li className="px-4 py-4 text-sm text-steel">The room is starting up.</li>}
                     {feed.map((e, i) => (
                         <li key={`${step}-${i}`} className={`px-4 py-3 ${i === 0 ? 'bg-paper/[0.04]' : ''}`}>

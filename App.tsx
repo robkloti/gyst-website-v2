@@ -10,6 +10,7 @@ import { HarnessStrip } from './components/sections/HarnessStrip';
 import { FeatureSection } from './components/sections/FeatureSection';
 import { Showroom } from './components/sections/Showroom';
 import { ClientWork } from './components/sections/ClientWork';
+import { Rooms } from './components/sections/Rooms';
 import HvacCalculatorPage from './hvac-calculator';
 import SqueezePage from './hvac-calculator/SqueezePage';
 
@@ -60,6 +61,16 @@ const MainApp = () => {
                     if (section.id === SectionId.PROBLEM) {
                         return (
                             <ProblemSection key={section.id} content={section} onInView={handleInView} />
+                        );
+                    }
+
+                    // Rooms switcher sits right before the first call to action
+                    if (section.id === SectionId.CTA) {
+                        return (
+                            <React.Fragment key="rooms-cta-wrapper">
+                                <Rooms />
+                                <FeatureSection key={section.id} content={section} onInView={handleInView} />
+                            </React.Fragment>
                         );
                     }
 
