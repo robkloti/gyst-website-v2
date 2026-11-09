@@ -25,6 +25,7 @@ const isHvacCalculatorRoute = () => currentPath() === '/find-leaks';
 const CASE_STUDIES_BY_PATH: Record<string, React.LazyExoticComponent<React.FC>> = {
     '/work/shang': lazy(() => import('./work/shang/ShangCaseStudy')),
     '/work/caelum': lazy(() => import('./work/caelum/CaelumCaseStudy')),
+    '/hq': lazy(() => import('./hq/HQPage')),
 };
 
 const MainApp = () => {

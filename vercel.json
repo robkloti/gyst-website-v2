@@ -5,6 +5,10 @@
       "destination": "/index.html"
     },
     {
+      "source": "/hq",
+      "destination": "/index.html"
+    },
+    {
       "source": "/find-leaks",
       "destination": "/index.html"
     },

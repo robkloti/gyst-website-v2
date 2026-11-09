@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { RoomAgent, RoomData } from './types';
+import { RoomAgent, RoomData, RoomProp } from './types';
 import { track } from '../lib/track';
 
 const S = 34;
@@ -117,7 +117,25 @@ const Plant: React.FC<{ x: number; y: number; kind: 'tall' | 'big' | 'small'; de
     );
 };
 
-const PLANTS: { x: number; y: number; kind: 'tall' | 'big' | 'small' }[] = [
+const Sofa: React.FC<{ x: number; y: number }> = ({ x, y }) => (
+    <g pointerEvents="none">
+        <ellipse cx={iso(x + 1, y + 0.5)[0]} cy={iso(x + 1, y + 0.5)[1]} rx={46} ry={20} fill="rgba(60,40,15,0.12)" />
+        <Box x={x} y={y} w={2.2} d={0.3} h={0.8} top="#A7A39B" side="#8F8B83" front="#9C988F" />
+        <Box x={x} y={y + 0.3} w={2.2} d={0.7} h={0.38} top="#B9B5AC" side="#8F8B83" front="#A29E95" />
+        <Box x={x} y={y + 0.3} w={0.25} d={0.7} h={0.58} top="#A7A39B" side="#8F8B83" front="#9C988F" />
+        <Box x={x + 1.95} y={y + 0.3} w={0.25} d={0.7} h={0.58} top="#A7A39B" side="#8F8B83" front="#9C988F" />
+    </g>
+);
+
+const Table: React.FC<{ x: number; y: number }> = ({ x, y }) => (
+    <g pointerEvents="none">
+        <Box x={x} y={y} w={1.2} d={0.7} h={0.28} top={C.deskTop} side={C.deskSide} front={C.deskFront} />
+        <polygon points={quad(x + 0.3, y + 0.2, 0.35, 0.25, 0.28)} fill="#F1EEE8" />
+        <ellipse cx={iso(x + 0.85, y + 0.35, 0.28)[0]} cy={iso(x + 0.85, y + 0.35, 0.28)[1] - 3} rx={3.5} ry={2} fill="#FBFAF6" stroke={C.ink} strokeWidth={0.8} />
+    </g>
+);
+
+const PLANTS: RoomProp[] = [
     { x: 0.15, y: 0.15, kind: 'tall' },
     { x: 15.45, y: 0.15, kind: 'tall' },
     { x: 0.12, y: 4.9, kind: 'small' },
@@ -195,10 +213,12 @@ const Agent: React.FC<{ a: RoomAgent; idx: number; rug: (typeof RUGS)[number]; a
     );
 };
 
-export const WorkerRoom: React.FC<{ room: RoomData }> = ({ room }) => {
+export const WorkerRoom: React.FC<{ room: RoomData; step?: number; bare?: boolean }> = ({ room, step: stepProp, bare }) => {
     const { w, h } = room.floor;
     const reduced = usePrefersReducedMotion();
-    const [step, setStep] = useState(-1);
+    const [innerStep, setStep] = useState(-1);
+    const controlled = stepProp !== undefined;
+    const step = controlled ? stepProp : innerStep;
     const [playing, setPlaying] = useState(true);
     const [visible, setVisible] = useState(false);
     const [openId, setOpenId] = useState<string | null>(null);
@@ -242,10 +262,10 @@ export const WorkerRoom: React.FC<{ room: RoomData }> = ({ room }) => {
     }, []);
 
     useEffect(() => {
-        if (!playing || !visible || openId) return;
+        if (controlled || !playing || !visible || openId) return;
         const t = window.setTimeout(() => setStep((s) => (s + 1) % room.script.length), step < 0 ? 600 : STEP_MS);
         return () => window.clearTimeout(t);
-    }, [playing, visible, openId, step, room.script.length]);
+    }, [controlled, playing, visible, openId, step, room.script.length]);
 
     useEffect(() => {
         if (!openId) return;
@@ -281,9 +301,10 @@ export const WorkerRoom: React.FC<{ room: RoomData }> = ({ room }) => {
     const getsFrom = opened ? [...new Set(room.script.filter((s) => s.to === opened.id).map((s) => s.from))] : [];
 
     const items = useMemo(() => {
-        const list: { depth: number; node: React.ReactNode }[] = PLANTS.map((p, i) => ({
-            depth: p.x + p.y + 0.4,
-            node: <Plant key={`p${i}`} x={p.x} y={p.y} kind={p.kind} delay={i * 0.8} />,
+        const list: { depth: number; node: React.ReactNode }[] = (room.props ?? PLANTS).map((p, i) => ({
+            depth: p.x + p.y + (p.kind === 'sofa' ? 1.5 : p.kind === 'table' ? 1 : 0.4),
+            node:
+                p.kind === 'sofa' ? <Sofa key={`p${i}`} x={p.x} y={p.y} /> : p.kind === 'table' ? <Table key={`p${i}`} x={p.x} y={p.y} /> : <Plant key={`p${i}`} x={p.x} y={p.y} kind={p.kind} delay={i * 0.8} />,
         }));
         room.agents.forEach((a, i) => {
             const { cx, cy } = seat(a);
@@ -294,10 +315,10 @@ export const WorkerRoom: React.FC<{ room: RoomData }> = ({ room }) => {
         });
         return list.sort((p, q) => p.depth - q.depth).map((i) => i.node);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [room.agents, rugOf, from?.id, to?.id]);
+    }, [room.agents, room.props, rugOf, from?.id, to?.id]);
 
     // Wall screen lives on the back-right wall (y = 0).
-    const scr = { x0: 4.4, x1: 12.4, z0: 0.85, z1: 2.85 };
+    const scr = { x0: w * 0.275, x1: w * 0.775, z0: 0.85, z1: 2.85 };
     const colW = (scr.x1 - scr.x0 - 0.5) / room.counters.length;
     const wallText = (x: number, z: number) => {
         const [px, py] = iso(x, 0, z);
@@ -311,15 +332,16 @@ export const WorkerRoom: React.FC<{ room: RoomData }> = ({ room }) => {
         const [px, py] = iso(0, y, z);
         return `matrix(0.866 -0.5 0 1 ${px} ${py})`;
     };
-    const windowsL = [1.2, 4.9, 8.6];
-    const windowsR = [0.9, 13.0];
+    const windowsL = Array.from({ length: Math.floor((h - 0.6) / 3.7) }, (_, i) => 1.2 + i * 3.7);
+    const windowsR = [0.9, w - 3];
     const time = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
     const hourDeg = ((now.getHours() % 12) + now.getMinutes() / 60) * 30;
     const minDeg = now.getMinutes() * 6;
 
     return (
-        <div ref={wrapRef} className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_300px] gap-px bg-charcoal/10 border border-paper/10 text-charcoal">
-            <div className="relative bg-paper min-w-0">
+        <div ref={wrapRef} className={bare ? "relative text-charcoal" : "grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_300px] gap-px bg-charcoal/10 border border-paper/10 text-charcoal"}>
+            <div className={bare ? "relative min-w-0" : "relative bg-paper min-w-0"}>
+                {!bare && (
                 <div className="flex items-center justify-between gap-3 px-4 py-3 border-b border-charcoal/10">
                     <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-steel-dark truncate">{room.title}</div>
                     <div className="flex items-center gap-3 shrink-0">
@@ -337,6 +359,7 @@ export const WorkerRoom: React.FC<{ room: RoomData }> = ({ room }) => {
                         </button>
                     </div>
                 </div>
+                )}
                 <div ref={panRef} className="overflow-x-auto overscroll-x-contain">
                     <div className="relative min-w-[700px] sm:min-w-0">
                         <svg viewBox={`${minX} ${minY} ${vbW} ${vbH}`} className="block w-full h-auto" role="img" aria-label={`Isometric office for ${room.title}. Each desk is an agent; click one to see what it does.`}>
@@ -363,7 +386,7 @@ export const WorkerRoom: React.FC<{ room: RoomData }> = ({ room }) => {
                                     <line x1={iso(x + 1.15, 0, 0.95)[0]} y1={iso(x + 1.15, 0, 0.95)[1]} x2={iso(x + 1.15, 0, 2.65)[0]} y2={iso(x + 1.15, 0, 2.65)[1]} stroke={C.frame} strokeWidth={2.5} />
                                 </g>
                             ))}
-                            <g transform={leftWall(4.05, 2.3)}>
+                            <g transform={leftWall(windowsL[1] ? windowsL[1] - 0.85 : 4.05, 2.3)}>
                                 <circle r={11} fill="#FFFFFF" stroke={C.ink} strokeWidth={1.4} />
                                 <line x1={0} y1={0} x2={0} y2={-5.5} stroke={C.ink} strokeWidth={1.6} strokeLinecap="round" transform={`rotate(${hourDeg})`} />
                                 <line x1={0} y1={0} x2={0} y2={-8.5} stroke={C.ink} strokeWidth={1} strokeLinecap="round" transform={`rotate(${minDeg})`} />
@@ -472,14 +495,17 @@ export const WorkerRoom: React.FC<{ room: RoomData }> = ({ room }) => {
                         </AnimatePresence>
                     </div>
                 </div>
+                {!bare && (
                 <div className="flex flex-wrap items-center gap-x-5 gap-y-2 px-4 py-3 border-t border-charcoal/10 font-mono text-[10px] uppercase tracking-[0.14em] text-steel-dark">
                     <span className="flex items-center gap-2"><i className="inline-block w-2.5 h-2.5 rounded-full bg-hazard border border-charcoal" /> Working right now</span>
                     <span className="flex items-center gap-2"><i className="inline-block w-3 h-2.5 rounded-[3px] bg-white border border-charcoal" /> Agent</span>
                     <span className="flex items-center gap-2"><i className="inline-block w-2.5 h-2.5 rounded-full" style={{ background: SKIN[1] }} /> Person</span>
                     <span className="ml-auto normal-case tracking-normal text-[11px]"><span className="sm:hidden">Swipe to pan. Tap</span><span className="hidden sm:inline">Click</span> anyone in the room. Demo, sample activity.</span>
                 </div>
+                )}
             </div>
 
+            {!bare && (
             <div className="bg-paper min-w-0 flex flex-col">
                 <div className="px-4 py-3 border-b border-charcoal/10 font-mono text-[10px] uppercase tracking-[0.18em] text-steel-dark flex items-center justify-between">
                     What the agents just did
@@ -504,6 +530,7 @@ export const WorkerRoom: React.FC<{ room: RoomData }> = ({ room }) => {
                     ))}
                 </ol>
             </div>
+            )}
 
             <AnimatePresence>
                 {opened && (
