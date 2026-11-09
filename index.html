@@ -31,7 +31,7 @@
     <title>GYST - Autonomous Systems</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Newsreader:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&family=Cormorant+Garamond:wght@300;400;500&family=Jost:wght@300;400;500&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Newsreader:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -40,8 +40,17 @@
             fontFamily: {
               sans: ['Inter', 'sans-serif'],
               mono: ['JetBrains Mono', 'monospace'],
+              archivo: ['Archivo', 'system-ui', 'sans-serif'],
+              anton: ['Anton', 'Impact', 'sans-serif'],
+              cormorant: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+              jost: ['Jost', 'system-ui', 'sans-serif'],
             },
             colors: {
+              // BRAND.md (2026-08 rebrand) - used by /work pages
+              charcoal: '#1A1B1D',
+              paper: '#F2F0EB',
+              hazard: '#F0B429',
+              steel: { DEFAULT: '#8A9099', dark: '#6B7078' },
               brand: {
                 DEFAULT: '#FFB224',
                 light: '#FFD573',
@@ -69,6 +78,11 @@
       ::-webkit-scrollbar-thumb { background: #262626; border-radius: 99px; }
       .perspective-1000 { perspective: 1000px; }
       .perspective-2000 { perspective: 2000px; }
+      .room-pulse { transform-box: fill-box; transform-origin: center; animation: roomPulse 1.6s ease-out infinite; }
+      .room-dash { animation: roomDash 1s linear infinite; }
+      @keyframes roomPulse { 0% { opacity: .9; transform: scale(.7); } 100% { opacity: 0; transform: scale(1.5); } }
+      @keyframes roomDash { to { stroke-dashoffset: -20; } }
+      @media (prefers-reduced-motion: reduce) { .room-pulse, .room-dash { animation: none; } }
       .mask-image-gradient { mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent); }
     </style>
   <script type="importmap">

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { Suspense, lazy, useState } from 'react';
 import { SECTIONS } from './constants';
 import { SectionId } from './types';
 import { Navbar } from './components/layout/Navbar';
@@ -20,6 +20,9 @@ const currentPath = () =>
 // Page 1 (squeeze) → /find-leaks/start; Page 2 (calculator + sales) → /find-leaks.
 const isSqueezeRoute = () => currentPath() === '/find-leaks/start';
 const isHvacCalculatorRoute = () => currentPath() === '/find-leaks';
+const isShangRoute = () => currentPath() === '/work/shang';
+
+const ShangCaseStudy = lazy(() => import('./work/shang/ShangCaseStudy'));
 
 const MainApp = () => {
     const [activeSection, setActiveSection] = useState<SectionId>(SectionId.HERO);
@@ -88,6 +91,10 @@ const App = () =>
         <SqueezePage />
     ) : isHvacCalculatorRoute() ? (
         <HvacCalculatorPage />
+    ) : isShangRoute() ? (
+        <Suspense fallback={<div className="min-h-screen bg-charcoal" />}>
+            <ShangCaseStudy />
+        </Suspense>
     ) : (
         <MainApp />
     );
