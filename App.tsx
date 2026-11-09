@@ -9,7 +9,6 @@ import { ProblemSection } from './components/sections/Problem';
 import { TechStackSection } from './components/sections/TechStack';
 import { FeatureSection } from './components/sections/FeatureSection';
 import { CaseStudiesSection } from './components/sections/CaseStudies';
-import { Testimonials } from './components/sections/Testimonials';
 import HvacCalculatorPage from './hvac-calculator';
 import SqueezePage from './hvac-calculator/SqueezePage';
 
@@ -64,7 +63,6 @@ const MainApp = () => {
                         return (
                             <React.Fragment key="social-proof-wrapper">
                                 <CaseStudiesSection />
-                                <Testimonials />
                                 <FeatureSection key={section.id} content={section} onInView={handleInView} />
                             </React.Fragment>
                         );
@@ -80,7 +78,7 @@ const MainApp = () => {
             </main>
 
             {/* Noise Grain Overlay */}
-            <div className="fixed inset-0 z-[100] pointer-events-none opacity-[0.03] mix-blend-overlay" style={{ backgroundImage: 'url("https://grainy-gradients.vercel.app/noise.svg")' }}></div>
+            <div className="fixed inset-0 z-[100] pointer-events-none opacity-[0.03] mix-blend-overlay" style={{ backgroundImage: 'url("/noise.svg")' }}></div>
         </div>
     );
 };

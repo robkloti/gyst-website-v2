@@ -289,7 +289,7 @@ export const SalesPage: React.FC = () => (
 
     {/* §8 — THE CALL CTA */}
     <Section className="text-center">
-      <H2>Book a 20-minute call.</H2>
+      <H2>Book a 30-minute call.</H2>
       <div className="text-neutral-300 text-base md:text-lg leading-relaxed mb-6 max-w-2xl mx-auto space-y-3 text-left">
         <p>
           <span className="text-white font-semibold">1. We screen-share the live Mission Control demo.</span>{' '}
@@ -308,9 +308,9 @@ export const SalesPage: React.FC = () => (
         No pitch on the call. No surprise upsell. If you&rsquo;re not the right fit, we&rsquo;ll say
         so and recommend what is.
       </p>
-      <BookButton>Book your 20-minute call &rarr;</BookButton>
+      <BookButton>Book your 30-minute call &rarr;</BookButton>
       <p className="text-neutral-500 text-xs mt-4">
-        20 minutes. Calendar booking. No prep required. Just bring your calculator result.
+        30 minutes. Calendar booking. No prep required. Just bring your calculator result.
       </p>
     </Section>
 
@@ -334,7 +334,7 @@ export const SalesPage: React.FC = () => (
         Your number is on this page. The system that plugs it is everything below your number. The
         call shows you it&rsquo;s real.
       </p>
-      <BookButton>Book your 20-minute call &rarr;</BookButton>
+      <BookButton>Book your 30-minute call &rarr;</BookButton>
     </Section>
   </>
 );
