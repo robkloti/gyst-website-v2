@@ -1,4 +1,4 @@
-<html lang="en" class="bg-[#050505] text-neutral-100 antialiased selection:bg-[#FFB224]/30 selection:text-[#FFB224]"><head><meta charset="UTF-8">
+<html lang="en" class="bg-[#1A1B1D] text-neutral-100 antialiased selection:bg-[#F0B429]/30 selection:text-[#F0B429]"><head><meta charset="UTF-8">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- Meta Pixel Code -->
@@ -34,7 +34,7 @@ gtag('event', 'audit_booked', {
 <!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
 <!-- CSS Dependencies -->
 <script src="https://cdn.tailwindcss.com"></script>
@@ -46,14 +46,16 @@ gtag('event', 'audit_booked', {
 <!-- Styles -->
 <style>
 body {
-font-family: 'Inter', sans-serif;
-background-color: #050505;
+font-family: 'Archivo', sans-serif;
+background-color: #1A1B1D;
 overflow-x: hidden;
 }
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #050505; }
-::-webkit-scrollbar-thumb { background: #262626; border-radius: 99px; }
+::-webkit-scrollbar-track { background: #1A1B1D; }
+::-webkit-scrollbar-thumb { background: #3A3C40; border-radius: 99px; }
 .font-mono { font-family: 'JetBrains Mono', monospace; }
+      .gyst-word { font-family: Anton, Impact, sans-serif; color: #F2F0EB; letter-spacing: .005em; line-height: .82; display: inline-flex; align-items: flex-end; gap: .145em; }
+      .gyst-device { width: .22em; height: .22em; flex: none; margin-bottom: .03em; color: #F0B429; }
 </style>
 </head>
 <body>
@@ -74,6 +76,11 @@ overflow-x: hidden;
             Linkedin: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>,
             Logo: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><defs><path id="SVGSzlFdebm" fill="currentColor" d="M20.654 16.88c-.111-1.057-.958-1.88-1.987-1.88c-.845 0-1.568.555-1.861 1.34a2.22 2.22 0 0 0-.015 1.513a1.46 1.46 0 0 0-1.4.49A1.63 1.63 0 0 0 15 19.412c0 .877.672 1.588 1.5 1.588H20c1.105 0 2-.948 2-2.118c0-.927-.562-1.714-1.346-2.001"/></defs><path fill="currentColor" fillRule="evenodd" d="M3.172 19.828C4.343 21 6.229 21 10 21h3.93a3.17 3.17 0 0 1-.43-1.588c0-.816.32-1.592.857-2.162H13.5a.75.75 0 0 1 0-1.5h1.928c.511-1.29 1.727-2.25 3.239-2.25c1.56 0 2.81 1.028 3.288 2.38l.014.01C22 15.074 22 14.12 22 13v-.25H2V13c0 3.771 0 5.657 1.172 6.828M6 18.25a.75.75 0 0 1-.75-.75v-2a.75.75 0 0 1 1.5 0v2a.75.75 0 0 1-.75.75m3 0a.75.75 0 0 1-.75-.75v-2a.75.75 0 0 1 1.5 0v2a.75.75 0 0 1-.75.75M3.172 4.172C2 5.343 2 7.229 2 11v.25h20V11c0-3.771 0-5.657-1.172-6.828S17.771 3 14 3h-4C6.229 3 4.343 3 3.172 4.172M9 9.25a.75.75 0 0 1-.75-.75v-2a.75.75 0 0 1 1.5 0v2a.75.75 0 0 1-.75.75M5.25 8.5a.75.75 0 0 0 1.5 0v-2a.75.75 0 0 0-1.5 0zm7.5-1a.75.75 0 0 1 .75-.75H18a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1-.75-.75" clipRule="evenodd"/><use href="#SVGSzlFdebm" fillRule="evenodd" clipRule="evenodd"/><use href="#SVGSzlFdebm"/></svg>
         };
+
+        // BRAND.md lockup: wordmark with the device as the period (small device, below 32px).
+        const GystMark = ({ size = 22 }) => (
+            <span className="gyst-word" style={{ fontSize: size }}>GYST<svg className="gyst-device" viewBox="0 0 48 48" aria-hidden="true"><g fill="currentColor"><rect x="8" y="0" width="8" height="20"/><rect x="8" y="28" width="8" height="20"/><rect x="32" y="0" width="8" height="20"/><rect x="32" y="28" width="8" height="20"/><rect x="0" y="8" width="20" height="8"/><rect x="28" y="8" width="20" height="8"/><rect x="0" y="32" width="20" height="8"/><rect x="28" y="32" width="20" height="8"/></g></svg></span>
+        );
 
         const Icon = ({ name, size = 16, className }) => {
             const C = Icons[name];
@@ -102,9 +109,8 @@ overflow-x: hidden;
             <footer className="relative z-50 pt-16 pb-8 border-t border-white/5 mt-auto">
                 <div className="max-w-2xl mx-auto px-6">
                     <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-                        <div className="flex items-center gap-2 text-[#FFB224]">
-                            <Icon name="Logo" size={20} />
-                            <span className="font-bold tracking-tight text-sm text-white">GYST</span>
+                        <div className="flex items-center gap-2">
+                        <GystMark size={24} />
                         </div>
                         <div className="flex gap-4">
                             <a href="https://x.com/robtheops" target="_blank" rel="noopener" className="text-neutral-500 hover:text-white transition-colors"><Icon name="Twitter" size={16} /></a>
@@ -113,11 +119,11 @@ overflow-x: hidden;
                     </div>
                     <div className="pt-6 mt-6 border-t border-white/5 text-center">
                         <p className="text-neutral-600 text-[10px] uppercase tracking-wider">
-                            <a href="mailto:rob@gyst-ai.com" className="text-neutral-500 hover:text-[#FFB224] transition-colors">rob@gyst-ai.com</a>
+                            <a href="mailto:rob@gyst-ai.com" className="text-neutral-500 hover:text-[#F0B429] transition-colors">rob@gyst-ai.com</a>
                             <span className="mx-2">|</span>
                             30 N Gould St, STE R, Sheridan, WY 82801
                             <span className="mx-2">|</span>
-                            Built by <a href="https://x.com/robtheops" target="_blank" rel="noopener" className="text-neutral-500 hover:text-[#FFB224] transition-colors">@robtheops</a> / GYST AI
+                            Built by <a href="https://x.com/robtheops" target="_blank" rel="noopener" className="text-neutral-500 hover:text-[#F0B429] transition-colors">@robtheops</a> / GYST AI
                         </p>
                     </div>
                 </div>
@@ -127,15 +133,12 @@ overflow-x: hidden;
         const App = () => (
             <div className="relative w-full min-h-screen flex flex-col">
                 <div className="fixed inset-0 z-0 pointer-events-none">
-                    <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-emerald-900/10 rounded-full blur-[150px]" />
-                    <div className="absolute bottom-[-20%] right-[-10%] w-[40%] h-[40%] bg-[#FFB224]/5 rounded-full blur-[150px]" />
                     <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-[0.03]"></div>
                 </div>
 
                 <div className="absolute top-0 left-0 p-6 md:p-8 z-50">
-                    <a href="/" className="flex items-center gap-2 text-[#FFB224]">
-                        <Icon name="Logo" size={24} />
-                        <span className="font-bold tracking-tight text-lg text-white">GYST</span>
+                    <a href="/" className="flex items-center gap-2">
+                        <GystMark size={28} />
                     </a>
                 </div>
 
@@ -164,11 +167,11 @@ overflow-x: hidden;
                                 initial={{ opacity: 0, y: 15 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.4, delay: 0.1 + i * 0.1 }}
-                                className="bg-[#080808]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 relative overflow-hidden"
+                                className="bg-[#161719]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 relative overflow-hidden"
                             >
                                 <div className="flex gap-4">
-                                    <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-[#FFB224]/10 border border-[#FFB224]/20 flex items-center justify-center">
-                                        <Icon name={step.icon} size={18} className="text-[#FFB224]" />
+                                    <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-[#F0B429]/10 border border-[#F0B429]/20 flex items-center justify-center">
+                                        <Icon name={step.icon} size={18} className="text-[#F0B429]" />
                                     </div>
                                     <div className="flex-grow">
                                         <h3 className="text-sm font-semibold text-white mb-2">{step.title}</h3>
@@ -185,13 +188,13 @@ overflow-x: hidden;
                         transition={{ delay: 0.6 }}
                         className="mt-12 text-center"
                     >
-                        <div className="bg-[#0A0A0A] border border-white/5 rounded-xl px-6 py-4 inline-block">
+                        <div className="bg-[#202124] border border-white/5 rounded-xl px-6 py-4 inline-block">
                             <p className="text-neutral-500 text-xs mb-1">Need to reschedule or have questions?</p>
-                            <a href="mailto:rob@gyst-ai.com" className="text-[#FFB224] text-sm font-medium hover:text-[#FFD573] transition-colors">
+                            <a href="mailto:rob@gyst-ai.com" className="text-[#F0B429] text-sm font-medium hover:text-[#F0B429] transition-colors">
                                 rob@gyst-ai.com
                             </a>
                             <span className="text-neutral-700 mx-2">or</span>
-                            <a href="https://x.com/robtheops" target="_blank" rel="noopener" className="text-[#FFB224] text-sm font-medium hover:text-[#FFD573] transition-colors">
+                            <a href="https://x.com/robtheops" target="_blank" rel="noopener" className="text-[#F0B429] text-sm font-medium hover:text-[#F0B429] transition-colors">
                                 DM @robtheops
                             </a>
                         </div>

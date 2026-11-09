@@ -88,7 +88,7 @@ export const EmailCapture: React.FC<EmailCaptureProps> = ({ result }) => {
             type="button"
             onClick={() => setExpanded(true)}
             className="flex-1 flex items-center justify-center gap-2 px-6 py-3.5 rounded-full font-semibold text-sm transition-all hover:opacity-90"
-            style={{ backgroundColor: ACCENT_HEX, color: '#fff' }}
+            style={{ backgroundColor: ACCENT_HEX, color: '#1A1B1D' }}
           >
             <Mail size={16} /> Email me this report
           </button>
@@ -112,7 +112,7 @@ export const EmailCapture: React.FC<EmailCaptureProps> = ({ result }) => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@yourcompany.com"
-            className="flex-1 px-5 py-3.5 rounded-full bg-[#0A0A0A] border border-white/15 text-white placeholder-neutral-500 text-sm focus:outline-none focus:border-white/40"
+            className="flex-1 px-5 py-3.5 rounded-full bg-[#202124] border border-white/15 text-white placeholder-neutral-500 text-sm focus:outline-none focus:border-white/40"
             autoFocus
             required
           />
@@ -120,7 +120,7 @@ export const EmailCapture: React.FC<EmailCaptureProps> = ({ result }) => {
             type="submit"
             disabled={submitting}
             className="px-6 py-3.5 rounded-full font-semibold text-sm transition-all hover:opacity-90 disabled:opacity-50"
-            style={{ backgroundColor: ACCENT_HEX, color: '#fff' }}
+            style={{ backgroundColor: ACCENT_HEX, color: '#1A1B1D' }}
           >
             {submitting ? 'Sending…' : 'Send report'}
           </button>

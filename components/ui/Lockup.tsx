@@ -18,6 +18,14 @@ export const Device: React.FC<{ size: number; className?: string }> = ({ size, c
     </svg>
 );
 
+// Wordmark + device without a link, for places that already sit inside one.
+export const Wordmark: React.FC<{ size?: number }> = ({ size = 22 }) => (
+    <span className="font-anton text-paper inline-flex items-end" style={{ fontSize: size, letterSpacing: '.005em', gap: '.145em', lineHeight: 0.82 }}>
+        GYST
+        <Device size={size * 0.22} className="text-hazard shrink-0" />
+    </span>
+);
+
 // Descriptor is .115em of the wordmark; spec says drop it (compact) when it would fall under ~8px.
 export const Lockup: React.FC<{ size?: number }> = ({ size = 28 }) => (
     <a href="/" aria-label="GYST - Automated Systems" className="inline-flex items-end no-underline" style={{ fontSize: size, lineHeight: 0.82 }}>

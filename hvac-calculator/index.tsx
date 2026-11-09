@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { Wordmark } from '../components/ui/Lockup';
 import { Calculator } from './Calculator';
 import { ResultView } from './ResultView';
 import { EmailCapture } from './EmailCapture';
@@ -13,13 +14,13 @@ const HvacCalculatorPage: React.FC = () => {
   const result = useMemo(() => calculate(inputs), [inputs]);
 
   return (
-    <div className="min-h-screen w-full bg-[#050505] text-neutral-200 overflow-x-hidden">
+    <div className="min-h-screen w-full bg-charcoal text-neutral-200 overflow-x-hidden">
       <header className="w-full px-5 py-4 border-b border-white/5">
         <a
           href="/"
           className="inline-flex items-center gap-2 font-bold tracking-tight text-white"
         >
-          <span style={{ color: ACCENT_HEX }}>GYST</span>
+          <Wordmark size={24} />
           <span className="text-neutral-500 text-xs font-normal hidden sm:inline">
             HVAC Lead Loss Calculator
           </span>

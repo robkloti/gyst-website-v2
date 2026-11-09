@@ -53,7 +53,7 @@ export const Calculator: React.FC<CalculatorProps> = ({ inputs, onChange }) => {
           return (
             <div
               key={q.id}
-              className="bg-[#0A0A0A] border border-white/10 rounded-2xl p-5 md:p-6"
+              className="bg-[#202124] border border-white/10 rounded-2xl p-5 md:p-6"
             >
               <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-2 mb-3">
                 <label
