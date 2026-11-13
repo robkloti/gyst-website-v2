@@ -35,6 +35,12 @@ export interface RoomCounter {
     start: number;
 }
 
+export interface RoomProp {
+    x: number;
+    y: number;
+    kind: 'tall' | 'big' | 'small' | 'sofa' | 'table';
+}
+
 export interface RoomData {
     slug: string;
     title: string;
@@ -44,4 +50,5 @@ export interface RoomData {
     agents: RoomAgent[];
     counters: RoomCounter[];
     script: RoomHandoff[];
+    props?: RoomProp[];
 }

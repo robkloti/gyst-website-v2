@@ -81,7 +81,14 @@
       .room-dash { animation: roomDash 1s linear infinite; }
       @keyframes roomPulse { 0% { opacity: .9; transform: scale(.7); } 100% { opacity: 0; transform: scale(1.5); } }
       @keyframes roomDash { to { stroke-dashoffset: -20; } }
-      @media (prefers-reduced-motion: reduce) { .room-pulse, .room-dash { animation: none; } }
+      .room-bob { animation: roomBob 3.4s ease-in-out infinite; }
+      .room-busy { animation: roomBob .5s ease-in-out infinite; }
+      .room-sway { transform-box: fill-box; transform-origin: 50% 100%; animation: roomSway 7s ease-in-out infinite; }
+      .room-blink { animation: roomBlink 1.4s ease-in-out infinite; }
+      @keyframes roomBob { 50% { transform: translateY(-1.5px); } }
+      @keyframes roomSway { 0%, 100% { transform: rotate(-1.6deg); } 50% { transform: rotate(1.6deg); } }
+      @keyframes roomBlink { 50% { opacity: .25; } }
+      @media (prefers-reduced-motion: reduce) { .room-pulse, .room-dash, .room-bob, .room-busy, .room-sway, .room-blink { animation: none; } }
       .mask-image-gradient { mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent); }
     </style>
   <script type="importmap">
