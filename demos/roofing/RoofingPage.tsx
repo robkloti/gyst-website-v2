@@ -51,8 +51,9 @@ const RoofingPage: React.FC = () => {
     };
 
     return (
-        <div className="rf min-h-screen bg-[#E8ECEE] text-[#15222C] text-[14px] lg:pl-[68px] pb-20">
+        <div className="rf min-h-screen bg-[#E8ECEE] text-[#15222C] text-[14px] lg:pl-[68px]">
             <style>{CSS}</style>
+            <GystBadge slug="roofing" />
 
             <aside className="hidden lg:flex fixed inset-y-0 left-0 w-[68px] flex-col items-center py-4 bg-[#15222C]">
                 <span className="grid place-items-center w-10 h-10 rounded-[10px] bg-[#1B7F5A] text-white" aria-label="Slatewing">
@@ -301,7 +302,7 @@ const RoofingPage: React.FC = () => {
                     </div>
                 )}
             </Drawer>
-            <GystBadge slug="roofing" />
+            <GystBadge slug="roofing" foot />
         </div>
     );
 };

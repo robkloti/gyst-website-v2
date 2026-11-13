@@ -54,8 +54,9 @@ const LawPage: React.FC = () => {
     const matters = MATTERS.filter((m) => stage === 'All' || m.stage === stage);
 
     return (
-        <div className="lw min-h-screen bg-[#F7F4EC] text-[#1B2432] text-[14px] pb-20">
+        <div className="lw min-h-screen bg-[#F7F4EC] text-[#1B2432] text-[14px]">
             <style>{CSS}</style>
+            <GystBadge slug="law" />
             <div className="border-b border-[#DDD6C6] bg-[#FFFEFB]">
                 <div className="max-w-[1320px] mx-auto px-4 sm:px-8 h-[68px] flex items-center gap-6">
                     <div className="shrink-0">
@@ -320,7 +321,7 @@ const LawPage: React.FC = () => {
 
                 <p className="text-[12.5px] text-[#9A9DA6] mt-14 max-w-xl">Marlowe Tennant LLP is a made-up firm. Every client, matter and number on this page is sample data.</p>
             </div>
-            <GystBadge slug="law" />
+            <GystBadge slug="law" foot />
         </div>
     );
 };

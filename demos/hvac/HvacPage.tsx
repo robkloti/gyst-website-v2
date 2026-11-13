@@ -126,8 +126,9 @@ const HvacPage: React.FC = () => {
     ];
 
     return (
-        <div className="hv min-h-screen bg-[#0E1216] text-[#C9D2D9] text-[14px] pb-16">
+        <div className="hv min-h-screen bg-[#0E1216] text-[#C9D2D9] text-[14px]">
             <style>{CSS}</style>
+            <GystBadge slug="hvac" />
             <header className="sticky top-0 z-40 bg-[#0E1216]/95 backdrop-blur border-b border-[#26303A]">
                 <div className="flex items-center gap-4 h-14 px-3 sm:px-5">
                     <div className="flex items-center gap-2.5 shrink-0">
@@ -352,7 +353,7 @@ const HvacPage: React.FC = () => {
                     </div>
                 )}
             </Drawer>
-            <GystBadge slug="hvac" />
+            <GystBadge slug="hvac" foot />
         </div>
     );
 };

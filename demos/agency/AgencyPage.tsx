@@ -49,8 +49,9 @@ const AgencyPage: React.FC = () => {
     };
 
     return (
-        <div className="ag min-h-screen bg-white text-[#0B0B0C] text-[14.5px] pb-20">
+        <div className="ag min-h-screen bg-white text-[#0B0B0C] text-[14.5px]">
             <style>{CSS}</style>
+            <GystBadge slug="agency" />
             <div className="max-w-[1360px] mx-auto px-4 sm:px-8">
                 <div className="flex items-center justify-between gap-3 h-10 ag-m border-b border-[#0B0B0C]">
                     <span>Vol. 4 <span className="hidden sm:inline">· No. 317</span></span>
@@ -273,7 +274,7 @@ const AgencyPage: React.FC = () => {
                     </div>
                 )}
             </Drawer>
-            <GystBadge slug="agency" />
+            <GystBadge slug="agency" foot />
         </div>
     );
 };

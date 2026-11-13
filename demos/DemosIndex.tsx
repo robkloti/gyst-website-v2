@@ -1,21 +1,8 @@
 import React from 'react';
 import { track } from '../lib/track';
 import { BookButton, CaseLayout, Eyebrow } from '../work/CaseLayout';
+import { DEMOS, REAL } from './list';
 
-const DEMOS = [
-    { slug: 'hvac', tag: 'Home services', name: 'Copperjack Dispatch', line: 'A heating and air shop’s dispatch board. Today’s jobs on a map, five trucks, the calls the AI front desk took overnight and the old quotes it is chasing.', look: 'Dark console, three columns' },
-    { slug: 'roofing', tag: 'Roofing', name: 'Slatewing Storm Desk', line: 'Three days after a hail storm. Leads coming in, insurance claims moving across a board, crews on roofs and materials on order.', look: 'Claims board with an icon rail' },
-    { slug: 'law', tag: 'Law firm', name: 'Chambers', line: 'A litigation firm’s morning desk. Enquiries scored by the intake agent, drafts waiting for a partner, deadlines and billable hours.', look: 'Serif, split reading pane' },
-    { slug: 'medspa', tag: 'Med spa', name: 'Oriel House Concierge', line: 'An aesthetics clinic’s day. Three providers’ appointments, the rebooking agent, lapsed clients to win back, revenue and reviews.', look: 'Soft sidebar app, day calendar' },
-    { slug: 'agency', tag: 'Marketing agency', name: 'The Desk', line: 'A content agency laid out like a front page. Six accounts, the week’s calendar, ad spend against return and the content engine’s queue.', look: 'Magazine front page' },
-];
-
-const REAL = [
-    ['/work/shang', 'Shang case study and demo', 'Real estate. Thirteen desks, two of them people.'],
-    ['/work/caelum', 'Caelum', 'Insurance. Leads found and openers drafted before the day starts.'],
-    ['/hq', 'GYST HQ', 'How GYST runs itself, on the same kind of console.'],
-    ['/find-leaks', 'HVAC lead calculator', 'Four questions and a dollar figure for the leads a shop is losing.'],
-];
 
 const DemosIndex: React.FC = () => (
     <CaseLayout slug="demos" title="Demo dashboards | GYST" nav={[['#demos', 'Demos'], ['#real', 'Real builds']]}>
@@ -30,9 +17,9 @@ const DemosIndex: React.FC = () => (
         <section id="demos" className="max-w-6xl mx-auto px-4 md:px-6 pb-20 scroll-mt-20">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
                 {DEMOS.map((d, i) => (
-                    <a key={d.slug} href={`/demos/${d.slug}`} onClick={() => track('work_card_click', { card: `demo-${d.slug}` })} className={`group flex flex-col no-underline bg-[#202124] border border-paper/20 hover:border-paper/50 transition-colors ${i < 2 ? 'lg:col-span-3' : 'lg:col-span-2'} ${i === 4 ? 'md:col-span-2' : ''}`}>
+                    <a key={d.slug} href={d.href} onClick={() => track('work_card_click', { card: `demo-${d.slug}` })} className={`group flex flex-col no-underline bg-[#202124] border border-paper/20 hover:border-paper/50 transition-colors ${i < 2 ? 'lg:col-span-3' : 'lg:col-span-2'} ${i === 4 ? 'md:col-span-2' : ''}`}>
                         <div className="relative aspect-[16/10] overflow-hidden bg-[#111] border-b border-paper/10">
-                            <img src={`/demo-shots/${d.slug}.jpg`} alt={`${d.name} dashboard`} loading="lazy" className="absolute inset-0 w-full h-full object-cover object-left-top" />
+                            <img src={d.image} alt={`${d.name} dashboard`} loading="lazy" className="absolute inset-0 w-full h-full object-cover object-left-top" />
                         </div>
                         <div className="p-5 flex flex-col gap-2 flex-1">
                             <div className="flex flex-wrap justify-between gap-x-3 gap-y-1 font-mono text-[10px] uppercase tracking-[0.14em] text-steel">
@@ -59,9 +46,9 @@ const DemosIndex: React.FC = () => (
                     <p className="text-[17px] text-charcoal/75 leading-relaxed mt-5 max-w-md">The demos show range. These four are real work for real businesses, including our own.</p>
                 </div>
                 <ul className="border-t border-charcoal/20">
-                    {REAL.map(([href, title, line]) => (
+                    {REAL.map(({ slug, href, name: title, line }) => (
                         <li key={href}>
-                            <a href={href} onClick={() => track('work_card_click', { card: `demos-real-${href}` })} className="group grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 py-5 border-b border-charcoal/20 no-underline text-charcoal">
+                            <a href={href} onClick={() => track('work_card_click', { card: `demos-real-${slug}` })} className="group grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 py-5 border-b border-charcoal/20 no-underline text-charcoal">
                                 <span>
                                     <span className="block text-[20px] font-semibold leading-tight">{title}</span>
                                     <span className="block text-[14.5px] text-charcoal/70 mt-1">{line}</span>

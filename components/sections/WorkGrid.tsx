@@ -70,9 +70,6 @@ export const WorkGrid: React.FC<{ onInView: (id: SectionId) => void }> = ({ onIn
                     <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-steel mb-4">The work</div>
                     <h2 className="font-display text-4xl md:text-6xl text-paper max-w-3xl">Seven builds. Open any of them.</h2>
                     <p className="text-steel text-lg mt-5 max-w-2xl">Each one started as a business written down. Then the software went on top.</p>
-                    <a href="/demos" onClick={() => track('work_card_click', { card: 'demos', vertical: vertical.key })} className="inline-flex items-center gap-2 mt-4 font-mono text-[11px] uppercase tracking-[0.14em] text-steel hover:text-paper no-underline border-b border-paper/25 pb-0.5">
-                        More demo dashboards <span aria-hidden="true">&rarr;</span>
-                    </a>
                 </Reveal>
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 mt-12">

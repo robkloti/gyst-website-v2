@@ -89,14 +89,15 @@ export const Drawer: React.FC<{ open: boolean; onClose: () => void; label: strin
     );
 };
 
-// The only GYST-styled thing inside a demo dashboard.
-export const GystBadge: React.FC<{ slug: string }> = ({ slug }) => (
-    <div className="fixed bottom-3 right-3 z-50 flex items-stretch max-w-[calc(100vw-24px)] bg-[#1A1B1D] text-[#F2F0EB] border border-[#F2F0EB]/25 shadow-[0_8px_24px_rgba(0,0,0,.35)]" style={{ fontFamily: 'Archivo, system-ui, sans-serif' }}>
-        <a href="/demos" className="hidden sm:flex items-center px-3 text-[10px] uppercase tracking-[0.14em] text-[#8A9099] hover:text-[#F2F0EB] no-underline border-r border-[#F2F0EB]/15" style={{ fontFamily: '"JetBrains Mono", monospace' }}>
-            All demos
+// The only GYST-styled thing inside a demo dashboard. It sits in the page flow, above the client's header and
+// again after the last section, so it never covers the dashboard.
+export const GystBadge: React.FC<{ slug: string; foot?: boolean }> = ({ slug, foot }) => (
+    <div data-gyst-strip className={`flex items-center justify-between gap-3 h-9 px-3 sm:px-5 bg-[#1A1B1D] text-[#F2F0EB] ${foot ? 'mt-14' : ''}`} style={{ fontFamily: 'Archivo, system-ui, sans-serif' }}>
+        <a href="/demos" className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.14em] text-[#8A9099] hover:text-[#F2F0EB] no-underline whitespace-nowrap" style={{ fontFamily: '"JetBrains Mono", monospace' }}>
+            <span aria-hidden="true">&larr;</span> All demos
         </a>
-        <a href="/calendar-page.html" onClick={() => trackBookClick(`demo-${slug}`)} className="flex items-center gap-2 px-3 py-2 text-[12.5px] font-medium text-[#F2F0EB] no-underline hover:bg-[#F2F0EB]/10 whitespace-nowrap">
-            <Device size={12} className="text-[#F0B429] shrink-0" />
+        <a href="/calendar-page.html" onClick={() => trackBookClick(`demo-${slug}${foot ? '-foot' : ''}`)} className="flex items-center gap-2 text-[12.5px] font-medium text-[#F2F0EB] no-underline hover:underline underline-offset-4 whitespace-nowrap">
+            <Device size={11} className="text-[#F0B429] shrink-0" />
             Built by GYST - book a mapping call
             <span aria-hidden="true">&rarr;</span>
         </a>

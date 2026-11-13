@@ -6,6 +6,7 @@ import { LoopVisualizer } from './components/visuals/LoopVisualizer';
 import { HeroSection } from './components/sections/Hero';
 import { HowItWorks } from './components/sections/HowItWorks';
 import { WorkGrid } from './components/sections/WorkGrid';
+import { DemoOrbit } from './components/sections/DemoOrbit';
 import { Rooms } from './components/sections/Rooms';
 import { Offer } from './components/sections/Offer';
 import { Faq } from './components/sections/Faq';
@@ -66,6 +67,7 @@ const MainApp = () => {
                     <HeroSection onInView={setActiveSection} />
                     <HowItWorks onInView={setActiveSection} />
                     <WorkGrid onInView={setActiveSection} />
+                    <DemoOrbit />
                     <Rooms />
                     <Offer onInView={setActiveSection} />
                     <Faq onInView={setActiveSection} />

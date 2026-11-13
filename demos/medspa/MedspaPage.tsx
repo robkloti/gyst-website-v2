@@ -86,8 +86,9 @@ const MedspaPage: React.FC = () => {
     };
 
     return (
-        <div className="ms min-h-screen bg-[#FAF4F0] text-[#3B2B30] text-[14px] lg:pl-[224px] pb-20">
+        <div className="ms min-h-screen bg-[#FAF4F0] text-[#3B2B30] text-[14px] lg:pl-[224px]">
             <style>{CSS}</style>
+            <GystBadge slug="medspa" />
 
             <aside className="hidden lg:flex fixed inset-y-0 left-0 w-[224px] flex-col p-5 bg-[#FFFBF9] border-r border-[#F0E4DE]">
                 <div className="flex items-center gap-2.5">
@@ -351,7 +352,7 @@ const MedspaPage: React.FC = () => {
                     </div>
                 )}
             </Drawer>
-            <GystBadge slug="medspa" />
+            <GystBadge slug="medspa" foot />
         </div>
     );
 };
