@@ -9,6 +9,10 @@
       "destination": "/index.html"
     },
     {
+      "source": "/trades",
+      "destination": "/index.html"
+    },
+    {
       "source": "/find-leaks",
       "destination": "/index.html"
     },
@@ -30,6 +34,11 @@
     }
   ],
   "redirects": [
+    {
+      "source": "/hvac",
+      "destination": "/trades",
+      "permanent": false
+    },
     {
       "source": "/work",
       "destination": "/#work",
