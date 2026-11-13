@@ -2,6 +2,7 @@ import React from 'react';
 import { Button } from '../ui/Button';
 import { Lockup } from '../ui/Lockup';
 import { trackBookClick } from '../../lib/track';
+import { BOOK_LABEL, BOOK_URL } from '../../constants';
 
 export const Navbar = () => {
     return (
@@ -11,16 +12,14 @@ export const Navbar = () => {
             </div>
             <div className="pointer-events-auto flex items-center gap-3">
                 <a href="#work" className="hidden md:block font-mono text-[10px] uppercase tracking-[0.16em] text-steel hover:text-paper no-underline px-2">
-                    Client work
+                    The work
                 </a>
-                <a href="/lead-magnet.html" className="hidden sm:block">
-                    <Button variant="secondary" className="!px-5 !py-2 !text-[10px] backdrop-blur-md bg-charcoal/40">
-                        Build your workspace
-                    </Button>
+                <a href="#offer" className="hidden md:block font-mono text-[10px] uppercase tracking-[0.16em] text-steel hover:text-paper no-underline px-2">
+                    The offer
                 </a>
-                <a href="/calendar-page.html" onClick={() => trackBookClick('home_nav')}>
+                <a href={BOOK_URL} onClick={() => trackBookClick('home_nav')}>
                     <Button variant="secondary" className="!px-5 !py-2 !text-[10px] backdrop-blur-md bg-charcoal/40">
-                        Let's Chat
+                        {BOOK_LABEL}
                     </Button>
                 </a>
             </div>

@@ -1,23 +1,23 @@
-import React, { Suspense, lazy, useState } from 'react';
-import { SECTIONS } from './constants';
-import { SectionId } from './types';
+import React, { Suspense, lazy, useCallback, useMemo, useState } from 'react';
+import { SectionId, VerticalKey } from './types';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 import { LoopVisualizer } from './components/visuals/LoopVisualizer';
 import { HeroSection } from './components/sections/Hero';
-import { ProblemSection } from './components/sections/Problem';
-import { HarnessStrip } from './components/sections/HarnessStrip';
-import { FeatureSection } from './components/sections/FeatureSection';
-import { Showroom } from './components/sections/Showroom';
-import { ClientWork } from './components/sections/ClientWork';
+import { HowItWorks } from './components/sections/HowItWorks';
+import { WorkGrid } from './components/sections/WorkGrid';
 import { Rooms } from './components/sections/Rooms';
+import { Offer } from './components/sections/Offer';
+import { Faq } from './components/sections/Faq';
+import { VerticalContext, initialVertical, verticalByKey } from './lib/vertical';
+import { track } from './lib/track';
 import HvacCalculatorPage from './hvac-calculator';
 import SqueezePage from './hvac-calculator/SqueezePage';
 
 const currentPath = () =>
     typeof window !== 'undefined' ? window.location.pathname.replace(/\/$/, '') : '';
 
-// Lightweight path routing — no router dep. Static HTML pages in /public
+// Lightweight path routing, no router dep. Static HTML pages in /public
 // handle every other "route"; these branches cover the SPA-served funnel.
 // Page 1 (squeeze) → /find-leaks/start; Page 2 (calculator + sales) → /find-leaks.
 const isSqueezeRoute = () => currentPath() === '/find-leaks/start';
@@ -30,74 +30,46 @@ const CASE_STUDIES_BY_PATH: Record<string, React.LazyExoticComponent<React.FC>> 
 
 const MainApp = () => {
     const [activeSection, setActiveSection] = useState<SectionId>(SectionId.HERO);
+    const [verticalKey, setVerticalKey] = useState<VerticalKey>(initialVertical);
 
-    const handleInView = (id: SectionId) => {
-        setActiveSection(id);
-    };
+    const setVertical = useCallback((key: VerticalKey) => {
+        setVerticalKey(key);
+        const url = new URL(window.location.href);
+        if (key === 'all') url.searchParams.delete('v');
+        else url.searchParams.set('v', key);
+        url.searchParams.delete('room');
+        window.history.replaceState(null, '', url);
+        track('vertical_switch', { vertical: key });
+    }, []);
+
+    const verticalValue = useMemo(() => ({ vertical: verticalByKey(verticalKey), setVertical }), [verticalKey, setVertical]);
 
     return (
-        <div className="min-h-screen w-full bg-charcoal text-paper selection:bg-hazard/30 selection:text-hazard overflow-x-hidden font-sans">
-            <Navbar />
+        <VerticalContext.Provider value={verticalValue}>
+            <div className="min-h-screen w-full bg-charcoal text-paper selection:bg-hazard/30 selection:text-hazard overflow-x-hidden font-sans">
+                <Navbar />
 
-            {/* Fixed Background Visualizer */}
-            <div className="fixed inset-0 z-0 flex items-center justify-center pointer-events-none">
-                <div className="w-full h-full max-w-[800px] max-h-[800px] opacity-[0.15] lg:opacity-100 lg:translate-x-[25%] transition-all duration-700">
-                    <LoopVisualizer activeSection={activeSection} />
+                {/* Fixed ring background */}
+                <div className="fixed inset-0 z-0 flex items-center justify-center pointer-events-none">
+                    <div className="w-full h-full max-w-[800px] max-h-[800px] opacity-[0.15] lg:opacity-100 lg:translate-x-[25%] transition-all duration-700">
+                        <LoopVisualizer activeSection={activeSection} />
+                    </div>
                 </div>
+
+                <main className="relative z-10 flex flex-col w-full">
+                    <HeroSection onInView={setActiveSection} />
+                    <HowItWorks onInView={setActiveSection} />
+                    <WorkGrid onInView={setActiveSection} />
+                    <Rooms />
+                    <Offer onInView={setActiveSection} />
+                    <Faq onInView={setActiveSection} />
+                    <Footer />
+                </main>
+
+                {/* Noise grain overlay */}
+                <div className="fixed inset-0 z-[100] pointer-events-none opacity-[0.03] mix-blend-overlay" style={{ backgroundImage: 'url("/noise.svg")' }}></div>
             </div>
-
-            <main className="relative z-10 flex flex-col w-full">
-                {SECTIONS.map((section) => {
-                    // 1. HERO
-                    if (section.id === SectionId.HERO) {
-                        return (
-                            <React.Fragment key={section.id}>
-                                <HeroSection content={section} onInView={handleInView} />
-                                <HarnessStrip />
-                            </React.Fragment>
-                        );
-                    }
-
-                    // 2. PROBLEM (Scrollytelling specialized section)
-                    if (section.id === SectionId.PROBLEM) {
-                        return (
-                            <ProblemSection key={section.id} content={section} onInView={handleInView} />
-                        );
-                    }
-
-                    // Rooms switcher sits right before the first call to action
-                    if (section.id === SectionId.CTA) {
-                        return (
-                            <React.Fragment key="rooms-cta-wrapper">
-                                <Rooms />
-                                <FeatureSection key={section.id} content={section} onInView={handleInView} />
-                            </React.Fragment>
-                        );
-                    }
-
-                    // 3. SHOWROOM + OFFER
-                    if (section.id === SectionId.OFFER) {
-                        return (
-                            <React.Fragment key="showroom-offer-wrapper">
-                                <ClientWork />
-                                <Showroom />
-                                <FeatureSection key={section.id} content={section} onInView={handleInView} />
-                            </React.Fragment>
-                        );
-                    }
-
-                    // 4. STANDARD SECTIONS
-                    return (
-                        <FeatureSection key={section.id} content={section} onInView={handleInView} />
-                    );
-                })}
-
-                <Footer />
-            </main>
-
-            {/* Noise Grain Overlay */}
-            <div className="fixed inset-0 z-[100] pointer-events-none opacity-[0.03] mix-blend-overlay" style={{ backgroundImage: 'url("/noise.svg")' }}></div>
-        </div>
+        </VerticalContext.Provider>
     );
 };
 
