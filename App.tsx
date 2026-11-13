@@ -33,6 +33,8 @@ const CASE_STUDIES_BY_PATH: Record<string, React.LazyExoticComponent<React.FC>> 
     '/demos/medspa': lazy(() => import('./demos/medspa/MedspaPage')),
     '/demos/agency': lazy(() => import('./demos/agency/AgencyPage')),
     '/demos/roofing': lazy(() => import('./demos/roofing/RoofingPage')),
+    '/demos-b/hvac': lazy(() => import('./demos-b/hvac/HvacBPage')),
+    '/demos-b/medspa': lazy(() => import('./demos-b/medspa/MedspaBPage')),
 };
 
 const MainApp = () => {
