@@ -17,6 +17,10 @@
       "destination": "/index.html"
     },
     {
+      "source": "/demos-b/:slug",
+      "destination": "/index.html"
+    },
+    {
       "source": "/find-leaks",
       "destination": "/index.html"
     },
