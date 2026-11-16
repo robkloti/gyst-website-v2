@@ -3,7 +3,7 @@ import React from 'react';
 import { Icon } from '../ui/Icons';
 import { Lockup } from '../ui/Lockup';
 
-export const Footer = () => {
+export const Footer: React.FC<{ bookHref?: string; bookLocation?: string }> = ({ bookHref = '/calendar-page.html', bookLocation = 'home_footer' }) => {
     return (
         <footer className="relative z-50 pt-20 pb-10 bg-charcoal border-t border-paper/10">
             <div className="max-w-7xl mx-auto px-6 md:px-12">
@@ -28,7 +28,7 @@ export const Footer = () => {
                     <div>
                         <h4 className="font-mono text-[10px] uppercase tracking-[0.16em] text-hazard mb-6">Start here</h4>
                         <ul className="space-y-4 text-sm text-steel">
-                            <li><a href="/calendar-page.html" onClick={() => trackBookClick('home_footer')} className="hover:text-paper transition-colors">Book a mapping call</a></li>
+                            <li><a href={bookHref} onClick={() => trackBookClick(bookLocation)} className="hover:text-paper transition-colors">Book a mapping call</a></li>
                             <li><a href="/lead-magnet.html" className="hover:text-paper transition-colors">Build your workspace: free, 6 questions</a></li>
                             <li><a href="/find-leaks" className="hover:text-paper transition-colors">HVAC operators: find your lead leaks</a></li>
                         </ul>

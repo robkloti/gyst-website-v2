@@ -32,7 +32,14 @@ const centre = (base: number, i: number, n: number, rx: number, ry: number) => {
     return [Math.cos(a) * rx, Math.sin(a) * ry];
 };
 
-export const DemoOrbit: React.FC = () => {
+const INTRO = {
+    eyebrow: 'What goes on top',
+    title: 'One brain. Every kind of business.',
+    sub: 'Once a business is written down, the software on top can look like anything. Here are five demo dashboards, each for a different kind of business, and four builds that are already running.',
+};
+
+// A landing page can pass its own words. The orbit itself is the same everywhere.
+export const DemoOrbit: React.FC<{ intro?: typeof INTRO }> = ({ intro = INTRO }) => {
     const { vertical } = useVertical();
     const near = NEAREST[vertical.key];
     const wrap = useRef<HTMLDivElement>(null);
@@ -163,12 +170,12 @@ export const DemoOrbit: React.FC = () => {
             <div className="max-w-6xl mx-auto">
                 <Reveal className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] gap-x-12 gap-y-6 items-end">
                     <div>
-                        <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-steel mb-4">What goes on top</div>
-                        <h2 className="font-display text-4xl md:text-6xl text-paper">One brain. Every kind of business.</h2>
+                        <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-steel mb-4">{intro.eyebrow}</div>
+                        <h2 className="font-display text-4xl md:text-6xl text-paper">{intro.title}</h2>
                     </div>
                     <div>
                         <p className="text-steel text-lg max-w-md">
-                            Once a business is written down, the software on top can look like anything. Here are five demo dashboards, each for a different kind of business, and four builds that are already running.
+                            {intro.sub}
                         </p>
                         <div className="flex flex-wrap items-center gap-x-6 gap-y-3 mt-5">
                             <a href="/demos" onClick={go('all')} className={`inline-flex items-center gap-2 text-paper text-[15px] font-semibold no-underline border-b border-paper/40 pb-0.5 hover:border-paper ${FOCUS}`}>

@@ -2,7 +2,7 @@ import React, { Suspense, lazy, useCallback, useMemo, useState } from 'react';
 import { SectionId, VerticalKey } from './types';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
-import { LoopVisualizer } from './components/visuals/LoopVisualizer';
+import { Grain, RingBackdrop } from './components/layout/Backdrop';
 import { HeroSection } from './components/sections/Hero';
 import { HowItWorks } from './components/sections/HowItWorks';
 import { WorkGrid } from './components/sections/WorkGrid';
@@ -65,12 +65,7 @@ const MainApp = () => {
             <div className="min-h-screen w-full bg-charcoal text-paper selection:bg-hazard/30 selection:text-hazard overflow-x-hidden font-sans">
                 <Navbar />
 
-                {/* Fixed ring background */}
-                <div className="fixed inset-0 z-0 flex items-center justify-center pointer-events-none">
-                    <div className="w-full h-full max-w-[800px] max-h-[800px] opacity-[0.15] lg:opacity-100 lg:translate-x-[25%] transition-all duration-700">
-                        <LoopVisualizer activeSection={activeSection} />
-                    </div>
-                </div>
+                <RingBackdrop activeSection={activeSection} />
 
                 <main className="relative z-10 flex flex-col w-full">
                     <HeroSection onInView={setActiveSection} />
@@ -83,8 +78,7 @@ const MainApp = () => {
                     <Footer />
                 </main>
 
-                {/* Noise grain overlay */}
-                <div className="fixed inset-0 z-[100] pointer-events-none opacity-[0.03] mix-blend-overlay" style={{ backgroundImage: 'url("/noise.svg")' }}></div>
+                <Grain />
             </div>
         </VerticalContext.Provider>
     );
