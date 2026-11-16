@@ -1,327 +1,475 @@
-import React, { useRef, useState } from 'react';
-import { Check } from 'lucide-react';
-import { FeedList, FeedRow, GystBadge, useDemoPage, useLiveFeed } from '../shared';
+import React, { useCallback, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { AlertTriangle, Check, Pause, Play, X } from 'lucide-react';
 import { DEADLINES, DECISIONS, DRAFTS, FEED, HOURS, INTAKE, MATTERS, STAGES, Stage } from './data';
+import { Count, GystCredit, Sheet, ToastHost, clockLabel, useDemoHead, useLiveFeed, useNarrow, useToast, withApprovals } from '../kit';
+import { CSS } from './styles';
 
-const FONTS = 'family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Hanken+Grotesk:wght@400;500;600';
-const CSS = `
-html, body { background: #F7F4EC; }
-::-webkit-scrollbar-track { background: #F7F4EC; }
-::-webkit-scrollbar-thumb { background: #CFC7B4; }
-.lw { font-family: "Hanken Grotesk", system-ui, sans-serif; }
-.lw-s { font-family: "EB Garamond", Georgia, serif; }
-.lw-c { font-family: "Hanken Grotesk", system-ui, sans-serif; text-transform: uppercase; letter-spacing: .14em; font-size: 10.5px; font-weight: 600; }
-`;
+const FONTS = 'family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500';
+const START = 8 * 60 + 5;
+const ROMAN = ['i', 'ii', 'iii'];
+const LEADS: Record<string, string> = { EM: 'Eleanor Marlowe', RT: 'Rafael Tennant', JW: 'Jonah Whitfield', AC: 'Amara Cole' };
 
-const OX = '#7A2331';
-const scoreTone = (n: number) => (n >= 80 ? '#2F6B4F' : n >= 50 ? '#9A7B3F' : '#8A8F9A');
-
-const Head: React.FC<{ title: string; right?: React.ReactNode }> = ({ title, right }) => (
-    <div className="flex items-baseline justify-between gap-3 pb-2.5 border-b border-[#1B2432]">
-        <h2 className="lw-s text-[24px] font-medium leading-none">{title}</h2>
-        {right}
-    </div>
-);
+// The Raman intake and the first chief-of-staff decision are the same act, so they share one approval.
+const keyOf = (id: string) => (id === 'i1' ? 'm1' : id);
+const tone = (score: number, paper = false) => (score >= 80 ? (paper ? 'var(--p-good)' : 'var(--good)') : score >= 40 ? (paper ? 'var(--p-brass)' : 'var(--brass)') : paper ? 'var(--p-bad)' : 'var(--bad)');
+const hrs = (tenths: number) => (tenths / 10).toFixed(1);
 
 const LawPage: React.FC = () => {
-    useDemoPage('law', 'Chambers | Marlowe Tennant LLP | Demo dashboard by GYST', FONTS);
+    useDemoHead('law', 'Marlowe Tennant LLP - Chambers', FONTS, 'oklch(.185 .024 165)');
+    const narrow = useNarrow(1100);
+    const feed = useLiveFeed(FEED, START, 6, 5400);
+    const { toast, show, clear } = useToast();
+
+    const [approved, setApproved] = useState<Record<string, string>>({});
+    const [anchors, setAnchors] = useState<Record<string, string>>({});
     const [tab, setTab] = useState<'intake' | 'drafts'>('intake');
     const [sel, setSel] = useState('i1');
-    const [stage, setStage] = useState<Stage | 'All'>('All');
-    const [resolved, setResolved] = useState<Record<string, string>>({});
-    const [feed, log] = useLiveFeed(FEED, '8:14');
-    const pane = useRef<HTMLDivElement>(null);
+    const [sheet, setSheet] = useState(false);
+    const [stage, setStage] = useState<Stage | 'all'>('all');
 
-    const intake = INTAKE.find((x) => x.id === sel);
-    const draft = DRAFTS.find((x) => x.id === sel);
-    const pendingDecisions = DECISIONS.filter((d) => !resolved[d.id]);
-    const found = resolved.m2 ? 9.6 : 0;
-    const total = HOURS.reduce((s, h) => s + h.h, 0) + found;
-    const left = { intake: INTAKE.filter((x) => !resolved[x.id]).length, drafts: DRAFTS.filter((x) => !resolved[x.id]).length };
-
+    const doneText = (key: string) => DECISIONS.find((d) => d.id === key)?.done ?? INTAKE.find((i) => i.id === key)?.done ?? DRAFTS.find((d) => d.id === key)!.done;
+    const approve = (id: string) => {
+        const key = keyOf(id);
+        setApproved((a) => ({ ...a, [key]: clockLabel(feed.now) }));
+        setAnchors((a) => ({ ...a, [key]: feed.items[0].key }));
+        show(doneText(key), () => setApproved(({ [key]: _, ...rest }) => rest));
+    };
+    const closeSheet = useCallback(() => setSheet(false), []);
     const pick = (id: string) => {
         setSel(id);
-        if (window.innerWidth < 1024) pane.current?.scrollIntoView({ block: 'start' });
+        if (narrow) setSheet(true);
     };
-    const swap = (t: 'intake' | 'drafts') => { setTab(t); setSel(t === 'intake' ? 'i1' : 'd1'); };
-    const resolve = (id: string, text: string) => {
-        setResolved((r) => ({ ...r, [id]: text }));
-        log('Eleanor', text);
-        // The first decision and the first intake are the same call.
-        if (id === 'm1') setResolved((r) => ({ ...r, i1: INTAKE[0].done }));
-        if (id === 'i1') setResolved((r) => ({ ...r, m1: DECISIONS[0].done }));
+
+    const waiting = DECISIONS.filter((d) => !approved[d.id]).length;
+    const draftsLeft = DRAFTS.filter((d) => !approved[d.id]).length;
+    const billed = HOURS.reduce((s, h) => s + Math.round(h.h * 10) + (approved.m2 ? Math.round(h.found * 10) : 0), 0);
+    const target = HOURS.reduce((s, h) => s + h.target, 0);
+    const matters = MATTERS.filter((m) => stage === 'all' || m.stage === stage);
+
+    const agentOf = (key: string) => DECISIONS.find((d) => d.id === key)?.agent ?? (key.startsWith('i') ? 'Intake Agent' : DRAFTS.find((d) => d.id === key)!.by);
+    const feedItems = withApprovals(
+        feed.items,
+        Object.keys(approved).map((key) => ({ id: key, who: `Eleanor + ${agentOf(key)}`, text: doneText(key), time: approved[key], after: anchors[key] }))
+    );
+
+    const foot = (id: string, label: string) => {
+        const ok = approved[keyOf(id)];
+        return (
+            <div className="mt-paper-foot">
+                {ok ? (
+                    <p className="mt-ok">
+                        <Check size={16} strokeWidth={2.4} aria-hidden="true" />
+                        <span>
+                            {doneText(keyOf(id))} Approved {ok}.
+                        </span>
+                    </p>
+                ) : (
+                    <>
+                        <button type="button" className="mt-btn" onClick={() => approve(id)}>
+                            {label}
+                        </button>
+                        <span>Nothing leaves chambers until you approve it.</span>
+                    </>
+                )}
+            </div>
+        );
     };
-    const matters = MATTERS.filter((m) => stage === 'All' || m.stage === stage);
+
+    const gutter = (
+        <div className="mt-gutter" aria-hidden="true">
+            {Array.from({ length: 60 }, (_, i) => (
+                <span key={i}>{i + 1}</span>
+            ))}
+        </div>
+    );
+
+    const pane = () => {
+        const intake = INTAKE.find((i) => i.id === sel);
+        const draft = DRAFTS.find((d) => d.id === sel);
+        if (intake)
+            return (
+                <article className="mt-paper" aria-label={`Intake memo, ${intake.name}`}>
+                    <div className="mt-paper-in">
+                        {gutter}
+                        <span className="mt-label">
+                            Intake memo · {intake.type} · {intake.got}
+                        </span>
+                        <h3>{intake.name}</h3>
+                        <div className="mt-verdict" style={{ '--tone': tone(intake.score, true) } as React.CSSProperties}>
+                            <b>{intake.score}</b>
+                            <span>{intake.verdict}</span>
+                        </div>
+                        <h4>In their words</h4>
+                        <blockquote>&ldquo;{intake.words}&rdquo;</blockquote>
+                        <h4>Why it scored {intake.score}</h4>
+                        <ol className="mt-reasons">
+                            {intake.reasons.map((r) => (
+                                <li key={r}>
+                                    <span>{r}</span>
+                                </li>
+                            ))}
+                        </ol>
+                        <h4>Conflict check</h4>
+                        <p className={`mt-check ${intake.conflict.startsWith('Clear') ? 'ok' : 'warn'}`}>
+                            {intake.conflict.startsWith('Clear') ? <Check size={15} strokeWidth={2.4} aria-hidden="true" /> : <AlertTriangle size={15} aria-hidden="true" />}
+                            <span>{intake.conflict}</span>
+                        </p>
+                        <h4>Fee</h4>
+                        <p>{intake.value}</p>
+                    </div>
+                    {foot(intake.id, intake.score < 40 ? 'Approve the referral note' : 'Approve the next step')}
+                </article>
+            );
+        if (draft)
+            return (
+                <article className="mt-paper mt-doc" aria-label={`${draft.title}, ${draft.matter}`}>
+                    <div className="mt-paper-in">
+                        {gutter}
+                        <div className="mt-margin">
+                            <b>
+                                {draft.by} · {draft.pages} pages · {draft.when}
+                            </b>
+                            {draft.flag}
+                        </div>
+                        <div className="mt-caption">{draft.matter}</div>
+                        <h3 className="mt-doc-title">{draft.title}</h3>
+                        {draft.body.map((p) => (
+                            <p key={p}>{p}</p>
+                        ))}
+                    </div>
+                    {foot(draft.id, 'Approve this draft')}
+                </article>
+            );
+        return null;
+    };
 
     return (
-        <div className="lw min-h-screen bg-[#F7F4EC] text-[#1B2432] text-[14px]">
+        <div className="mt">
             <style>{CSS}</style>
-            <GystBadge slug="law" />
-            <div className="border-b border-[#DDD6C6] bg-[#FFFEFB]">
-                <div className="max-w-[1320px] mx-auto px-4 sm:px-8 h-[68px] flex items-center gap-6">
-                    <div className="shrink-0">
-                        <div className="lw-s text-[23px] font-medium leading-none tracking-[.01em]">Marlowe Tennant <span className="text-[15px] italic text-[#6E7280]">LLP</span></div>
-                        <div className="lw-c text-[#9A7B3F] mt-1.5 !text-[9.5px]">Chambers</div>
+            <div className="mt-shell">
+                <aside className="mt-side">
+                    <div className="mt-brand">
+                        <b>Marlowe Tennant</b>
+                        <span>LLP · Chambers</span>
                     </div>
-                    <nav className="hidden lg:flex items-center gap-7 mx-auto text-[14px]" aria-label="Sections">
-                        {[['#desk', 'Desk'], ['#matters', 'Matters'], ['#deadlines', 'Deadlines'], ['#time', 'Time']].map(([h, l], i) => (
-                            <a key={h} href={h} className={`no-underline py-1 border-b ${i === 0 ? 'border-[#7A2331] text-[#1B2432]' : 'border-transparent text-[#6E7280] hover:text-[#1B2432]'}`}>{l}</a>
-                        ))}
-                    </nav>
-                    <div className="ml-auto lg:ml-0 flex items-center gap-4">
-                        <span className="lw-c text-[#6E7280] border border-[#DDD6C6] px-2 py-1 !text-[9.5px] whitespace-nowrap">Demo. Sample data.</span>
-                        <span className="hidden md:inline lw-s italic text-[16px] text-[#6E7280]">Friday, 13 November</span>
-                        <span className="hidden sm:grid place-items-center w-9 h-9 rounded-full border border-[#1B2432] lw-s text-[15px]">EM</span>
-                    </div>
-                </div>
-            </div>
-
-            <div className="max-w-[1320px] mx-auto px-4 sm:px-8">
-                <section className="grid lg:grid-cols-[minmax(0,1fr)_auto] gap-8 items-end py-9 md:py-12">
-                    <div>
-                        <div className="lw-c text-[#7A2331]">Morning memorandum, 8:14 AM</div>
-                        <h1 className="lw-s text-[40px] md:text-[54px] font-normal leading-[1.05] tracking-[-.01em] mt-3">Good morning, Eleanor.</h1>
-                        <p className="lw-s text-[20px] md:text-[23px] leading-[1.45] text-[#3A4250] mt-4 max-w-[760px]">
-                            Five people wrote to the firm since Tuesday and two are strong fits. The motion to compel in <i>Ashby</i> is drafted and due tomorrow. The team has logged {total.toFixed(1)} hours this week{found ? ', including the 9.6 the Timekeeper recovered' : ', and the Timekeeper found 9.6 more that nobody recorded'}.
+                    <div className="mt-side-meta">
+                        <span className="mt-demo">Demo. Sample data.</span>
+                        <p className="mt-date">
+                            Friday 13 November<b>{clockLabel(feed.now)}</b>
                         </p>
                     </div>
-                    <dl className="grid grid-cols-3 lg:grid-cols-1 gap-x-6 gap-y-3 lg:text-right lg:border-l lg:border-[#DDD6C6] lg:pl-8">
-                        {[[`${left.intake}`, 'enquiries to decide'], [`${left.drafts}`, 'drafts awaiting you'], [`${pendingDecisions.length}`, 'decisions held']].map(([n, l]) => (
-                            <div key={l}>
-                                <dt className="lw-s text-[34px] leading-none">{n}</dt>
-                                <dd className="text-[12.5px] text-[#6E7280] mt-1">{l}</dd>
-                            </div>
-                        ))}
-                    </dl>
-                </section>
+                    <ul className="mt-brief" aria-label="The day in brief">
+                        <li>
+                            <span className="mt-label">Enquiries screened</span>
+                            <b>
+                                {INTAKE.length}
+                                <small>since Tuesday</small>
+                            </b>
+                            <p>Two strong fits. One to refer out.</p>
+                        </li>
+                        <li>
+                            <span className="mt-label">Drafts for your eye</span>
+                            <b>
+                                <Count value={draftsLeft} format={String} />
+                                <small>of {DRAFTS.length}</small>
+                            </b>
+                            <p>{draftsLeft === 0 ? 'All four are approved.' : 'A motion, a demand and two letters.'}</p>
+                        </li>
+                        <li>
+                            <span className="mt-label">Next deadline</span>
+                            <b>
+                                {DEADLINES[0].day}
+                                <small>
+                                    {DEADLINES[0].mon}, {DEADLINES[0].left.toLowerCase()}
+                                </small>
+                            </b>
+                            <p>
+                                {DEADLINES[0].matter}: {DEADLINES[0].what.toLowerCase()}.
+                            </p>
+                        </li>
+                        <li>
+                            <span className="mt-label">Billed this week</span>
+                            <b>
+                                <Count value={billed} format={hrs} />
+                                <small>of {target} h</small>
+                            </b>
+                            <p>{approved.m2 ? '9.6 recovered hours are in.' : '9.6 more hours found, not yet entered.'}</p>
+                        </li>
+                    </ul>
+                </aside>
 
-                <div className="grid grid-cols-1 xl:grid-cols-12 gap-x-10 gap-y-12">
-                    <section id="desk" className="xl:col-span-8 scroll-mt-6">
-                        <div className="flex items-end justify-between gap-3 border-b border-[#1B2432]" role="tablist">
-                            <div className="flex gap-7">
-                                {([['intake', 'Intake queue'], ['drafts', 'Drafts for review']] as const).map(([id, l]) => (
-                                    <button key={id} type="button" role="tab" aria-selected={tab === id} onClick={() => swap(id)} className={`lw-s text-[24px] font-medium leading-none pb-2.5 border-b-2 -mb-px ${tab === id ? 'border-[#7A2331] text-[#1B2432]' : 'border-transparent text-[#9A9DA6] hover:text-[#1B2432]'}`}>
-                                        {l} <sup className="lw text-[11px] font-semibold text-[#7A2331]">{left[id]}</sup>
-                                    </button>
-                                ))}
-                            </div>
-                            <span className="hidden sm:block text-[12.5px] text-[#6E7280] pb-2.5">{tab === 'intake' ? 'Scored by the Intake Agent' : 'Written by the firm’s agents'}</span>
-                        </div>
-                        <div className="grid lg:grid-cols-[300px_minmax(0,1fr)] bg-[#FFFEFB] border border-t-0 border-[#DDD6C6]">
-                            <ul className="lg:border-r border-b lg:border-b-0 border-[#DDD6C6] divide-y divide-[#EAE4D6]">
-                                {tab === 'intake' && INTAKE.map((x) => (
-                                    <li key={x.id}>
-                                        <button type="button" onClick={() => pick(x.id)} aria-current={sel === x.id} className={`w-full text-left flex items-center gap-3.5 px-4 py-3.5 ${sel === x.id ? 'bg-[#F7F4EC]' : 'hover:bg-[#FBF9F3]'}`}>
-                                            <span className="lw-s text-[28px] leading-none w-9 text-center shrink-0" style={{ color: scoreTone(x.score) }}>{x.score}</span>
-                                            <span className="min-w-0 flex-1">
-                                                <span className="block text-[14.5px] font-semibold truncate">{x.name}</span>
-                                                <span className="block text-[13px] text-[#6E7280] truncate">{x.type}</span>
-                                            </span>
-                                            {resolved[x.id] ? <Check size={15} className="text-[#2F6B4F] shrink-0" /> : sel === x.id && <span className="w-1.5 h-1.5 rounded-full bg-[#7A2331] shrink-0" />}
-                                        </button>
-                                    </li>
-                                ))}
-                                {tab === 'drafts' && DRAFTS.map((x) => (
-                                    <li key={x.id}>
-                                        <button type="button" onClick={() => pick(x.id)} aria-current={sel === x.id} className={`w-full text-left flex items-center gap-3 px-4 py-3.5 ${sel === x.id ? 'bg-[#F7F4EC]' : 'hover:bg-[#FBF9F3]'}`}>
-                                            <span className="min-w-0 flex-1">
-                                                <span className="block text-[14.5px] font-semibold truncate">{x.title}</span>
-                                                <span className="block lw-s italic text-[15px] text-[#6E7280] truncate">{x.matter}</span>
-                                                <span className="block text-[12px] text-[#9A9DA6] mt-0.5">{x.pages} pages · {x.when}</span>
-                                            </span>
-                                            {resolved[x.id] ? <Check size={15} className="text-[#2F6B4F] shrink-0" /> : sel === x.id && <span className="w-1.5 h-1.5 rounded-full bg-[#7A2331] shrink-0" />}
-                                        </button>
-                                    </li>
-                                ))}
-                            </ul>
+                <main className="mt-main">
+                    <div className="mt-hello mt-in">
+                        <h1>
+                            Good morning, Eleanor. <em>{waiting === 0 ? 'Your desk is clear.' : `${waiting === 3 ? 'Three matters need' : waiting === 2 ? 'Two matters need' : 'One matter needs'} your signature.`}</em>
+                        </h1>
+                    </div>
 
-                            <div ref={pane} className="p-5 sm:p-7 min-h-[430px] scroll-mt-4">
-                                {intake && (
-                                    <>
-                                        <div className="flex items-start justify-between gap-5">
-                                            <div>
-                                                <div className="lw-c text-[#6E7280]">{intake.got}</div>
-                                                <h3 className="lw-s text-[32px] leading-tight mt-1.5">{intake.name}</h3>
-                                                <div className="text-[14.5px] text-[#6E7280]">{intake.type} · {intake.value}</div>
-                                            </div>
-                                            <div className="text-center shrink-0">
-                                                <div className="lw-s text-[52px] leading-none" style={{ color: scoreTone(intake.score) }}>{intake.score}</div>
-                                                <div className="lw-c mt-1" style={{ color: scoreTone(intake.score) }}>{intake.verdict}</div>
-                                            </div>
-                                        </div>
-                                        <blockquote className="lw-s italic text-[19px] leading-[1.5] text-[#3A4250] border-l-2 border-[#9A7B3F] pl-4 mt-5">&ldquo;{intake.words}&rdquo;</blockquote>
-                                        <div className="grid sm:grid-cols-2 gap-x-8 gap-y-5 mt-6">
-                                            <div>
-                                                <div className="lw-c text-[#6E7280]">Why it scored {intake.score}</div>
-                                                <ol className="mt-2 grid gap-1.5 text-[14px] leading-relaxed list-none p-0">
-                                                    {intake.reasons.map((r, i) => <li key={r} className="grid grid-cols-[18px_1fr]"><span className="lw-s italic text-[#9A7B3F]">{i + 1}.</span>{r}</li>)}
-                                                </ol>
-                                            </div>
-                                            <div>
-                                                <div className="lw-c text-[#6E7280]">Conflict check</div>
-                                                <p className={`mt-2 text-[14px] leading-relaxed ${intake.conflict.startsWith('Clear') ? '' : 'text-[#7A2331]'}`}>{intake.conflict}</p>
-                                            </div>
-                                        </div>
-                                        <div className="mt-7 pt-5 border-t border-[#EAE4D6]">
-                                            {resolved[intake.id] ? (
-                                                <div className="flex items-start gap-2 text-[14.5px] text-[#2F6B4F]"><Check size={17} className="shrink-0 mt-0.5" />{resolved[intake.id]}</div>
-                                            ) : (
-                                                <div className="flex flex-wrap gap-2.5">
-                                                    <button type="button" onClick={() => resolve(intake.id, intake.done)} className="h-10 px-5 bg-[#1B2432] text-[#FFFEFB] text-[14px] font-medium hover:bg-[#2A3546]">{intake.score < 50 ? 'Approve the referral note' : 'Approve and send the letter'}</button>
-                                                    <button type="button" onClick={() => resolve(intake.id, `Held ${intake.name} for the Monday intake meeting.`)} className="h-10 px-5 border border-[#1B2432] text-[14px] font-medium hover:bg-[#F7F4EC]">Hold for Monday</button>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </>
-                                )}
-                                {draft && (
-                                    <>
-                                        <div className="flex flex-wrap items-baseline justify-between gap-2">
-                                            <div className="lw-c text-[#6E7280]">{draft.by} · {draft.when} · {draft.pages} pages</div>
-                                            <div className="lw-c text-[#9A7B3F]">Page 1 of {draft.pages}</div>
-                                        </div>
-                                        <div className="mt-4 bg-white border border-[#EAE4D6] shadow-[0_1px_0_#EAE4D6,0_14px_30px_-22px_rgba(27,36,50,.35)] px-6 sm:px-10 py-8">
-                                            <div className="lw-s text-center text-[13px] tracking-[.18em] uppercase text-[#6E7280]">{draft.matter}</div>
-                                            <h3 className="lw-s text-center text-[25px] font-medium leading-tight mt-2">{draft.title}</h3>
-                                            <div className="w-10 h-px bg-[#9A7B3F] mx-auto my-5" />
-                                            {draft.body.map((p) => <p key={p} className="lw-s text-[17.5px] leading-[1.6] text-[#2A3340] mt-3 first:mt-0 indent-6">{p}</p>)}
-                                        </div>
-                                        <p className="mt-4 text-[14px] text-[#3A4250]"><span className="lw-c text-[#7A2331] mr-2">Note</span>{draft.flag}</p>
-                                        <div className="mt-5 pt-5 border-t border-[#EAE4D6]">
-                                            {resolved[draft.id] ? (
-                                                <div className="flex items-start gap-2 text-[14.5px] text-[#2F6B4F]"><Check size={17} className="shrink-0 mt-0.5" />{resolved[draft.id]}</div>
-                                            ) : (
-                                                <div className="flex flex-wrap gap-2.5">
-                                                    <button type="button" onClick={() => resolve(draft.id, draft.done)} className="h-10 px-5 bg-[#1B2432] text-[#FFFEFB] text-[14px] font-medium hover:bg-[#2A3546]">Approve</button>
-                                                    <button type="button" onClick={() => resolve(draft.id, `Returned “${draft.title}” to the ${draft.by} with notes.`)} className="h-10 px-5 border border-[#1B2432] text-[14px] font-medium hover:bg-[#F7F4EC]">Return with notes</button>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </>
-                                )}
+                    <section className="mt-sec mt-in" style={{ '--i': 1 } as React.CSSProperties} aria-labelledby="mt-sign-h">
+                        <div className="mt-head">
+                            <h2 id="mt-sign-h">For signature</h2>
+                            <div className="mt-meta">
+                                <span className="mt-label">{waiting === 0 ? 'Chief of staff. All clear' : `Chief of staff. ${waiting} of ${DECISIONS.length} waiting`}</span>
                             </div>
                         </div>
-                    </section>
-
-                    <section className="xl:col-span-4">
-                        <Head title="From your chief of staff" right={<span className="lw-c text-[#7A2331]">{pendingDecisions.length} held</span>} />
-                        <p className="lw-s text-[18px] leading-[1.5] text-[#3A4250] mt-4">
-                            Overnight the agents answered two enquiries, ran three conflict checks, finished one motion and read this morning&rsquo;s court notices. These three are yours to decide.
-                        </p>
-                        <ul className="mt-4 divide-y divide-[#DDD6C6] border-y border-[#DDD6C6]">
-                            {DECISIONS.map((d, i) => (
-                                <li key={d.id} className="grid grid-cols-[26px_minmax(0,1fr)] py-4">
-                                    <span className="lw-s italic text-[20px] text-[#9A7B3F] leading-tight">{i + 1}.</span>
+                        {DECISIONS.map((d, i) => {
+                            const ok = approved[d.id];
+                            return (
+                                <article key={d.id} className={`mt-sign ${ok ? 'done' : ''}`}>
+                                    <i aria-hidden="true">{ROMAN[i]}.</i>
                                     <div>
-                                        <div className={`text-[15px] font-semibold leading-snug ${resolved[d.id] ? 'text-[#6E7280]' : ''}`}>{d.title}</div>
-                                        {resolved[d.id] ? (
-                                            <div className="flex items-start gap-1.5 text-[13.5px] text-[#2F6B4F] mt-1.5"><Check size={15} className="shrink-0 mt-0.5" />{resolved[d.id]}</div>
+                                        <span className="mt-label">{d.agent}</span>
+                                        <h3>{d.title}</h3>
+                                        {ok ? (
+                                            <p className="mt-ok">
+                                                <Check size={15} strokeWidth={2.4} aria-hidden="true" />
+                                                <span>{d.done}</span>
+                                            </p>
                                         ) : (
-                                            <>
-                                                <p className="text-[13.5px] text-[#6E7280] leading-relaxed mt-1">{d.why}</p>
-                                                <div className="flex items-center gap-4 mt-2.5">
-                                                    <button type="button" onClick={() => resolve(d.id, d.done)} className="h-8 px-4 text-[13.5px] font-medium text-[#FFFEFB] hover:opacity-90" style={{ background: OX }}>Approve</button>
-                                                    <span className="lw-c text-[#9A9DA6]">{d.agent}</span>
-                                                </div>
-                                            </>
+                                            <p>{d.why}</p>
                                         )}
                                     </div>
-                                </li>
-                            ))}
-                        </ul>
+                                    <div>
+                                        {ok ? (
+                                            <span className="mt-stamp">Approved {ok}</span>
+                                        ) : (
+                                            <button type="button" className="mt-btn primary" onClick={() => approve(d.id)}>
+                                                Approve
+                                            </button>
+                                        )}
+                                    </div>
+                                </article>
+                            );
+                        })}
                     </section>
 
-                    <section id="matters" className="xl:col-span-8 scroll-mt-6">
-                        <Head title="Matters by stage" right={<span className="text-[12.5px] text-[#6E7280]">{MATTERS.length} open</span>} />
-                        <div className="grid grid-cols-3 sm:grid-cols-6 border-b border-[#DDD6C6]" role="group" aria-label="Filter matters by stage">
-                            {(['All', ...STAGES] as const).map((s) => {
-                                const n = s === 'All' ? MATTERS.length : MATTERS.filter((m) => m.stage === s).length;
-                                return (
-                                    <button key={s} type="button" onClick={() => setStage(s)} aria-pressed={stage === s} className={`text-left px-3 py-3 border-b-2 -mb-px ${stage === s ? 'border-[#7A2331] bg-[#FFFEFB]' : 'border-transparent hover:bg-[#FFFEFB]'}`}>
-                                        <span className="block lw-s text-[28px] leading-none">{n}</span>
-                                        <span className={`block text-[12.5px] mt-1 ${stage === s ? 'text-[#7A2331] font-semibold' : 'text-[#6E7280]'}`}>{s}</span>
+                    <section className="mt-sec mt-in" style={{ '--i': 2 } as React.CSSProperties} aria-labelledby="mt-room-h">
+                        <div className="mt-head">
+                            <h2 id="mt-room-h">Reading room</h2>
+                            <div className="mt-meta">
+                                <div className="mt-tabs" role="tablist" aria-label="Intake or drafts">
+                                    <button
+                                        type="button"
+                                        role="tab"
+                                        aria-selected={tab === 'intake'}
+                                        onClick={() => {
+                                            setTab('intake');
+                                            setSel(INTAKE[0].id);
+                                        }}
+                                    >
+                                        New enquiries <i>{INTAKE.length}</i>
                                     </button>
-                                );
-                            })}
+                                    <button
+                                        type="button"
+                                        role="tab"
+                                        aria-selected={tab === 'drafts'}
+                                        onClick={() => {
+                                            setTab('drafts');
+                                            setSel(DRAFTS[0].id);
+                                        }}
+                                    >
+                                        Drafts to review <i>{DRAFTS.length}</i>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                        <ul className="divide-y divide-[#EAE4D6]">
-                            {matters.map((m) => (
-                                <li key={m.name} className="grid grid-cols-[minmax(0,1fr)_auto] md:grid-cols-[minmax(0,1.2fr)_110px_minmax(0,1fr)_32px] items-baseline gap-x-5 py-2.5">
-                                    <span className="min-w-0"><span className="lw-s italic text-[18px]">{m.name}</span> <span className="text-[13px] text-[#6E7280] whitespace-nowrap">{m.type}</span></span>
-                                    <span className="lw-c text-[#9A7B3F] text-right md:text-left">{m.stage}</span>
-                                    <span className="text-[13.5px] text-[#3A4250] col-span-2 md:col-span-1">{m.next}</span>
-                                    <span className="hidden md:block lw-c text-[#6E7280] text-right">{m.lead}</span>
-                                </li>
-                            ))}
-                        </ul>
+                        <div className="mt-room" role="tabpanel">
+                            <div>
+                                {tab === 'intake'
+                                    ? INTAKE.map((it) => (
+                                          <button key={it.id} type="button" className="mt-item" aria-current={sel === it.id} aria-label={`${it.name}, ${it.type}, score ${it.score}, ${it.verdict}`} onClick={() => pick(it.id)}>
+                                              <h3>{it.name}</h3>
+                                              <small>
+                                                  {it.type}. {it.verdict}.
+                                              </small>
+                                              <small className="mt-when">{it.got}</small>
+                                              {approved[keyOf(it.id)] ? (
+                                                  <span className="mt-tick">
+                                                      <Check size={14} strokeWidth={2.4} aria-hidden="true" />
+                                                      Sent
+                                                  </span>
+                                              ) : (
+                                                  <span className="mt-score" style={{ '--v': it.score, '--tone': tone(it.score) } as React.CSSProperties}>
+                                                      <span>{it.score}</span>
+                                                  </span>
+                                              )}
+                                          </button>
+                                      ))
+                                    : DRAFTS.map((d) => (
+                                          <button key={d.id} type="button" className="mt-item" aria-current={sel === d.id} aria-label={`${d.title}, ${d.matter}`} onClick={() => pick(d.id)}>
+                                              <h3>{d.title}</h3>
+                                              <small>{d.matter}</small>
+                                              <small className="mt-when">
+                                                  {d.by} · {d.when}
+                                              </small>
+                                              {approved[d.id] ? (
+                                                  <span className="mt-tick">
+                                                      <Check size={14} strokeWidth={2.4} aria-hidden="true" />
+                                                      Approved
+                                                  </span>
+                                              ) : (
+                                                  <span className="mt-pages">{d.pages} pp</span>
+                                              )}
+                                          </button>
+                                      ))}
+                            </div>
+                            {!narrow && pane()}
+                        </div>
                     </section>
 
-                    <section id="deadlines" className="xl:col-span-4 scroll-mt-6">
-                        <Head title="Deadlines" right={<span className="text-[12.5px] text-[#6E7280]">Kept by the Docket Clerk</span>} />
-                        <ul className="divide-y divide-[#EAE4D6]">
-                            {DEADLINES.map((d) => (
-                                <li key={d.matter} className="grid grid-cols-[46px_minmax(0,1fr)_auto] gap-x-4 py-3.5 items-start">
-                                    <div className="text-center border border-[#DDD6C6] bg-[#FFFEFB] py-1">
-                                        <div className="lw-s text-[22px] leading-none">{d.day}</div>
-                                        <div className="lw-c !text-[9px] text-[#7A2331] mt-0.5">{d.mon}</div>
+                    <section className="mt-sec mt-in" style={{ '--i': 3 } as React.CSSProperties} aria-labelledby="mt-docket-h">
+                        <div className="mt-head">
+                            <h2 id="mt-docket-h">The docket</h2>
+                            <div className="mt-meta">
+                                <div className="mt-tabs" role="group" aria-label="Filter matters by stage">
+                                    <button type="button" aria-pressed={stage === 'all'} onClick={() => setStage('all')}>
+                                        All <i>{MATTERS.length}</i>
+                                    </button>
+                                    {STAGES.map((s) => (
+                                        <button key={s} type="button" aria-pressed={stage === s} onClick={() => setStage(s)}>
+                                            {s} <i>{MATTERS.filter((m) => m.stage === s).length}</i>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                        <div className="mt-row mt-rowhead mt-label" aria-hidden="true">
+                            <span>Matter</span>
+                            <span>Type</span>
+                            <span>Lead</span>
+                            <span>Stage</span>
+                            <span>Next</span>
+                        </div>
+                        {matters.map((m) => {
+                            const at = STAGES.indexOf(m.stage);
+                            return (
+                                <div className="mt-row" key={m.name}>
+                                    <h3>{m.name}</h3>
+                                    <span>{m.type}</span>
+                                    <span className="mt-lead" title={LEADS[m.lead]} aria-label={`Lead: ${LEADS[m.lead]}`}>
+                                        {m.lead}
+                                    </span>
+                                    <div className="mt-track">
+                                        <div aria-hidden="true">
+                                            {STAGES.map((s, i) => (
+                                                <i key={s} className={i <= at ? 'on' : ''} />
+                                            ))}
+                                        </div>
+                                        <small>{m.stage}</small>
                                     </div>
-                                    <div className="min-w-0">
-                                        <div className="text-[14.5px] font-semibold leading-snug"><i className="lw-s text-[17px] font-normal">{d.matter}</i>: {d.what}</div>
-                                        <div className="text-[12.5px] text-[#6E7280] mt-0.5">{d.basis}</div>
-                                    </div>
-                                    <div className="text-right">
-                                        <div className="text-[13px] font-semibold whitespace-nowrap">{d.left}</div>
-                                        <div className={`text-[12.5px] whitespace-nowrap ${d.ok ? 'text-[#2F6B4F]' : 'text-[#7A2331]'}`}>{resolved.m3 && d.matter === 'Morrow' ? 'Extension asked' : resolved.d1 && d.matter === 'Ashby' ? 'Approved to file' : d.state}</div>
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
+                                    <span>{m.name.startsWith('Morrow') && approved.m3 ? 'Extension requested. Opposition brief was due 20 Nov' : m.next}</span>
+                                </div>
+                            );
+                        })}
                     </section>
 
-                    <section id="time" className="xl:col-span-8 scroll-mt-6">
-                        <Head title="Billable hours, this week" right={<span className="text-[12.5px] text-[#6E7280]"><b className="lw-s text-[19px] font-medium text-[#1B2432]">{total.toFixed(1)}</b> of 150 hours</span>} />
-                        <ul className="divide-y divide-[#EAE4D6]">
-                            {HOURS.map((h) => {
-                                const hrs = h.h + (found ? h.found : 0);
+                    <div className="mt-pair">
+                        <section className="mt-sec mt-in" style={{ '--i': 4 } as React.CSSProperties} aria-labelledby="mt-dl-h">
+                            <div className="mt-head">
+                                <h2 id="mt-dl-h">Deadlines</h2>
+                                <div className="mt-meta">
+                                    <span className="mt-label">Next 30 days</span>
+                                </div>
+                            </div>
+                            {DEADLINES.map((d) => {
+                                const req = d.matter === 'Morrow' && approved.m3;
                                 return (
-                                    <li key={h.name} className="grid grid-cols-[minmax(0,1fr)_auto] md:grid-cols-[210px_minmax(0,1fr)_150px] items-center gap-x-6 gap-y-2 py-3.5">
-                                        <div>
-                                            <div className="text-[14.5px] font-semibold">{h.name}</div>
-                                            <div className="text-[12.5px] text-[#6E7280]">{h.role}</div>
+                                    <div className="mt-dl" key={d.matter}>
+                                        <div className="mt-dl-date">
+                                            <b>{d.day}</b>
+                                            <span>{d.mon}</span>
                                         </div>
-                                        <div className="col-span-2 md:col-span-1 md:order-none order-last relative h-[7px] bg-[#EAE4D6]" role="img" aria-label={`${hrs.toFixed(1)} of ${h.target} hours`}>
-                                            <div className="absolute inset-y-0 left-0 bg-[#1B2432]" style={{ width: `${Math.min(100, (h.h / h.target) * 100)}%` }} />
-                                            <div className="absolute inset-y-0 transition-all duration-500" style={{ left: `${(h.h / h.target) * 100}%`, width: `${Math.min(100 - (h.h / h.target) * 100, (h.found / h.target) * 100)}%`, background: found ? '#9A7B3F' : 'repeating-linear-gradient(135deg,#9A7B3F 0 2px,transparent 2px 5px)' }} />
-                                        </div>
-                                        <div className="text-right">
-                                            <span className="lw-s text-[22px]">{hrs.toFixed(1)}</span><span className="text-[12.5px] text-[#6E7280]"> / {h.target}</span>
-                                            <div className="text-[12px] text-[#9A7B3F]">{found ? `includes ${h.found} recovered` : `${h.found} found, not yet added`}</div>
-                                        </div>
-                                    </li>
+                                        <h3>
+                                            {d.matter}: {d.what}
+                                        </h3>
+                                        <small>
+                                            {d.left}. {d.basis}.
+                                        </small>
+                                        <span className={`mt-dl-state ${req ? 'req' : d.ok ? '' : 'no'}`}>
+                                            {req || d.ok ? <Check size={14} strokeWidth={2.4} aria-hidden="true" /> : <AlertTriangle size={14} aria-hidden="true" />}
+                                            {req ? 'Extension requested' : d.state}
+                                        </span>
+                                    </div>
                                 );
                             })}
-                        </ul>
-                    </section>
+                        </section>
 
-                    <section className="xl:col-span-4">
-                        <Head title="The record" right={<span className="flex items-center gap-1.5 text-[12.5px] text-[#2F6B4F]"><i className="w-1.5 h-1.5 rounded-full bg-[#2F6B4F]" />Six agents at work</span>} />
-                        <FeedList className="divide-y divide-[#EAE4D6]">
-                            {feed.slice(0, 6).map((f) => (
-                                <FeedRow key={f.key} className="py-3">
-                                    <div className="flex items-baseline justify-between gap-3">
-                                        <span className="lw-c text-[#7A2331]">{f.who}</span>
-                                        <span className="lw-s italic text-[14px] text-[#9A9DA6]">{f.time}</span>
+                        <section className="mt-sec mt-in" style={{ '--i': 5 } as React.CSSProperties} aria-labelledby="mt-hr-h">
+                            <div className="mt-head">
+                                <h2 id="mt-hr-h">Hours this week</h2>
+                                <div className="mt-meta">
+                                    <span className="mt-label">{approved.m2 ? 'Recovered hours entered' : 'Striped: found, not entered'}</span>
+                                </div>
+                            </div>
+                            {HOURS.map((h) => {
+                                const shown = approved.m2 ? h.h + h.found : h.h;
+                                return (
+                                    <div className="mt-hr" key={h.name}>
+                                        <div className="mt-hr-top">
+                                            <h3>{h.name}</h3>
+                                            <span>{h.role}</span>
+                                            <b>
+                                                {shown.toFixed(1)} <small>/ {h.target}</small>
+                                            </b>
+                                        </div>
+                                        <div className="mt-bar" role="img" aria-label={`${shown.toFixed(1)} of ${h.target} hours, ${h.found} found by the Timekeeper`}>
+                                            <i style={{ width: `${(h.h / h.target) * 100}%` }} />
+                                            <i className={`found ${approved.m2 ? 'in' : ''}`} style={{ width: `${(h.found / h.target) * 100}%` }} />
+                                        </div>
+                                        <p>
+                                            Timekeeper found <b>{h.found} h</b> with no time entry.
+                                        </p>
                                     </div>
-                                    <p className="text-[13.5px] leading-relaxed text-[#3A4250] mt-0.5">{f.text}</p>
-                                </FeedRow>
-                            ))}
-                        </FeedList>
-                    </section>
-                </div>
+                                );
+                            })}
+                        </section>
+                    </div>
+                </main>
 
-                <p className="text-[12.5px] text-[#9A9DA6] mt-14 max-w-xl">Marlowe Tennant LLP is a made-up firm. Every client, matter and number on this page is sample data.</p>
+                <section className="mt-logcol" aria-labelledby="mt-log-h">
+                  <div className="mt-logstick">
+                    <div className="mt-loghead">
+                        <h2 id="mt-log-h">Clerks&rsquo; log</h2>
+                        <span className="mt-fresh">
+                            <i className={`mt-dot ${feed.running ? 'run' : ''}`} />
+                            {feed.running ? 'Live' : feed.paused ? 'Paused' : `As of ${clockLabel(feed.now)}`}
+                        </span>
+                        <button type="button" className="mt-icon" style={{ margin: '-8px -10px -8px 0' }} aria-label={feed.paused ? 'Resume the log' : 'Pause the log'} onClick={() => feed.setPaused(!feed.paused)}>
+                            {feed.paused ? <Play size={15} /> : <Pause size={15} />}
+                        </button>
+                    </div>
+                    <ol className="mt-log" role="log" aria-live="polite" aria-label="Agent activity">
+                        <AnimatePresence initial={false}>
+                            {feedItems.slice(0, 8).map((f) => (
+                                <motion.li key={f.key} layout className={f.you ? 'you' : ''} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: 0.12 } }} transition={{ duration: 0.45, ease: [0.23, 1, 0.32, 1] }}>
+                                    <div>
+                                        <b>{f.who}</b>
+                                        <time>{f.time}</time>
+                                    </div>
+                                    <p>{f.text}</p>
+                                </motion.li>
+                            ))}
+                        </AnimatePresence>
+                    </ol>
+                  </div>
+                </section>
+
+                <footer className="mt-foot">
+                    <span>Marlowe Tennant LLP. Demo. Sample data, fictional clients and matters.</span>
+                    <GystCredit slug="law" className="mt-credit" />
+                </footer>
             </div>
-            <GystBadge slug="law" foot />
+
+            <Sheet open={narrow && sheet} onClose={closeSheet} label="Document" className="mt-sheet" scrimClassName="mt-scrim" duration={0.36}>
+                <div className="mt-sheet-close">
+                    <button type="button" aria-label="Close document" onClick={closeSheet}>
+                        <X size={18} />
+                    </button>
+                </div>
+                {pane()}
+            </Sheet>
+            <ToastHost toast={toast} clear={clear} className="mt-toast" />
         </div>
     );
 };

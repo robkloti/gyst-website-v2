@@ -1,4 +1,4 @@
-import { FeedLine } from '../shared';
+import { FeedLine } from '../kit';
 
 export type Intake = { id: string; name: string; type: string; got: string; score: number; verdict: string; words: string; reasons: string[]; conflict: string; value: string; done: string };
 export const INTAKE: Intake[] = [

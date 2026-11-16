@@ -17,10 +17,6 @@
       "destination": "/index.html"
     },
     {
-      "source": "/demos-b/:slug",
-      "destination": "/index.html"
-    },
-    {
       "source": "/find-leaks",
       "destination": "/index.html"
     },
@@ -42,6 +38,16 @@
     }
   ],
   "redirects": [
+    {
+      "source": "/demos-b",
+      "destination": "/demos",
+      "permanent": true
+    },
+    {
+      "source": "/demos-b/:slug",
+      "destination": "/demos/:slug",
+      "permanent": true
+    },
     {
       "source": "/work",
       "destination": "/#work",

@@ -33,11 +33,14 @@ const CASE_STUDIES_BY_PATH: Record<string, React.LazyExoticComponent<React.FC>> 
     '/demos/medspa': lazy(() => import('./demos/medspa/MedspaPage')),
     '/demos/agency': lazy(() => import('./demos/agency/AgencyPage')),
     '/demos/roofing': lazy(() => import('./demos/roofing/RoofingPage')),
-    '/demos-b/hvac': lazy(() => import('./demos-b/hvac/HvacBPage')),
-    '/demos-b/medspa': lazy(() => import('./demos-b/medspa/MedspaBPage')),
-    '/demos-b/roofing': lazy(() => import('./demos-b/roofing/RoofingBPage')),
-    '/demos-b/law': lazy(() => import('./demos-b/law/LawBPage')),
-    '/demos-b/agency': lazy(() => import('./demos-b/agency/AgencyBPage')),
+};
+
+// The old A/B test URLs. The B dashboards now live at /demos/<slug>.
+const demosBRedirect = () => {
+    const match = currentPath().match(/^\/demos-b(\/[a-z]+)?$/);
+    if (!match) return false;
+    window.location.replace(`/demos${match[1] ?? ''}${window.location.search}${window.location.hash}`);
+    return true;
 };
 
 const MainApp = () => {
@@ -87,7 +90,9 @@ const MainApp = () => {
 };
 
 const App = () =>
-    isSqueezeRoute() ? (
+    demosBRedirect() ? (
+        <div className="min-h-screen bg-charcoal" />
+    ) : isSqueezeRoute() ? (
         <SqueezePage />
     ) : isHvacCalculatorRoute() ? (
         <HvacCalculatorPage />

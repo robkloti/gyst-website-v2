@@ -1,123 +1,218 @@
-import React, { useState } from 'react';
-import { AlertTriangle, ArrowRight, Check, ClipboardList, CloudHail, HardHat, Home, Package, X } from 'lucide-react';
-import { Drawer, FeedList, FeedRow, GystBadge, useDemoPage, useLiveFeed } from '../shared';
-import { CLAIMS, CREWS, DECISIONS, FEED, LEADS, ORDERS, STAGES } from './data';
+import React, { useCallback, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { AlertTriangle, Check, Clock, Pause, Play, X } from 'lucide-react';
+import { CLAIMS, CREWS, Claim, DECISIONS, FEED, LEADS, ORDERS, STAGES } from './data';
+import { Count, GystCredit, Sheet, ToastHost, clockLabel, money, useDemoHead, useLiveFeed, useNarrow, useToast, withApprovals } from '../kit';
+import { CSS } from './styles';
 
-const FONTS = 'family=Red+Hat+Display:wght@600;700;900&family=Red+Hat+Text:wght@400;500;600&family=Red+Hat+Mono:wght@400;500';
-const CSS = `
-html, body { background: #E8ECEE; }
-::-webkit-scrollbar-track { background: #E8ECEE; }
-::-webkit-scrollbar-thumb { background: #B4BEC5; }
-.rf { font-family: "Red Hat Text", system-ui, sans-serif; }
-.rf-d { font-family: "Red Hat Display", system-ui, sans-serif; letter-spacing: -.02em; }
-.rf-m { font-family: "Red Hat Mono", ui-monospace, monospace; }
-.rf-card { background: #fff; border: 1px solid #D5DCE1; border-radius: 10px; }
-`;
+const FONTS = 'family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Spline+Sans+Mono:wght@400;500;600';
+const START = 8 * 60 + 42;
+const REPS = ['Cole', 'Jess', 'Priya'];
+type Shown = Claim & { cleared?: boolean };
 
-const GREEN = '#1B7F5A';
-const money = (n: number) => `$${n.toLocaleString('en-US')}`;
-const RAIL = [[Home, 'Storm desk', '#storm'], [ClipboardList, 'Claims', '#claims'], [HardHat, 'Crews', '#crews'], [Package, 'Materials', '#materials']] as const;
-const FILTERS = ['All', 'Needs attention', 'Cole', 'Jess', 'Priya'];
+const Mark = () => (
+    <svg width="30" height="22" viewBox="0 0 30 22" aria-hidden="true" fill="none">
+        <path d="M1 20 15 3l14 17" stroke="currentColor" strokeWidth="3" />
+        <path d="M8 20l7-8.5 7 8.5" stroke="var(--sig)" strokeWidth="3" />
+    </svg>
+);
 
 const RoofingPage: React.FC = () => {
-    useDemoPage('roofing', 'Slatewing Storm Desk | Demo dashboard by GYST', FONTS);
-    const [filter, setFilter] = useState('All');
-    const [openId, setOpenId] = useState<string | null>(null);
-    const [moved, setMoved] = useState<Record<string, number>>({});
-    const [approved, setApproved] = useState<string[]>([]);
-    const [feed, log] = useLiveFeed(FEED, '7:40');
+    useDemoHead('roofing', 'Slatewing Roofing - Storm Desk', FONTS, 'oklch(.945 .008 235)');
+    const narrow = useNarrow(1100);
+    const feed = useLiveFeed(FEED, START, 6, 5000);
+    const { toast, show, clear } = useToast();
 
-    const claims = CLAIMS.map((c) => ({
-        ...c,
-        stage: moved[c.id] ?? c.stage,
-        flag: (c.id === 'c1' && approved.includes('r1')) || (c.id === 'c2' && approved.includes('r2')) ? undefined : c.flag,
-        amount: c.id === 'c2' && approved.includes('r2') ? c.amount + 2318 : c.amount,
-    }));
-    const shown = claims.filter((c) => filter === 'All' || (filter === 'Needs attention' ? !!c.flag : c.rep === filter));
-    const open = claims.find((c) => c.id === openId);
-    const pending = DECISIONS.filter((d) => !approved.includes(d.id));
-    const estOut = 64 + (approved.includes('r3') ? 9 : 0);
-    const leadMax = Math.max(...LEADS.days.map((d) => d[1]));
-    const leadTotal = LEADS.days.reduce((s, d) => s + d[1], 0);
+    const [approved, setApproved] = useState<Record<string, string>>({});
+    const [anchors, setAnchors] = useState<Record<string, string>>({});
+    const [rep, setRep] = useState<string>('all');
+    const [flagged, setFlagged] = useState(false);
+    const [stageTab, setStageTab] = useState(2);
+    const [openId, setOpenId] = useState<string | null>(null);
 
     const approve = (id: string) => {
-        setApproved((a) => [...a, id]);
-        log('Tess', `Approved. ${DECISIONS.find((d) => d.id === id)!.done}`);
+        const d = DECISIONS.find((x) => x.id === id)!;
+        setApproved((a) => ({ ...a, [id]: clockLabel(feed.now) }));
+        setAnchors((a) => ({ ...a, [id]: feed.items[0].key }));
+        show(d.done, () => setApproved(({ [id]: _, ...rest }) => rest));
     };
-    const advance = (id: string) => {
-        const c = claims.find((x) => x.id === id)!;
-        setMoved((m) => ({ ...m, [id]: c.stage + 1 }));
-        log('Claims', `${c.name} moved to ${STAGES[c.stage + 1]}.`);
-    };
+    const closeSheet = useCallback(() => setOpenId(null), []);
+
+    // Approvals change the board: the rain flag clears, the supplement lands on the claim, the estimates go out.
+    const claims: Shown[] = CLAIMS.map((c) => {
+        if (c.id === 'c1' && approved.r1) return { ...c, flag: 'Moved to Tuesday', cleared: true, note: 'Tear-off moved to Tuesday with the same crew. The dumpster stays and Rosa has been texted.' };
+        if (c.id === 'c2' && approved.r2) return { ...c, amount: c.amount + 2318, flag: 'Supplement sent', cleared: true };
+        if ((c.id === 'c11' || c.id === 'c12') && approved.r3) return { ...c, flag: 'Estimate sent', cleared: true, note: c.note.replace('Estimate is in the batch waiting on you.', 'Estimate sent. Follow-up is set for 48 hours.') };
+        return c;
+    });
+    const total = claims.reduce((s, c) => s + c.amount, 0);
+    const byStage = STAGES.map((_, i) => claims.filter((c) => c.stage === i));
+    const approvedValue = claims.filter((c) => c.stage >= 3).reduce((s, c) => s + c.amount, 0);
+    const open = claims.filter((c) => c.flag && !c.cleared).length;
+    const waiting = DECISIONS.filter((d) => !approved[d.id]).length;
+    const leads = LEADS.days.reduce((s, [, n]) => s + n, 0);
+    const peak = Math.max(...LEADS.days.map(([, n]) => n));
+    const match = (c: Shown) => (rep === 'all' || c.rep === rep) && (!flagged || (!!c.flag && !c.cleared));
+    const claim = claims.find((c) => c.id === openId) ?? null;
+    const sqDone = CREWS.reduce((s, c) => s + c.done, 0);
+    const sqAll = CREWS.reduce((s, c) => s + c.of, 0);
+
+    const feedItems = withApprovals(
+        feed.items,
+        DECISIONS.filter((d) => approved[d.id]).map((d) => ({ id: d.id, who: `You + ${d.agent}`, text: d.done, time: approved[d.id], after: anchors[d.id] }))
+    );
+
+    const flagEl = (c: Shown) =>
+        c.flag && (
+            <span className={`sw-flag ${c.cleared ? 'ok' : ''}`}>
+                {c.cleared ? <Check size={12} strokeWidth={2.6} aria-hidden="true" /> : <AlertTriangle size={12} strokeWidth={2.2} aria-hidden="true" />}
+                {c.flag}
+            </span>
+        );
+
+    const card = (c: Shown) => (
+        <button
+            key={c.id}
+            type="button"
+            className={`sw-card ${!narrow && !match(c) ? 'dim' : ''}`}
+            aria-current={openId === c.id}
+            aria-label={`${c.name}, ${c.addr}, ${STAGES[c.stage]}, ${money(c.amount)}${c.flag ? `, ${c.flag}` : ''}`}
+            onClick={() => setOpenId(c.id)}
+        >
+            {flagEl(c)}
+            <b>{c.name}</b>
+            <small>{c.addr}</small>
+            <small>
+                {c.carrier} · {c.squares} sq
+            </small>
+            <span className="sw-card-row">
+                <span>
+                    {c.rep} · {c.days === 0 ? 'today' : `${c.days}d here`}
+                </span>
+                <strong>{money(c.amount)}</strong>
+            </span>
+        </button>
+    );
 
     return (
-        <div className="rf min-h-screen bg-[#E8ECEE] text-[#15222C] text-[14px] lg:pl-[68px]">
+        <div className="sw">
             <style>{CSS}</style>
-            <GystBadge slug="roofing" />
 
-            <aside className="hidden lg:flex fixed inset-y-0 left-0 w-[68px] flex-col items-center py-4 bg-[#15222C]">
-                <span className="grid place-items-center w-10 h-10 rounded-[10px] bg-[#1B7F5A] text-white" aria-label="Slatewing">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M2 13 12 4l10 9" /><path d="M6 14.5 12 9l6 5.5" /><path d="M12 15v5" /></svg>
-                </span>
-                <nav className="grid gap-2 mt-8" aria-label="Sections">
-                    {RAIL.map(([Icon, l, h], i) => (
-                        <a key={h} href={h} title={l} aria-label={l} className={`grid place-items-center w-11 h-11 rounded-[10px] ${i === 0 ? 'bg-white/12 text-white' : 'text-[#8FA0AC] hover:text-white hover:bg-white/5'}`}><Icon size={20} strokeWidth={1.8} /></a>
-                    ))}
-                </nav>
-                <span className="mt-auto grid place-items-center w-10 h-10 rounded-full bg-[#2B3B47] text-white rf-d text-[13px] font-bold">TA</span>
-            </aside>
-
-            <header className="flex items-center justify-between gap-3 px-4 sm:px-7 h-[60px] bg-white border-b border-[#D5DCE1]">
-                <div className="flex items-center gap-3 min-w-0">
-                    <span className="lg:hidden grid place-items-center w-9 h-9 rounded-[9px] bg-[#1B7F5A] text-white shrink-0"><Home size={18} /></span>
-                    <div className="min-w-0">
-                        <div className="rf-d text-[19px] font-black leading-none truncate">Slatewing<span className="hidden sm:inline"> Roofing</span></div>
-                        <div className="text-[12px] text-[#5F7180] mt-1">Storm Desk</div>
+            <header className="sw-top">
+                <div className="sw-wrap">
+                    <div className="sw-brand">
+                        <Mark />
+                        <b>Slatewing Roofing</b>
+                        <span>Storm Desk</span>
                     </div>
-                </div>
-                <div className="flex items-center gap-3">
-                    <span className="hidden md:flex items-center gap-2 text-[13px] text-[#5F7180]"><i className="w-2 h-2 rounded-full bg-[#1B7F5A]" />8 agents working</span>
-                    <span className="hidden sm:inline rf-m text-[12px] text-[#5F7180]">Fri 13 Nov · 7:40 AM</span>
-                    <span className="rf-m text-[10.5px] uppercase tracking-[.08em] text-[#5F7180] bg-[#E8ECEE] rounded-full px-2.5 py-1 whitespace-nowrap">Demo. Sample data.</span>
+                    <div className="sw-top-right">
+                        <span className="sw-demo">Demo. Sample data.</span>
+                        <span className="sw-clock">
+                            Fri<b>{clockLabel(feed.now)}</b>
+                        </span>
+                    </div>
                 </div>
             </header>
 
-            <div className="px-4 sm:px-7 py-5 max-w-[1560px] mx-auto">
-                <section id="storm" className="rounded-[14px] bg-[#15222C] text-white p-5 sm:p-7 grid grid-cols-1 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] gap-8 scroll-mt-4">
-                    <div>
-                        <div className="inline-flex items-center gap-2 rounded-full bg-[#7A5AF8]/20 text-[#C3B5FD] text-[12.5px] font-semibold px-3 py-1"><CloudHail size={15} />Hail event · Tuesday 10 Nov · stones up to 1.75 in</div>
-                        <h1 className="rf-d text-[30px] sm:text-[40px] font-black leading-[1.05] mt-4">Day three after the storm, Tess. {leadTotal} leads in and every one has been answered.</h1>
-                        <p className="text-[15.5px] leading-relaxed text-[#B8C4CD] mt-3 max-w-[620px]">1,284 roofs were in the path across three zip codes. The phone desk booked 14 inspections overnight, and four crews are on roofs today.</p>
-                        <dl className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-4 mt-6">
-                            {[[`${leadTotal}`, 'storm leads'], ['87', 'inspections booked'], ['41', 'claims filed'], ['$684K', 'signed since Tuesday']].map(([n, l]) => (
-                                <div key={l} className="border-l-2 border-[#1B7F5A] pl-3">
-                                    <dt className="rf-d text-[30px] font-black leading-none">{n}</dt>
-                                    <dd className="text-[12.5px] text-[#8FA0AC] mt-1.5">{l}</dd>
+            <div className="sw-hero">
+                <div className="sw-wrap">
+                    <div className="sw-in">
+                        <h1>
+                            Hail week, day four. <em>{waiting === 0 ? 'Nothing is waiting on you.' : `${waiting} call${waiting === 1 ? ' is' : 's are'} yours.`}</em>
+                        </h1>
+                        <p>
+                            {CLAIMS.length} claims are moving, four crews are on roofs, and {open === 0 ? 'every flag on the board is cleared.' : `${open} claims on the board carry a flag.`}
+                        </p>
+                    </div>
+                    <div className="sw-storm sw-in" style={{ '--i': 1 } as React.CSSProperties}>
+                        <span className="sw-label">Leads since Tuesday&rsquo;s hail</span>
+                        <b>{leads}</b>
+                        <div className="sw-bars" role="img" aria-label={LEADS.days.map(([d, n]) => `${d} ${n}`).join(', ')}>
+                            {LEADS.days.map(([d, n]) => (
+                                <div key={d}>
+                                    <em>{n}</em>
+                                    <i style={{ height: `${(n / peak) * 44}px` }} />
+                                    <span>{d}</span>
                                 </div>
                             ))}
-                        </dl>
+                        </div>
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 xl:border-l xl:border-white/10 xl:pl-8">
-                        <div>
-                            <div className="text-[12.5px] font-semibold text-[#8FA0AC]">Leads per day</div>
-                            <div className="flex items-end gap-3 h-[150px] mt-3" role="img" aria-label="Leads per day since the storm">
-                                {LEADS.days.map(([d, n], i) => (
-                                    <div key={d} className="flex-1 flex flex-col items-center justify-end h-full gap-1.5">
-                                        <span className="rf-m text-[12px]">{n}</span>
-                                        <span className="w-full rounded-t-[5px]" style={{ height: `${(n / leadMax) * 100}%`, background: i === 3 ? 'repeating-linear-gradient(135deg,#7A5AF8 0 5px,#6347D9 5px 10px)' : '#7A5AF8' }} />
-                                        <span className="text-[12px] text-[#8FA0AC]">{d}</span>
+                </div>
+            </div>
+
+            <div className="sw-wrap">
+                <section className="sw-sec sw-in" style={{ '--i': 2 } as React.CSSProperties} aria-labelledby="sw-mc-h">
+                    <div className="sw-head">
+                        <span className="sw-idx">01</span>
+                        <h2 id="sw-mc-h">Your calls</h2>
+                        <span className={`sw-count ${waiting === 0 ? 'zero' : ''}`} aria-label={`${waiting} decisions waiting`}>
+                            {waiting}
+                        </span>
+                        <div className="sw-meta">
+                            <span className="sw-label">{waiting === 0 ? 'All clear. The desk has it from here.' : 'Chief of staff. Drafted by the desk, waiting on a yes.'}</span>
+                        </div>
+                    </div>
+                    <div className="sw-calls">
+                        {DECISIONS.map((d) => {
+                            const ok = approved[d.id];
+                            return (
+                                <article key={d.id} className={`sw-call ${ok ? 'done' : ''}`}>
+                                    <span className="sw-label">{d.agent}</span>
+                                    <h3>{d.title}</h3>
+                                    {ok ? (
+                                        <p className="sw-ok">
+                                            <Check size={16} strokeWidth={2.6} aria-hidden="true" />
+                                            <span>
+                                                {d.done} Approved {ok}.
+                                            </span>
+                                        </p>
+                                    ) : (
+                                        <>
+                                            <p>{d.why}</p>
+                                            <div className="sw-call-foot">
+                                                <button type="button" className="sw-btn primary" onClick={() => approve(d.id)}>
+                                                    Approve
+                                                </button>
+                                            </div>
+                                        </>
+                                    )}
+                                </article>
+                            );
+                        })}
+                    </div>
+                    <div className="sw-figs">
+                        <div className="sw-fig lead">
+                            <span className="sw-label">Claims in motion</span>
+                            <div className="sw-fig-val">
+                                <Count value={total} />
+                                <small>{CLAIMS.length} roofs, three carriers</small>
+                            </div>
+                            <div className="sw-stagebar" aria-hidden="true">
+                                {STAGES.map((s, i) => (
+                                    <div key={s} style={{ flex: byStage[i].reduce((a, c) => a + c.amount, 0) }}>
+                                        <i />
+                                        <span>
+                                            0{i + 1} · {byStage[i].length}
+                                        </span>
                                     </div>
                                 ))}
                             </div>
-                            <div className="text-[12px] text-[#8FA0AC] mt-2">Friday so far, as of 7:40 AM</div>
                         </div>
-                        <div>
-                            <div className="text-[12.5px] font-semibold text-[#8FA0AC]">Where they came from</div>
-                            <ul className="grid gap-3 mt-3">
-                                {LEADS.sources.map(([s, n]) => (
-                                    <li key={s}>
-                                        <div className="flex justify-between text-[13.5px]"><span>{s}</span><span className="rf-m">{n}</span></div>
-                                        <div className="h-1.5 rounded-full bg-white/10 mt-1.5"><div className="h-full rounded-full bg-[#3FBF8F]" style={{ width: `${(n / 71) * 100}%` }} /></div>
+                        <div className="sw-fig">
+                            <span className="sw-label">Approved by carriers</span>
+                            <div className="sw-fig-val">
+                                <Count value={approvedValue} />
+                            </div>
+                            <p>Four roofs approved, two of them already on the build calendar.</p>
+                        </div>
+                        <div className="sw-fig">
+                            <span className="sw-label">Where the leads came from</span>
+                            <ul className="sw-src">
+                                {LEADS.sources.map(([name, n]) => (
+                                    <li key={name}>
+                                        <span>{name}</span>
+                                        <i style={{ '--v': (n / LEADS.sources[0][1]) * 100 } as React.CSSProperties} />
+                                        <b>{n}</b>
                                     </li>
                                 ))}
                             </ul>
@@ -125,184 +220,191 @@ const RoofingPage: React.FC = () => {
                     </div>
                 </section>
 
-                <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_350px] gap-4 mt-4 items-start">
-                    <section id="claims" className="min-w-0 scroll-mt-4">
-                        <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
-                            <h2 className="rf-d text-[22px] font-black">Insurance claims by stage</h2>
-                            <div className="flex flex-wrap gap-1.5" role="group" aria-label="Filter claims">
-                                {FILTERS.map((f) => (
-                                    <button key={f} type="button" onClick={() => setFilter(f)} aria-pressed={filter === f} className={`h-8 px-3 rounded-full text-[13px] font-medium border ${filter === f ? 'bg-[#15222C] border-[#15222C] text-white' : 'bg-white border-[#D5DCE1] text-[#3D4E5B] hover:border-[#9AA9B4]'}`}>
-                                        {f}{f === 'Needs attention' && <span className="rf-m ml-1.5 text-[11px] opacity-70">{claims.filter((c) => c.flag).length}</span>}
+                <section className="sw-sec sw-in" style={{ '--i': 3 } as React.CSSProperties} aria-labelledby="sw-board-h">
+                    <div className="sw-head">
+                        <span className="sw-idx">02</span>
+                        <h2 id="sw-board-h">Claim board</h2>
+                        <div className="sw-meta">
+                            <div className="sw-chips" role="group" aria-label="Filter by rep">
+                                <button type="button" aria-pressed={rep === 'all'} onClick={() => setRep('all')}>
+                                    All reps
+                                </button>
+                                {REPS.map((r) => (
+                                    <button key={r} type="button" aria-pressed={rep === r} onClick={() => setRep(r)}>
+                                        {r} <i>{CLAIMS.filter((c) => c.rep === r).length}</i>
+                                    </button>
+                                ))}
+                                <button type="button" aria-pressed={flagged} onClick={() => setFlagged(!flagged)}>
+                                    <AlertTriangle size={13} aria-hidden="true" />
+                                    Flagged <i>{open}</i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {narrow ? (
+                        <>
+                            <div className="sw-chips" role="tablist" aria-label="Stage" style={{ paddingTop: 12 }}>
+                                {STAGES.map((s, i) => (
+                                    <button key={s} type="button" role="tab" aria-selected={stageTab === i} onClick={() => setStageTab(i)}>
+                                        {s} <i>{byStage[i].filter(match).length}</i>
                                     </button>
                                 ))}
                             </div>
+                            <div className="sw-board" role="tabpanel">
+                                <div>
+                                    {byStage[stageTab].filter(match).map(card)}
+                                    {byStage[stageTab].filter(match).length === 0 && <p className="sw-col-empty">No claims at this stage match the filter.</p>}
+                                </div>
+                            </div>
+                        </>
+                    ) : (
+                        <div className="sw-board">
+                            {STAGES.map((s, i) => (
+                                <div key={s}>
+                                    <div className="sw-col-head">
+                                        <span>0{i + 1}</span>
+                                        <b>{s}</b>
+                                        <em>{money(byStage[i].reduce((a, c) => a + c.amount, 0))}</em>
+                                    </div>
+                                    {byStage[i].map(card)}
+                                </div>
+                            ))}
                         </div>
-                        <div className="overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
-                            <div className="grid grid-cols-[repeat(5,minmax(176px,1fr))] gap-3 min-w-max xl:min-w-0">
-                                {STAGES.map((s, i) => {
-                                    const col = shown.filter((c) => c.stage === i);
-                                    return (
-                                        <div key={s} className="rounded-[12px] bg-[#DCE2E6] p-2">
-                                            <div className="px-1.5 pt-1 pb-2">
-                                                <span className="block rf-d text-[14px] font-bold leading-tight">{s}</span>
-                                                <span className="rf-m text-[11.5px] text-[#5F7180]">{col.length ? `${col.length} · $${(col.reduce((t, c) => t + c.amount, 0) / 1000).toFixed(1)}K` : 'None'}</span>
-                                            </div>
-                                            <div className="grid gap-2">
-                                                {col.map((c) => (
-                                                    <button key={c.id} type="button" onClick={() => setOpenId(c.id)} className="rf-card text-left p-3 hover:border-[#1B7F5A] hover:shadow-[0_6px_14px_-8px_rgba(21,34,44,.4)] transition-shadow">
-                                                        <div className="flex items-start justify-between gap-2">
-                                                            <span className="text-[14.5px] font-semibold leading-tight">{c.name}</span>
-                                                            <span className="grid place-items-center w-6 h-6 rounded-full bg-[#E8ECEE] rf-d text-[10.5px] font-bold shrink-0" title={`Rep: ${c.rep}`}>{c.rep[0]}</span>
-                                                        </div>
-                                                        <div className="text-[12.5px] text-[#5F7180] mt-0.5">{c.addr}</div>
-                                                        <div className="text-[12px] text-[#5F7180]">{c.carrier}</div>
-                                                        <div className="flex items-center justify-between gap-2 mt-2">
-                                                            <span className="rf-m text-[13px] font-medium">{money(c.amount)}</span>
-                                                            <span className="rf-m text-[11.5px] text-[#5F7180]">{c.squares} sq</span>
-                                                        </div>
-                                                        {c.flag && <div className="flex items-center gap-1.5 mt-2.5 rounded-[6px] bg-[#FDECE7] text-[#B23A1E] text-[12px] font-semibold px-2 py-1"><AlertTriangle size={12} className="shrink-0" />{c.flag}</div>}
-                                                    </button>
-                                                ))}
-                                                {col.length === 0 && <div className="rounded-[10px] border border-dashed border-[#B4BEC5] text-[12.5px] text-[#5F7180] text-center py-5">None for this filter</div>}
-                                            </div>
-                                        </div>
-                                    );
-                                })}
+                    )}
+                </section>
+
+                <div className="sw-lower">
+                    <section className="sw-sec sw-in" style={{ '--i': 4 } as React.CSSProperties} aria-labelledby="sw-crew-h">
+                        <div className="sw-head">
+                            <span className="sw-idx">03</span>
+                            <h2 id="sw-crew-h">Crews</h2>
+                            <div className="sw-meta">
+                                <span className="sw-label">
+                                    {sqDone} of {sqAll} squares
+                                </span>
                             </div>
                         </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-4 mt-3">
-                            <section id="crews" className="rf-card p-5 scroll-mt-4">
-                                <h2 className="rf-d text-[18px] font-black">Crews on roofs today</h2>
-                                <ul className="grid gap-4 mt-4">
-                                    {CREWS.map((c) => (
-                                        <li key={c.name}>
-                                            <div className="flex items-baseline justify-between gap-2">
-                                                <span className="text-[14.5px] font-semibold">{c.name} <span className="font-normal text-[#5F7180]">· {c.job}</span></span>
-                                                <span className="rf-m text-[12px] text-[#5F7180] whitespace-nowrap">{c.done}/{c.of} sq</span>
-                                            </div>
-                                            <div className="h-2 rounded-full bg-[#E8ECEE] mt-2"><div className="h-full rounded-full" style={{ width: `${(c.done / c.of) * 100}%`, background: GREEN }} /></div>
-                                            <div className="text-[12.5px] text-[#5F7180] mt-1.5">{c.lead} · {c.task}</div>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </section>
-
-                            <section id="materials" className="rf-card p-5 scroll-mt-4">
-                                <h2 className="rf-d text-[18px] font-black">Material orders</h2>
-                                <ul className="mt-2 divide-y divide-[#E8ECEE]">
-                                    {ORDERS.map((o) => (
-                                        <li key={o.what} className="py-2.5">
-                                            <div className="text-[14px] font-medium leading-snug">{o.what}</div>
-                                            <div className="flex items-center justify-between gap-3 mt-0.5 text-[12.5px]">
-                                                <span className="text-[#5F7180]">{o.job}</span>
-                                                <span className={`text-right font-medium ${o.tone === 'ok' ? 'text-[#1B7F5A]' : o.tone === 'bad' ? 'text-[#B23A1E]' : 'text-[#5F7180]'}`}>{o.state}</span>
-                                            </div>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </section>
-
-                            <section className="rf-card p-5 md:col-span-2 2xl:col-span-1">
-                                <h2 className="rf-d text-[18px] font-black">Estimates out vs. signed</h2>
-                                <div className="grid gap-3 mt-4">
-                                    {[['Sent', estOut, estOut, '$1.42M', '#B4BEC5'], ['Opened', 51, estOut, `${Math.round((51 / estOut) * 100)}%`, '#7A5AF8'], ['Signed', 23, estOut, '$684,300', GREEN]].map(([l, n, of, s, c]) => (
-                                        <div key={l as string} className="grid grid-cols-[62px_minmax(0,1fr)] items-center gap-3">
-                                            <span className="text-[13.5px] text-[#5F7180]">{l}</span>
-                                            <div className="relative h-9 rounded-[7px] bg-[#F1F4F5] overflow-hidden">
-                                                <div className="absolute inset-y-0 left-0 rounded-[7px] transition-all duration-500" style={{ width: `${((n as number) / (of as number)) * 100}%`, background: c as string }} />
-                                                <div className="absolute inset-0 flex items-center justify-between px-3"><span className="rf-d text-[17px] font-black" style={{ color: l === 'Sent' ? '#15222C' : '#fff' }}>{n}</span><span className="rf-m text-[11.5px] text-[#3D4E5B]">{s}</span></div>
-                                            </div>
-                                        </div>
-                                    ))}
+                        {CREWS.map((c) => (
+                            <div className="sw-crew" key={c.name}>
+                                <div className="sw-crew-top">
+                                    <b>{c.name}</b>
+                                    <span>
+                                        {c.lead} · {c.job}
+                                    </span>
+                                    <em>
+                                        {c.done}/{c.of}
+                                    </em>
                                 </div>
-                                <p className="text-[12.5px] text-[#5F7180] mt-4">Homeowners sign 2.6 days after the estimate on average. Follow-up texts go out at 48 hours.</p>
-                            </section>
-                        </div>
+                                <p>{c.task}</p>
+                                <div className={`sw-meter ${c.done === c.of ? 'full' : ''}`} role="img" aria-label={`${c.done} of ${c.of} squares`}>
+                                    <i style={{ '--v': (c.done / c.of) * 100 } as React.CSSProperties} />
+                                </div>
+                            </div>
+                        ))}
                     </section>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 gap-4 items-start order-first xl:order-none">
-                        <section className="rf-card overflow-hidden">
-                            <div className="flex items-center justify-between px-5 h-12 bg-[#1B7F5A] text-white">
-                                <h2 className="rf-d text-[16px] font-bold">Mission Control</h2>
-                                <span className="rf-m text-[11.5px] bg-white/20 rounded-full px-2.5 py-0.5">{pending.length} waiting on you</span>
+                    <section className="sw-sec sw-in" style={{ '--i': 5 } as React.CSSProperties} aria-labelledby="sw-ord-h">
+                        <div className="sw-head">
+                            <span className="sw-idx">04</span>
+                            <h2 id="sw-ord-h">Materials</h2>
+                            <div className="sw-meta">
+                                <span className="sw-label">1 backordered</span>
                             </div>
-                            <p className="px-5 pt-4 text-[14px] leading-relaxed text-[#3D4E5B]">Overnight the agents answered 23 calls, filed 4 claims, measured 9 roofs from drone photos and caught one short-paid estimate.</p>
-                            <ul className="divide-y divide-[#E8ECEE] mt-2">
-                                {DECISIONS.map((d) => {
-                                    const ok = approved.includes(d.id);
-                                    return (
-                                        <li key={d.id} className="px-5 py-4">
-                                            <div className="rf-m text-[11px] uppercase tracking-[.08em] text-[#5F7180]">{d.agent}</div>
-                                            <div className={`text-[15px] font-semibold leading-snug mt-1 ${ok ? 'text-[#5F7180]' : ''}`}>{d.title}</div>
-                                            {ok ? (
-                                                <div className="flex items-start gap-1.5 text-[13px] text-[#1B7F5A] font-medium mt-1.5"><Check size={15} className="shrink-0 mt-0.5" />{d.done}</div>
-                                            ) : (
-                                                <>
-                                                    <p className="text-[13px] text-[#5F7180] leading-relaxed mt-1">{d.why}</p>
-                                                    <button type="button" onClick={() => approve(d.id)} className="mt-3 h-9 px-5 rounded-[8px] bg-[#15222C] text-white text-[13.5px] font-semibold hover:bg-[#1B7F5A]">Approve</button>
-                                                </>
-                                            )}
-                                        </li>
-                                    );
-                                })}
-                            </ul>
-                        </section>
-
-                        <section className="rf-card p-5">
-                            <div className="flex items-center justify-between">
-                                <h2 className="rf-d text-[16px] font-bold">Agent activity</h2>
-                                <span className="flex items-center gap-1.5 rf-m text-[11.5px] text-[#1B7F5A]"><i className="w-1.5 h-1.5 rounded-full bg-[#1B7F5A]" />Live</span>
-                            </div>
-                            <FeedList className="mt-2 divide-y divide-[#E8ECEE]">
-                                {feed.slice(0, 6).map((f) => (
-                                    <FeedRow key={f.key} className="py-2.5">
-                                        <div className="flex justify-between gap-2 rf-m text-[11.5px]"><span className="font-medium text-[#7A5AF8]">{f.who}</span><span className="text-[#8FA0AC]">{f.time}</span></div>
-                                        <p className="text-[13.5px] leading-snug mt-0.5">{f.text}</p>
-                                    </FeedRow>
-                                ))}
-                            </FeedList>
-                        </section>
-                    </div>
-                </div>
-            </div>
-
-            <Drawer open={!!open} onClose={() => setOpenId(null)} label="Claim detail" scrim="rgba(21,34,44,.45)" className="rf bg-white text-[#15222C]">
-                {open && (
-                    <div className="p-6">
-                        <div className="flex items-start justify-between gap-3">
-                            <div>
-                                <div className="rf-m text-[11.5px] uppercase tracking-[.08em] text-[#5F7180]">{open.carrier} · rep {open.rep}</div>
-                                <h3 className="rf-d text-[28px] font-black leading-tight mt-1">{open.name}</h3>
-                                <div className="text-[14px] text-[#5F7180]">{open.addr}</div>
-                            </div>
-                            <button type="button" onClick={() => setOpenId(null)} aria-label="Close" className="grid place-items-center w-9 h-9 rounded-[8px] border border-[#D5DCE1] text-[#5F7180] hover:text-[#15222C]"><X size={16} /></button>
                         </div>
-                        <ol className="grid grid-cols-5 gap-1 mt-6">
-                            {STAGES.map((s, i) => (
-                                <li key={s}>
-                                    <div className="h-1.5 rounded-full" style={{ background: i <= open.stage ? GREEN : '#E8ECEE' }} />
-                                    <div className={`text-[11px] leading-tight mt-1.5 ${i === open.stage ? 'font-semibold' : 'text-[#8FA0AC]'}`}>{s}</div>
+                        <ul>
+                            {ORDERS.map((o) => (
+                                <li key={o.what} className={`sw-order ${o.tone}`}>
+                                    {o.tone === 'ok' ? <Check size={14} strokeWidth={2.6} aria-hidden="true" /> : o.tone === 'wait' ? <Clock size={14} aria-hidden="true" /> : <AlertTriangle size={14} aria-hidden="true" />}
+                                    <h3>{o.what}</h3>
+                                    <p>
+                                        {o.job}. <b>{o.state}.</b>
+                                    </p>
                                 </li>
                             ))}
-                        </ol>
-                        <div className="grid grid-cols-3 gap-3 mt-6">
-                            {[['Claim', money(open.amount)], ['Roof', `${open.squares} squares`], ['In stage', open.days ? `${open.days} day${open.days > 1 ? 's' : ''}` : 'Today']].map(([l, v]) => (
-                                <div key={l} className="rounded-[10px] bg-[#F1F4F5] p-3"><div className="text-[11.5px] text-[#5F7180]">{l}</div><div className="rf-d text-[17px] font-bold mt-0.5">{v}</div></div>
-                            ))}
+                        </ul>
+                    </section>
+
+                    <section className="sw-sec sw-feed sw-in" style={{ '--i': 6 } as React.CSSProperties} aria-labelledby="sw-feed-h">
+                        <div className="sw-head">
+                            <span className="sw-idx">05</span>
+                            <h2 id="sw-feed-h">Desk log</h2>
+                            <div className="sw-meta">
+                                <span className="sw-fresh">
+                                    <i className={`sw-dot ${feed.running ? 'run' : ''}`} />
+                                    {feed.running ? 'Live' : feed.paused ? 'Paused' : `As of ${clockLabel(feed.now)}`}
+                                </span>
+                                <button type="button" className="sw-icon" style={{ margin: '-8px -8px -8px 0' }} aria-label={feed.paused ? 'Resume the log' : 'Pause the log'} onClick={() => feed.setPaused(!feed.paused)}>
+                                    {feed.paused ? <Play size={15} /> : <Pause size={15} />}
+                                </button>
+                            </div>
                         </div>
-                        {open.flag && <div className="flex items-center gap-2 mt-4 rounded-[8px] bg-[#FDECE7] text-[#B23A1E] text-[13.5px] font-semibold px-3 py-2"><AlertTriangle size={15} />{open.flag}</div>}
-                        <div className="rf-m text-[11px] uppercase tracking-[.08em] text-[#5F7180] mt-6">Where it stands</div>
-                        <p className="text-[14.5px] leading-relaxed mt-1.5">{open.note}</p>
-                        {open.stage < 4 ? (
-                            <button type="button" onClick={() => advance(open.id)} className="w-full h-11 mt-7 rounded-[8px] bg-[#1B7F5A] text-white text-[14px] font-semibold hover:bg-[#166B4B] flex items-center justify-center gap-2">Move to {STAGES[open.stage + 1]}<ArrowRight size={16} /></button>
-                        ) : (
-                            <div className="h-11 mt-7 rounded-[8px] bg-[#E3F3EC] text-[#1B7F5A] text-[14px] font-semibold flex items-center justify-center gap-2"><Check size={16} />On the build calendar</div>
-                        )}
-                    </div>
+                        <ol role="log" aria-live="polite" aria-label="Agent activity">
+                            <AnimatePresence initial={false}>
+                                {feedItems.slice(0, 8).map((f) => (
+                                    <motion.li key={f.key} layout className={f.you ? 'you' : ''} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: 0.1 } }} transition={{ duration: 0.28, ease: [0.19, 1, 0.22, 1] }}>
+                                        <div>
+                                            <b>{f.who}</b>
+                                            <time>{f.time}</time>
+                                        </div>
+                                        <p>{f.text}</p>
+                                    </motion.li>
+                                ))}
+                            </AnimatePresence>
+                        </ol>
+                    </section>
+                </div>
+
+                <footer className="sw-foot">
+                    <span>Slatewing Roofing. Demo. Sample data, fictional homeowners and carriers.</span>
+                    <GystCredit slug="roofing" className="sw-credit" />
+                </footer>
+            </div>
+
+            <Sheet open={!!claim} onClose={closeSheet} label={claim ? `Claim, ${claim.name}` : 'Claim'} className="sw-sheet" scrimClassName="sw-scrim" duration={0.26}>
+                {claim && (
+                    <>
+                        <div className="sw-sheet-head">
+                            <span className="sw-label">Claim file · {claim.carrier}</span>
+                            <button type="button" className="sw-icon" aria-label="Close claim" onClick={closeSheet}>
+                                <X size={18} />
+                            </button>
+                        </div>
+                        <div className="sw-sheet-body">
+                            {flagEl(claim)}
+                            <h2>{claim.name}</h2>
+                            <p style={{ color: 'var(--text-2)', fontSize: 16 }}>{claim.addr}</p>
+                            <ol className="sw-steps" aria-label={`Stage ${claim.stage + 1} of 5, ${STAGES[claim.stage]}`}>
+                                {STAGES.map((s, i) => (
+                                    <li key={s} className={i < claim.stage ? 'on' : i === claim.stage ? 'now' : ''}>
+                                        {s}
+                                    </li>
+                                ))}
+                            </ol>
+                            <dl className="sw-facts">
+                                <div>
+                                    <dt>Claim value</dt>
+                                    <dd className="sw-num">{money(claim.amount)}</dd>
+                                </div>
+                                <div>
+                                    <dt>Roof size</dt>
+                                    <dd>{claim.squares} squares</dd>
+                                </div>
+                                <div>
+                                    <dt>Rep</dt>
+                                    <dd>{claim.rep}</dd>
+                                </div>
+                                <div>
+                                    <dt>At this stage</dt>
+                                    <dd>{claim.days === 0 ? 'Since today' : `${claim.days} day${claim.days === 1 ? '' : 's'}`}</dd>
+                                </div>
+                            </dl>
+                            <span className="sw-label">Where it stands</span>
+                            <p className="sw-note">{claim.note}</p>
+                        </div>
+                    </>
                 )}
-            </Drawer>
-            <GystBadge slug="roofing" foot />
+            </Sheet>
+            <ToastHost toast={toast} clear={clear} className="sw-toast" />
         </div>
     );
 };

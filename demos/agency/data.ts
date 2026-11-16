@@ -1,4 +1,4 @@
-import { FeedLine } from '../shared';
+import { FeedLine } from '../kit';
 
 export type Client = { id: string; name: string; what: string; retainer: number; health: 'Thriving' | 'Steady' | 'Watch'; spend: number; back: number; note: string };
 export const CLIENTS: Client[] = [
