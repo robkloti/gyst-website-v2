@@ -16,6 +16,12 @@ export const NIGHT_LOG: { time: string; who: string; text: string }[] = [
     { time: '7:00 AM', who: 'Morning report', text: 'One emergency booked overnight. One April quote said yes.' },
 ];
 
+export const TRADES_ORBIT = {
+    eyebrow: 'See it running',
+    title: 'Open a shop like yours.',
+    sub: 'Copperjack is a made-up heating and air shop with a working dispatch board. Open it and press the buttons. The others are the same idea for other kinds of business, and four are real builds.',
+};
+
 export const LEAKS: { title: string; pain: string; fix: string }[] = [
     {
         title: 'The 9pm call',
@@ -70,7 +76,7 @@ export const PROOF: { tag: string; title: string; line: string; cta: string; hre
         line: 'A made-up HVAC shop with a working dashboard: calls, bookings, quotes chased. Every number in it is sample data.',
         cta: 'Open the demo',
         href: '/demos/hvac',
-        image: '/trades/copperjack-demo.jpg',
+        image: '/demo-shots/hvac.jpg',
         alt: 'The Copperjack Dispatch demo dashboard, showing sample data',
     },
     {
