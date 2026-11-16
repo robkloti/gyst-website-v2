@@ -13,6 +13,14 @@
       "destination": "/index.html"
     },
     {
+      "source": "/demos",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/demos/:slug",
+      "destination": "/index.html"
+    },
+    {
       "source": "/find-leaks",
       "destination": "/index.html"
     },
@@ -38,6 +46,16 @@
       "source": "/hvac",
       "destination": "/trades",
       "permanent": false
+    },
+    {
+      "source": "/demos-b",
+      "destination": "/demos",
+      "permanent": true
+    },
+    {
+      "source": "/demos-b/:slug",
+      "destination": "/demos/:slug",
+      "permanent": true
     },
     {
       "source": "/work",

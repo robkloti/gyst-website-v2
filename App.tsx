@@ -6,6 +6,7 @@ import { LoopVisualizer } from './components/visuals/LoopVisualizer';
 import { HeroSection } from './components/sections/Hero';
 import { HowItWorks } from './components/sections/HowItWorks';
 import { WorkGrid } from './components/sections/WorkGrid';
+import { DemoOrbit } from './components/sections/DemoOrbit';
 import { Rooms } from './components/sections/Rooms';
 import { Offer } from './components/sections/Offer';
 import { Faq } from './components/sections/Faq';
@@ -27,6 +28,20 @@ const CASE_STUDIES_BY_PATH: Record<string, React.LazyExoticComponent<React.FC>> 
     '/work/caelum': lazy(() => import('./work/caelum/CaelumCaseStudy')),
     '/hq': lazy(() => import('./hq/HQPage')),
     '/trades': lazy(() => import('./trades/TradesPage')),
+    '/demos': lazy(() => import('./demos/DemosIndex')),
+    '/demos/hvac': lazy(() => import('./demos/hvac/HvacPage')),
+    '/demos/law': lazy(() => import('./demos/law/LawPage')),
+    '/demos/medspa': lazy(() => import('./demos/medspa/MedspaPage')),
+    '/demos/agency': lazy(() => import('./demos/agency/AgencyPage')),
+    '/demos/roofing': lazy(() => import('./demos/roofing/RoofingPage')),
+};
+
+// The old A/B test URLs. The B dashboards now live at /demos/<slug>.
+const demosBRedirect = () => {
+    const match = currentPath().match(/^\/demos-b(\/[a-z]+)?$/);
+    if (!match) return false;
+    window.location.replace(`/demos${match[1] ?? ''}${window.location.search}${window.location.hash}`);
+    return true;
 };
 
 const MainApp = () => {
@@ -61,6 +76,7 @@ const MainApp = () => {
                     <HeroSection onInView={setActiveSection} />
                     <HowItWorks onInView={setActiveSection} />
                     <WorkGrid onInView={setActiveSection} />
+                    <DemoOrbit />
                     <Rooms />
                     <Offer onInView={setActiveSection} />
                     <Faq onInView={setActiveSection} />
@@ -75,7 +91,9 @@ const MainApp = () => {
 };
 
 const App = () =>
-    isSqueezeRoute() ? (
+    demosBRedirect() ? (
+        <div className="min-h-screen bg-charcoal" />
+    ) : isSqueezeRoute() ? (
         <SqueezePage />
     ) : isHvacCalculatorRoute() ? (
         <HvacCalculatorPage />
