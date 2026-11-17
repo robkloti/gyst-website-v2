@@ -6,6 +6,7 @@ import { LoopVisualizer } from './components/visuals/LoopVisualizer';
 import { HeroSection } from './components/sections/Hero';
 import { HowItWorks } from './components/sections/HowItWorks';
 import { WorkGrid } from './components/sections/WorkGrid';
+import { DemoOrbit } from './components/sections/DemoOrbit';
 import { Rooms } from './components/sections/Rooms';
 import { Offer } from './components/sections/Offer';
 import { Faq } from './components/sections/Faq';
@@ -26,6 +27,12 @@ const CASE_STUDIES_BY_PATH: Record<string, React.LazyExoticComponent<React.FC>> 
     '/work/shang': lazy(() => import('./work/shang/ShangCaseStudy')),
     '/work/caelum': lazy(() => import('./work/caelum/CaelumCaseStudy')),
     '/hq': lazy(() => import('./hq/HQPage')),
+    '/demos': lazy(() => import('./demos/DemosIndex')),
+    '/demos/hvac': lazy(() => import('./demos/hvac/HvacPage')),
+    '/demos/law': lazy(() => import('./demos/law/LawPage')),
+    '/demos/medspa': lazy(() => import('./demos/medspa/MedspaPage')),
+    '/demos/agency': lazy(() => import('./demos/agency/AgencyPage')),
+    '/demos/roofing': lazy(() => import('./demos/roofing/RoofingPage')),
 };
 
 const MainApp = () => {
@@ -60,6 +67,7 @@ const MainApp = () => {
                     <HeroSection onInView={setActiveSection} />
                     <HowItWorks onInView={setActiveSection} />
                     <WorkGrid onInView={setActiveSection} />
+                    <DemoOrbit />
                     <Rooms />
                     <Offer onInView={setActiveSection} />
                     <Faq onInView={setActiveSection} />
