@@ -2,10 +2,11 @@ import React, { Suspense, lazy, useCallback, useMemo, useState } from 'react';
 import { SectionId, VerticalKey } from './types';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
-import { LoopVisualizer } from './components/visuals/LoopVisualizer';
+import { Grain, RingBackdrop } from './components/layout/Backdrop';
 import { HeroSection } from './components/sections/Hero';
 import { HowItWorks } from './components/sections/HowItWorks';
 import { WorkGrid } from './components/sections/WorkGrid';
+import { DemoOrbit } from './components/sections/DemoOrbit';
 import { Rooms } from './components/sections/Rooms';
 import { Offer } from './components/sections/Offer';
 import { Faq } from './components/sections/Faq';
@@ -26,6 +27,21 @@ const CASE_STUDIES_BY_PATH: Record<string, React.LazyExoticComponent<React.FC>> 
     '/work/shang': lazy(() => import('./work/shang/ShangCaseStudy')),
     '/work/caelum': lazy(() => import('./work/caelum/CaelumCaseStudy')),
     '/hq': lazy(() => import('./hq/HQPage')),
+    '/trades': lazy(() => import('./trades/TradesPage')),
+    '/demos': lazy(() => import('./demos/DemosIndex')),
+    '/demos/hvac': lazy(() => import('./demos/hvac/HvacPage')),
+    '/demos/law': lazy(() => import('./demos/law/LawPage')),
+    '/demos/medspa': lazy(() => import('./demos/medspa/MedspaPage')),
+    '/demos/agency': lazy(() => import('./demos/agency/AgencyPage')),
+    '/demos/roofing': lazy(() => import('./demos/roofing/RoofingPage')),
+};
+
+// The old A/B test URLs. The B dashboards now live at /demos/<slug>.
+const demosBRedirect = () => {
+    const match = currentPath().match(/^\/demos-b(\/[a-z]+)?$/);
+    if (!match) return false;
+    window.location.replace(`/demos${match[1] ?? ''}${window.location.search}${window.location.hash}`);
+    return true;
 };
 
 const MainApp = () => {
@@ -49,32 +65,29 @@ const MainApp = () => {
             <div className="min-h-screen w-full bg-charcoal text-paper selection:bg-hazard/30 selection:text-hazard overflow-x-hidden font-sans">
                 <Navbar />
 
-                {/* Fixed ring background */}
-                <div className="fixed inset-0 z-0 flex items-center justify-center pointer-events-none">
-                    <div className="w-full h-full max-w-[800px] max-h-[800px] opacity-[0.15] lg:opacity-100 lg:translate-x-[25%] transition-all duration-700">
-                        <LoopVisualizer activeSection={activeSection} />
-                    </div>
-                </div>
+                <RingBackdrop activeSection={activeSection} />
 
                 <main className="relative z-10 flex flex-col w-full">
                     <HeroSection onInView={setActiveSection} />
                     <HowItWorks onInView={setActiveSection} />
                     <WorkGrid onInView={setActiveSection} />
+                    <DemoOrbit />
                     <Rooms />
                     <Offer onInView={setActiveSection} />
                     <Faq onInView={setActiveSection} />
                     <Footer />
                 </main>
 
-                {/* Noise grain overlay */}
-                <div className="fixed inset-0 z-[100] pointer-events-none opacity-[0.03] mix-blend-overlay" style={{ backgroundImage: 'url("/noise.svg")' }}></div>
+                <Grain />
             </div>
         </VerticalContext.Provider>
     );
 };
 
 const App = () =>
-    isSqueezeRoute() ? (
+    demosBRedirect() ? (
+        <div className="min-h-screen bg-charcoal" />
+    ) : isSqueezeRoute() ? (
         <SqueezePage />
     ) : isHvacCalculatorRoute() ? (
         <HvacCalculatorPage />

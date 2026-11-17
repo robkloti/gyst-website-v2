@@ -27,8 +27,8 @@ export const Wordmark: React.FC<{ size?: number }> = ({ size = 22 }) => (
 );
 
 // Descriptor is .115em of the wordmark; spec says drop it (compact) when it would fall under ~8px.
-export const Lockup: React.FC<{ size?: number }> = ({ size = 28 }) => (
-    <a href="/" aria-label="GYST - Automated Systems" className="inline-flex items-end no-underline" style={{ fontSize: size, lineHeight: 0.82 }}>
+export const Lockup: React.FC<{ size?: number; href?: string }> = ({ size = 28, href = '/' }) => (
+    <a href={href} aria-label="GYST - Automated Systems" className="inline-flex items-end no-underline" style={{ fontSize: size, lineHeight: 0.82 }}>
         <span className="font-anton text-paper flex items-end" style={{ letterSpacing: '.005em', gap: '.145em', lineHeight: 0.82 }}>
             GYST
             <Device size={size * 0.22} className="text-hazard shrink-0" />
