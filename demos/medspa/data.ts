@@ -1,4 +1,4 @@
-import { FeedLine } from '../shared';
+import { FeedLine } from '../kit';
 
 export const PROVIDERS = [
     { name: 'Dr. Elena Marsh', role: 'Injector', soft: '#F8E4DF', ink: '#A65F56' },

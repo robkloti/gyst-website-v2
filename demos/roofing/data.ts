@@ -1,4 +1,4 @@
-import { FeedLine } from '../shared';
+import { FeedLine } from '../kit';
 
 export const STAGES = ['Inspected', 'Claim filed', 'Adjuster meeting', 'Approved', 'Build scheduled'];
 export type Claim = { id: string; name: string; addr: string; carrier: string; amount: number; stage: number; days: number; rep: string; squares: number; flag?: string; note: string };

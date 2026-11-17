@@ -35,6 +35,14 @@ const CASE_STUDIES_BY_PATH: Record<string, React.LazyExoticComponent<React.FC>> 
     '/demos/roofing': lazy(() => import('./demos/roofing/RoofingPage')),
 };
 
+// The old A/B test URLs. The B dashboards now live at /demos/<slug>.
+const demosBRedirect = () => {
+    const match = currentPath().match(/^\/demos-b(\/[a-z]+)?$/);
+    if (!match) return false;
+    window.location.replace(`/demos${match[1] ?? ''}${window.location.search}${window.location.hash}`);
+    return true;
+};
+
 const MainApp = () => {
     const [activeSection, setActiveSection] = useState<SectionId>(SectionId.HERO);
     const [verticalKey, setVerticalKey] = useState<VerticalKey>(initialVertical);
@@ -82,7 +90,9 @@ const MainApp = () => {
 };
 
 const App = () =>
-    isSqueezeRoute() ? (
+    demosBRedirect() ? (
+        <div className="min-h-screen bg-charcoal" />
+    ) : isSqueezeRoute() ? (
         <SqueezePage />
     ) : isHvacCalculatorRoute() ? (
         <HvacCalculatorPage />

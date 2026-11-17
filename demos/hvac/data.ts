@@ -1,4 +1,4 @@
-import { FeedLine } from '../shared';
+import { FeedLine } from '../kit';
 
 export type JobStatus = 'done' | 'onsite' | 'enroute' | 'scheduled';
 export type Job = {
@@ -15,13 +15,6 @@ export type Job = {
     y: number;
     brain: string;
     log: [string, string][];
-};
-
-export const STATUS: Record<JobStatus, { label: string; color: string }> = {
-    onsite: { label: 'On site', color: '#3DDC84' },
-    enroute: { label: 'En route', color: '#4DA3FF' },
-    scheduled: { label: 'Scheduled', color: '#8795A1' },
-    done: { label: 'Done', color: '#55626E' },
 };
 
 export const JOBS: Job[] = [
