@@ -10,40 +10,37 @@ export enum SectionId {
   FINAL = 'final'
 }
 
-export interface SectionContent {
-  id: SectionId;
-  eyebrow?: string;
-  headline?: string;
-  subheadline?: string;
-  copy?: string[];
-  bullets?: string[];
-  micro?: string;
-  cta?: string;
-  type?: 'cta';
+export type VerticalKey = 'all' | 'trades' | 'realestate' | 'insurance' | 'marketing' | 'studio';
+export type ModuleId = 'lead' | 'desk' | 'content' | 'ads' | 'console' | 'apps';
+
+export interface Vertical {
+  key: VerticalKey;
+  tab: string;
+  eyebrow: string;
+  pack: string;
+  build: string;
+  // Slug of the worker room this vertical opens. Undefined keeps whatever room is open.
+  room?: string;
+  // Work-grid card that sits closest to this buyer.
+  proof?: string;
+  // Modules shown first in the offer for this buyer.
+  modules: ModuleId[];
 }
 
-export interface ShowroomBrand {
+export interface OfferModule {
+  id: ModuleId;
   name: string;
-  role: string;
-  room: string;
-  receipts: string[];
+  line: string;
 }
 
-export interface OfferVehicle {
-  name: string;
-  detail: string;
-  value: string;
-}
-
-export interface CaseStudy {
+export interface WorkCard {
+  id: string;
   tag: string;
-  featured: boolean;
+  kind: string;
   title: string;
-  duration: string;
-  challenge: string;
-  solution: string;
-  metrics: { value: string; label: string }[];
-  tags: string[];
-  quote: string;
-  author: string;
+  line: string;
+  cta: string;
+  href: string;
+  image?: string;
+  span: 'wide' | 'narrow';
 }

@@ -11,7 +11,7 @@ export const Footer = () => {
                     <div className="flex flex-col gap-6">
                         <Lockup size={30} />
                         <p className="text-steel text-sm leading-relaxed max-w-xs">
-                            I install Claude Code on your team's own folders and keep it running.
+                            We package your business into an operating system AI can read, then build the software on top.
                         </p>
                         <div className="flex flex-col gap-4 text-sm text-steel mt-2">
                             <div className="flex items-center gap-3">
@@ -28,8 +28,8 @@ export const Footer = () => {
                     <div>
                         <h4 className="font-mono text-[10px] uppercase tracking-[0.16em] text-hazard mb-6">Start here</h4>
                         <ul className="space-y-4 text-sm text-steel">
-                            <li><a href="/calendar-page.html" onClick={() => trackBookClick('home_footer')} className="hover:text-paper transition-colors">Book the install call</a></li>
-                            <li><a href="/lead-magnet.html" className="hover:text-paper transition-colors">Build your workspace — free, 6 questions</a></li>
+                            <li><a href="/calendar-page.html" onClick={() => trackBookClick('home_footer')} className="hover:text-paper transition-colors">Book a mapping call</a></li>
+                            <li><a href="/lead-magnet.html" className="hover:text-paper transition-colors">Build your workspace: free, 6 questions</a></li>
                             <li><a href="/find-leaks" className="hover:text-paper transition-colors">HVAC operators: find your lead leaks</a></li>
                         </ul>
                     </div>
@@ -37,9 +37,9 @@ export const Footer = () => {
                     <div>
                         <h4 className="font-mono text-[10px] uppercase tracking-[0.16em] text-hazard mb-6">Rob, in public</h4>
                         <ul className="space-y-4 text-sm text-steel">
-                            <li><a href="https://www.tiktok.com/@robtheops" target="_blank" rel="noreferrer" className="hover:text-paper transition-colors">TikTok — @robtheops</a></li>
-                            <li><a href="https://x.com/robtheops" target="_blank" rel="noreferrer" className="hover:text-paper transition-colors">X — @robtheops</a></li>
-                            <li><a href="https://www.instagram.com/robgyst.ai" target="_blank" rel="noreferrer" className="hover:text-paper transition-colors">Instagram — @robgyst.ai</a></li>
+                            <li><a href="https://www.tiktok.com/@robtheops" target="_blank" rel="noreferrer" className="hover:text-paper transition-colors">TikTok: @robtheops</a></li>
+                            <li><a href="https://x.com/robtheops" target="_blank" rel="noreferrer" className="hover:text-paper transition-colors">X: @robtheops</a></li>
+                            <li><a href="https://www.instagram.com/robgyst.ai" target="_blank" rel="noreferrer" className="hover:text-paper transition-colors">Instagram: @robgyst.ai</a></li>
                         </ul>
                     </div>
                 </div>
@@ -48,6 +48,9 @@ export const Footer = () => {
                     <p className="text-steel/70 text-xs font-mono">© 2026 GYST AI. Do, then share.</p>
                     <p className="text-steel/70 text-xs font-mono">System stable. Monitoring continues.</p>
                 </div>
+                <p className="text-steel/60 text-[11px] mt-4 text-center md:text-left">
+                    The orb in the Shang console is adapted from RUBRIC Agentic OS by Jay E, used under the MIT licence.
+                </p>
             </div>
         </footer>
     );

@@ -1,218 +1,159 @@
-import { SectionId, SectionContent, ShowroomBrand, OfferVehicle, CaseStudy } from './types';
+import { OfferModule, Vertical, WorkCard } from './types';
 
-// Copy rules: references/voice.md (gyst-ops). Short sentences. Name the tool.
-// Every number here traces to references/offer.md or a synth delta in voice.md.
+// Homepage copy. Plain words, short sentences, no prices: every button books a mapping call.
 
-export const SECTIONS: SectionContent[] = [
+export const BOOK_URL = '/calendar-page.html';
+export const BOOK_LABEL = 'Book a mapping call';
+
+export const HERO = {
+    line1: 'Get the business',
+    line2: 'out of your head.',
+    sub: [
+        'We write down how your business actually runs - prices, scripts, rules, customers - in a form AI can read. ',
+        'That is your operating system.',
+        ' Then we build the software on top of it: a lead engine, a front desk, dashboards, and small apps your team uses every day.',
+    ],
+    caption: 'Client build: the Shang Properties sales console. Shown with permission.',
+};
+
+// One object per buyer. The hero, the rooms, the work grid and the offer all read from here.
+export const VERTICALS: Vertical[] = [
     {
-        id: SectionId.HERO,
-        eyebrow: "The same harness I run three brands on",
-        headline: "Stop prompting. Start running.",
-        subheadline: "Every prompt starts from zero. Every brand rule gets re-typed. So I install Claude Code on your marketing team's own folders. A workshop, not a chatbot. I wire it to run your content engine, ads engine, brand-voice lint and memory. Day 1 your folders aren't empty. Day 14 it's shipping work. No babysitter.",
-        cta: "Book the install call"
+        key: 'all',
+        tab: 'Service business',
+        eyebrow: 'AI operating systems for owner-led businesses',
+        pack: 'Your prices, scripts, rules and customer history. Whatever is in your head and your group chats today.',
+        build: 'A lead engine, a front desk, a console and the small apps your team asks for.',
+        modules: ['lead', 'desk', 'content', 'ads', 'console', 'apps'],
     },
     {
-        id: SectionId.PROBLEM,
-        headline: "Ad-hoc AI doesn't compound. It resets.",
-        copy: [
-            "Most teams use AI all day. Almost none of it is remembered.",
-            "This doesn't scale. It resets."
-        ]
+        key: 'trades',
+        tab: 'Trades / HVAC',
+        eyebrow: 'AI operating systems for HVAC and trades shops',
+        pack: 'Your price book, service area, dispatch rules, how you quote, and every old quote in the CRM.',
+        build: 'A front desk that answers after hours, follow-up on dead quotes, a review chaser, a lead calculator.',
+        room: 'hvac',
+        proof: 'calculator',
+        modules: ['desk', 'lead', 'apps', 'console', 'content', 'ads'],
     },
     {
-        id: SectionId.ROUTE,
-        eyebrow: "01 · Route",
-        headline: "One file tells Claude where everything is.",
-        subheadline: "Think of CLAUDE.md as the reception desk. Every request walks in, gets pointed to the right room, and nothing else loads.",
-        bullets: [
-            "Strip CLAUDE.md to a routing table",
-            "Gate what gets read per task",
-            "Keep the token bill flat as the folder grows"
-        ],
-        micro: "Map, not encyclopedia."
+        key: 'realestate',
+        tab: 'Real estate',
+        eyebrow: 'AI operating systems for real estate teams',
+        pack: 'Your listings and fact sheets, buyer profiles, brand voice and the lines legal will not let you say.',
+        build: 'A sales console, script and carousel apps, a review desk, a page for each seller.',
+        room: 'shang',
+        proof: 'shang-case',
+        modules: ['content', 'console', 'apps', 'lead', 'desk', 'ads'],
     },
     {
-        id: SectionId.REMEMBER,
-        eyebrow: "02 · Remember",
-        headline: "Every room keeps its own memory.",
-        subheadline: "Think of CONTEXT.md files as drawer labels. Claude opens the drawer the task needs (process, voice, current state) and leaves the rest shut.",
-        bullets: [
-            "Seed voice.md from your team's real transcripts",
-            "Log what worked in results/ after every task",
-            "Let month two run cheaper than month one"
-        ],
-        micro: "Nothing starts from zero twice."
+        key: 'insurance',
+        tab: 'Insurance',
+        eyebrow: 'AI operating systems for insurance agencies',
+        pack: 'Your products, who you prospect, compliance wording and how your advisors open a conversation.',
+        build: 'A prospecting desk, opener drafts ready each morning, a carousel maker, a booking page.',
+        room: 'caelum',
+        proof: 'caelum',
+        modules: ['lead', 'content', 'console', 'apps', 'desk', 'ads'],
     },
     {
-        id: SectionId.DO,
-        eyebrow: "03 · Do",
-        headline: "Skills do the work. Wired where the work happens.",
-        subheadline: "Think of skills as the tools on the workshop wall. Each room has its own set. Say the job; the chain runs.",
-        bullets: [
-            "Spawn 7 shorts before lunch",
-            "Ship 100 ad variants through one validation chain",
-            "Lint every line with humanizer, then stop-slop, before it ships"
-        ],
-        micro: "Say it once. It runs the chain."
+        key: 'marketing',
+        tab: 'Marketing team',
+        eyebrow: 'AI operating systems for marketing teams',
+        pack: 'Your brand rules, offers, past winners, and the ad accounts and folders you already have.',
+        build: 'A content engine, an ads engine, a voice check, a console for approvals.',
+        room: 'marketing',
+        proof: 'hq',
+        modules: ['content', 'ads', 'console', 'lead', 'apps', 'desk'],
     },
     {
-        id: SectionId.RUN,
-        eyebrow: "04 · Run",
-        headline: "Hooks run it while you sleep.",
-        subheadline: "Cron for the loop. Scheduled tasks and file watchers fire the skills, log the results, and hand you drafts in the morning.",
-        bullets: [
-            "Wake up to the day's drafts",
-            "Watch a folder; trigger the chain",
-            "Review the log, not the process"
-        ],
-        micro: "Ad-hoc AI becomes a loop."
+        key: 'studio',
+        tab: 'Studio',
+        eyebrow: 'AI operating systems for studios',
+        pack: 'Your class schedule, pay rules, enrolment steps and the plan for the next campaign.',
+        build: 'A trial booker, an enrolment chaser, a campaign sequencer, a payout counter.',
+        room: 'ggc',
+        proof: 'ggc',
+        modules: ['desk', 'content', 'apps', 'console', 'lead', 'ads'],
     },
-    {
-        id: SectionId.CTA,
-        type: 'cta',
-        headline: "Book the install call.",
-        copy: [],
-        bullets: []
-    },
-    {
-        id: SectionId.OFFER,
-        eyebrow: "The offer",
-        headline: "The 14-Day Zero-Babysit Marketing Ops Install.",
-        copy: [
-            "Same harness I run GYST, BADSIDE and GGC on. Installed on your folders, in your voice, wired to your tools. Running by day 14."
-        ],
-        micro: "File-first. Markdown and git. If GYST disappears tomorrow, your system still runs."
-    },
-    {
-        id: SectionId.FINAL,
-        headline: "System stable. Monitoring continues.",
-        micro: "gyst-ai.com"
-    }
 ];
 
-// Terminal shown in the hero. Illustrative run of the content room.
-export const HERO_TERMINAL: { kind: 'cmd' | 'prompt' | 'dim' | 'ok'; text: string }[] = [
-    { kind: 'cmd', text: 'claude' },
-    { kind: 'prompt', text: 'spawn 7 shorts on the design.md thread' },
-    { kind: 'dim', text: 'read CLAUDE.md → content room' },
-    { kind: 'dim', text: 'load content/CONTEXT.md · references/voice.md' },
-    { kind: 'dim', text: 'spawning 7 sub-agents…' },
-    { kind: 'ok', text: 'content/queue/2026-08-19-design-md/01-hook.md … 07-cta.md' },
-    { kind: 'ok', text: 'lint humanizer → stop-slop · 0 flags' },
+export const HOW_TREE: [string, string][] = [
+    ['sales/', 'prices, scripts'],
+    ['service/', 'how jobs run'],
+    ['customers/', 'who buys, who left'],
+    ['voice.md', 'how you talk'],
 ];
 
-// Harness strip under the hero — the framing voice.md prescribes.
-export const HARNESS_STRIP = [
-    { label: "The harness", value: "Claude Code", detail: "runs the loop" },
-    { label: "The memory", value: "Folders", detail: "CLAUDE.md → CONTEXT.md" },
-    { label: "The executors", value: "Skills", detail: "wired per room" },
-    { label: "The cron", value: "Hooks", detail: "runs while you sleep" },
-];
-export const ALSO_WIRED = ["n8n", "Supabase", "Apify", "Claude API"];
-
-// Showroom — replaces the old case studies. Real receipts only, all dated in gyst-ops.
-export const SHOWROOM: ShowroomBrand[] = [
-    {
-        name: "GYST",
-        role: "The operator's own shop",
-        room: "~/projects/gyst-ops",
-        receipts: [
-            "119+ short scripts queued through spawn-shorts",
-            "100-ad Meta cycles through a four-stage research → plan → creative → eval chain",
-            "Cold outreach at 5.3% human-classified reply (PM Video, 243 leads)"
-        ]
-    },
-    {
-        name: "BADSIDE",
-        role: "Brand-collab outreach, Manila",
-        room: "gyst-ops · outreach room, BADSIDE tenant",
-        receipts: [
-            "12.5% human-classified reply, Manila wellness studios, 48 leads",
-            "Five sub-verticals ranked in one cycle, all above 4%",
-            "Same voice-lint stack, different CONTEXT.md"
-        ]
-    },
-    {
-        name: "GGC",
-        role: "Dance studio + UNLEASHED recital",
-        room: "gyst-ops · /ggc",
-        receipts: [
-            "Recital campaign sequenced tease → enrol → countdown, run through GHL",
-            "Recital landing page + QR redirect shipped from this repo",
-            "Its own aesthetic, its own room. Brand isolation lives in a folder"
-        ]
-    }
+// The four harness ideas, one line each.
+export const HOW_BRAIN: [string, string][] = [
+    ['Route', 'Sends each job to the right room.'],
+    ['Remember', 'Keeps what it learned last week.'],
+    ['Do', 'Has a written skill for each task.'],
+    ['Run', 'Works on a schedule, not on request.'],
 ];
 
-// Offer B stack — values from references/offer.md §3.
-export const OFFER_STACK: OfferVehicle[] = [
-    { name: "Workspace-Architect hero install", detail: "CLAUDE.md, rooms, voice.md, ICP, format catalog, seeded day 1", value: "$5,000" },
-    { name: "Content engine", detail: "spawn-shorts · spawn-long-form · repurpose · carousel-build · lint stack · daily cron", value: "$6,000" },
-    { name: "Ads engine (Meta, multi-tenant)", detail: "research → plan → 100 creatives → eval, four-stage chain", value: "$7,500" },
-    { name: "Self-evolving skills layer", detail: "agents write SKILL.md; Curator stales at 30d, archives at 90d", value: "$4,000" },
-    { name: "Memory + Hive Mind layer", detail: "SQLite + embeddings, weekly consolidation, auto-injected context", value: "$3,000" },
-];
-export const OFFER_STACK_TOTAL = "$25,500";
-// Q4 default (2026-08-19). One place to change or blank out.
-export const OFFER_PRICE = "$2,500 install + $247/mo";
-
-export const OFFER_GUARANTEE = [
-    { when: "Days 1–14", what: "Full refund on the install fee. No questions." },
-    { when: "Day 30", what: "Not using it daily? Next month's on me. Repeats until you are." },
-    { when: "Past day 14", what: "Install fee stays. The system's on your machine. You own it." },
+export const HOW_APPS: [string, string][] = [
+    ['Lead engine', 'finds and books'],
+    ['Front desk', 'answers and follows up'],
+    ['Console', 'shows what ran today'],
+    ['Micro apps', 'one screen, one job'],
 ];
 
-// Earlier client engagements (confirmed real by Rob, 2026-11-08).
-export const CASE_STUDIES: CaseStudy[] = [
-    {
-        tag: "Property Management",
-        featured: true,
-        title: "Galaxy Housing",
-        duration: "8 weeks • 4 specialists",
-        challenge: "Manual property management processes and inefficient lead qualification resulted in slow response times and missed opportunities in a competitive real estate market.",
-        solution: "End-to-end sales AI implementation with RAG database for property listings, automated lead qualification, and multi-channel voice marketing system.",
-        metrics: [
-            { value: "300%", label: "Increase in qualified leads" },
-            { value: "85%", label: "Reduction in average response time" },
-            { value: "40%", label: "Improvement in lead-to-client conversion" },
-            { value: "60%", label: "Reduction in manual tasks" }
-        ],
-        tags: ["RAG Solutions", "Lead Generation AI", "AI Chatbots", "+1"],
-        quote: "GYST transformed our entire lead management process. We're now handling 3x more qualified leads with the same team size.",
-        author: "Sarah Mitchell, Operations Director, Galaxy Housing"
-    },
-    {
-        tag: "Marketing Agency",
-        featured: true,
-        title: "Force at Work",
-        duration: "10 weeks • 5 specialists",
-        challenge: "Scaling personalized marketing campaigns across Japanese markets while maintaining cultural authenticity and engagement quality.",
-        solution: "AI avatars for culturally-aware content creation, social media automation bots, and intelligent lead generation system tailored for Japanese business culture.",
-        metrics: [
-            { value: "500%", label: "Increase in social engagement" },
-            { value: "70%", label: "Reduction in content costs" },
-            { value: "200%", label: "Improvement in marketing ROI" },
-            { value: "250%", label: "Expansion in target reach" }
-        ],
-        tags: ["AI Avatars", "Social Media Automation", "Lead Generation AI", "+1"],
-        quote: "The AI avatars perfectly captured Japanese business culture nuances. Our clients can't tell the difference from human-created content.",
-        author: "Hiroshi Tanaka, Creative Director, Force at Work"
-    },
-    {
-        tag: "Crypto Finance",
-        featured: true,
-        title: "RC Wallet",
-        duration: "12 weeks • 6 specialists",
-        challenge: "Identifying high-value crypto investors (whales) from on-chain data and providing automated, intelligent customer support for complex financial queries.",
-        solution: "On-chain analysis system with automated whale identification, intelligent lead generation, and RAG-powered customer support system for crypto-specific queries.",
-        metrics: [
-            { value: "1,000+", label: "High-value crypto investors identified" },
-            { value: "90%", label: "Reduction in customer support workload" },
-            { value: "$2M", label: "Value of new opportunities" },
-            { value: "95%", label: "Customer satisfaction score" }
-        ],
-        tags: ["On-chain Analysis", "Lead Generation AI", "RAG Solutions", "+1"],
-        quote: "GYST's on-chain analysis identified prospects we never would have found manually. The ROI has been exceptional.",
-        author: "David Chen, CEO, RC Wallet"
-    }
+// Order set by Rob, 2026-11-13. Do not reorder.
+export const WORK: WorkCard[] = [
+    { id: 'shang-console', tag: 'Real estate', kind: 'Console', title: 'Shang Agentic OS console', line: 'The sales team’s home screen: an orb of micro apps, what needs review, this month’s numbers.', cta: 'Watch it run', href: '#hero-console', image: '/hero/shang-console.jpg', span: 'wide' },
+    { id: 'shang-case', tag: 'Real estate', kind: 'Case study', title: 'Shang case study and demo', line: 'Thirteen desks, two of them people. Pick a path and watch a carousel get made.', cta: 'Try the demo', href: '/work/shang', image: '/work/home/shang-room.jpg', span: 'narrow' },
+    { id: 'hq', tag: 'GYST', kind: 'Console', title: 'GYST HQ', line: 'How GYST runs itself. Mission Control, outbound, content and builds.', cta: 'Open HQ', href: '/hq', image: '/work/home/gyst-hq.jpg', span: 'narrow' },
+    { id: 'caelum', tag: 'Insurance', kind: 'Case study', title: 'Caelum', line: 'Ten agents and one prospector. Leads found and openers drafted before the day starts.', cta: 'Read the case study', href: '/work/caelum', image: '/work/home/caelum-room.jpg', span: 'narrow' },
+    { id: 'calculator', tag: 'HVAC', kind: 'Micro app', title: 'HVAC lead calculator', line: 'Four questions, four minutes, and a dollar figure for the leads a shop is losing.', cta: 'Try it', href: '/find-leaks', image: '/work/home/find-leaks.jpg', span: 'narrow' },
+    { id: 'engine', tag: 'GYST', kind: 'In build', title: 'Pipeline Engine', line: 'All your GTM on one board. Signals in, booked calls out. The full dashboard is in build, so this opens the outbound board in HQ.', cta: 'See the outbound board', href: '/hq?view=outbound', span: 'wide' },
+    { id: 'ggc', tag: 'Dance studio', kind: 'Manila', title: 'Good Girls Club', line: 'A studio’s front desk, campaigns and payouts, run from one room.', cta: 'Walk the room', href: '#rooms', image: '/work/home/ggc-room.jpg', span: 'narrow' },
+];
+
+// Numbers on the engine card are sample data and are labelled that way on the card.
+export const ENGINE_FLOW: { label: string; n: string }[] = [
+    { label: 'Signals', n: '212' },
+    { label: 'Score', n: '61' },
+    { label: 'Tiers', n: '14 / 47' },
+    { label: 'Loom', n: '14' },
+    { label: 'Email', n: '47' },
+    { label: 'Setter', n: '2' },
+    { label: 'Booked', n: '1' },
+];
+
+export const OFFER_BRAIN = {
+    name: 'The Business Brain',
+    line: 'Your business, written down once, in files you own. Every module reads it.',
+    inside: [
+        ['The business map', 'Offers, prices, scripts, rules and customers, one room each.'],
+        ['Your voice file', 'Built from recordings of how you really talk.'],
+        ['Skills', 'A written playbook for each task. New ones get added as it works.'],
+        ['Memory', 'It keeps what it learned. Month two is easier than month one.'],
+        ['Talk to it from your phone', 'Voice notes in Telegram become work.'],
+        ['You own all of it', 'Plain files in your own accounts. No platform to rent.'],
+    ] as [string, string][],
+};
+
+export const OFFER_MODULES: OfferModule[] = [
+    { id: 'lead', name: 'Lead Engine', line: 'Finds businesses with a reason to buy, scores them, writes to them, routes the replies.' },
+    { id: 'desk', name: 'Front Desk', line: 'Answers calls and texts, books the job, works the old quotes.' },
+    { id: 'content', name: 'Content Engine', line: 'Scripts, carousels and video in your voice, queued for your yes.' },
+    { id: 'ads', name: 'Ads Engine', line: 'Makes ad creative, tests it, keeps the winners.' },
+    { id: 'console', name: 'Console', line: 'Your dashboard. What ran today and what needs you.' },
+    { id: 'apps', name: 'Micro Apps', line: 'Small tools for one job: a quote builder, a calculator, a payout counter.' },
+];
+
+export const OFFER_STACKS: { name: string; parts: string[]; line: string }[] = [
+    { name: 'Trades stack', parts: ['Front Desk', 'Lead Engine', 'Quote builder app'], line: 'For HVAC and trades shops that lose jobs to missed calls and old quotes.' },
+    { name: 'Marketing stack', parts: ['Content Engine', 'Ads Engine', 'Console'], line: 'For marketing teams that want content and ads shipping without a babysitter.' },
+];
+
+export const FAQ: [string, string][] = [
+    ['Do I own it?', 'Yes. It is plain files and folders in your own accounts, kept in git. If GYST disappeared tomorrow, your system would still run.'],
+    ['What do you need from me?', 'A mapping call, access to what you already have (price sheets, scripts, your CRM), and a few recordings of how you talk. We do the writing.'],
+    ['How long does it take?', 'The Business Brain is installed and running in 14 days. Modules go on after that, one at a time.'],
+    ['What if it breaks?', 'Every change is saved as a snapshot first, so anything can be rolled back. We also sit down each quarter and go through what ran, what broke and what to cut.'],
+    ['How do you charge?', 'It depends on which modules you need, so the price is set on the mapping call. There is no price list on this site.'],
+    ['What happens on a mapping call?', 'It takes 30 minutes. We go through how the business runs today and where work gets stuck, then pick the first thing worth building.'],
 ];
