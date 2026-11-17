@@ -3,13 +3,14 @@ import React from 'react';
 import { Icon } from '../ui/Icons';
 import { Lockup } from '../ui/Lockup';
 
-export const Footer: React.FC<{ bookHref?: string; bookLocation?: string }> = ({ bookHref = '/calendar-page.html', bookLocation = 'home_footer' }) => {
+// A landing page keeps visitors on the page: only the book link and the email, no links out to the rest of the site.
+export const Footer: React.FC<{ bookHref?: string; bookLocation?: string; landing?: boolean }> = ({ bookHref = '/calendar-page.html', bookLocation = 'home_footer', landing = false }) => {
     return (
         <footer className="relative z-50 pt-20 pb-10 bg-charcoal border-t border-paper/10">
             <div className="max-w-7xl mx-auto px-6 md:px-12">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-16">
+                <div className={`grid grid-cols-1 ${landing ? 'md:grid-cols-2' : 'md:grid-cols-3'} gap-12 mb-16`}>
                     <div className="flex flex-col gap-6">
-                        <Lockup size={30} />
+                        <Lockup size={30} href={landing ? '#hero' : '/'} />
                         <p className="text-steel text-sm leading-relaxed max-w-xs">
                             We package your business into an operating system AI can read, then build the software on top.
                         </p>
@@ -29,19 +30,19 @@ export const Footer: React.FC<{ bookHref?: string; bookLocation?: string }> = ({
                         <h4 className="font-mono text-[10px] uppercase tracking-[0.16em] text-hazard mb-6">Start here</h4>
                         <ul className="space-y-4 text-sm text-steel">
                             <li><a href={bookHref} onClick={() => trackBookClick(bookLocation)} className="hover:text-paper transition-colors">Book a mapping call</a></li>
-                            <li><a href="/lead-magnet.html" className="hover:text-paper transition-colors">Build your workspace: free, 6 questions</a></li>
-                            <li><a href="/find-leaks" className="hover:text-paper transition-colors">HVAC operators: find your lead leaks</a></li>
+                            {!landing && <li><a href="/lead-magnet.html" className="hover:text-paper transition-colors">Build your workspace: free, 6 questions</a></li>}
+                            {!landing && <li><a href="/find-leaks" className="hover:text-paper transition-colors">HVAC operators: find your lead leaks</a></li>}
                         </ul>
                     </div>
 
-                    <div>
+                    {!landing && <div>
                         <h4 className="font-mono text-[10px] uppercase tracking-[0.16em] text-hazard mb-6">Rob, in public</h4>
                         <ul className="space-y-4 text-sm text-steel">
                             <li><a href="https://www.tiktok.com/@robtheops" target="_blank" rel="noreferrer" className="hover:text-paper transition-colors">TikTok: @robtheops</a></li>
                             <li><a href="https://x.com/robtheops" target="_blank" rel="noreferrer" className="hover:text-paper transition-colors">X: @robtheops</a></li>
                             <li><a href="https://www.instagram.com/robgyst.ai" target="_blank" rel="noreferrer" className="hover:text-paper transition-colors">Instagram: @robgyst.ai</a></li>
                         </ul>
-                    </div>
+                    </div>}
                 </div>
 
                 <div className="pt-8 border-t border-paper/10 flex flex-col md:flex-row justify-between items-center gap-4">

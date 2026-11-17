@@ -6,12 +6,12 @@ import { BOOK_LABEL, BOOK_URL } from '../../constants';
 
 const HOME_LINKS: [string, string][] = [['#work', 'The work'], ['#offer', 'The offer']];
 
-// The landing pages pass their own anchors and a booking link that carries their UTM tags.
-export const Navbar: React.FC<{ links?: [string, string][]; bookHref?: string; bookLocation?: string }> = ({ links = HOME_LINKS, bookHref = BOOK_URL, bookLocation = 'home_nav' }) => {
+// The landing pages pass their own anchors, a logo link that stays on the page, and a booking link that carries their UTM tags.
+export const Navbar: React.FC<{ links?: [string, string][]; homeHref?: string; bookHref?: string; bookLocation?: string }> = ({ links = HOME_LINKS, homeHref = '/', bookHref = BOOK_URL, bookLocation = 'home_nav' }) => {
     return (
         <nav className="fixed top-0 left-0 right-0 z-[100] px-6 py-4 flex items-center justify-between pointer-events-none bg-gradient-to-b from-charcoal via-charcoal/70 to-transparent">
             <div className="pointer-events-auto">
-                <Lockup size={22} />
+                <Lockup size={22} href={homeHref} />
             </div>
             <div className="pointer-events-auto flex items-center gap-3">
                 {links.map(([href, label]) => (

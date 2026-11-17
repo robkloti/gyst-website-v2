@@ -20,7 +20,9 @@ const LABEL = 'font-mono text-[10px] uppercase tracking-[0.16em]';
 const H2 = 'font-display text-4xl md:text-6xl text-paper';
 // Same rhythm as the homepage sections in components/sections.
 const SECTION = 'relative z-10 w-full py-24 px-4 sm:px-6 md:px-12 border-t border-paper/10 scroll-mt-20';
-const NAV: [string, string][] = [['#demos', 'The demos'], ['#stack', 'The stack']];
+const NAV: [string, string][] = [['#demos', 'The demos'], ['#room', 'The room'], ['#stack', 'The stack'], ['#proof', 'Proof']];
+// On a phone the log keeps the call, the booking and the morning report so the demos sit higher.
+const PHONE_ROWS = [0, 2, 4];
 // The trades vertical swings the HVAC demo to the top of the orbit.
 const TRADES = { vertical: verticalByKey('trades'), setVertical: () => {} };
 
@@ -30,7 +32,7 @@ const Book: React.FC<{ href: string; label: string; className?: string }> = ({ h
     </a>
 );
 
-// The front desk on a sample night. Sits where the homepage hero has its console: a row of five on a wide screen, a list on a phone.
+// The front desk on a sample night. Sits where the homepage hero has its console: a row of five on a wide screen, a list of three on a phone.
 const NightLog: React.FC<{ shop: string | null }> = ({ shop }) => (
     <motion.figure
         initial={{ opacity: 0, y: 30 }}
@@ -57,7 +59,7 @@ const NightLog: React.FC<{ shop: string | null }> = ({ shop }) => (
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.5, delay: 0.55 + i * 0.22 }}
-                        className="bg-[#141517] grid grid-cols-[68px_1fr] lg:grid-cols-1 lg:content-start gap-x-3 gap-y-3 px-4 py-3 lg:px-5 lg:py-5"
+                        className={`bg-[#141517] ${PHONE_ROWS.includes(i) ? 'grid' : 'hidden lg:grid'} grid-cols-[68px_1fr] lg:grid-cols-1 lg:content-start gap-x-3 gap-y-3 px-4 py-3 lg:px-5 lg:py-5`}
                     >
                         <span className="font-mono text-[11px] lg:text-[12px] text-steel pt-[3px] lg:pt-0 whitespace-nowrap">{row.time}</span>
                         <span className="min-w-0">
@@ -98,7 +100,7 @@ const TradesPage: React.FC = () => {
         <MotionConfig reducedMotion="user">
             <VerticalContext.Provider value={TRADES}>
                 <div className="min-h-screen w-full bg-charcoal text-paper selection:bg-hazard/30 selection:text-hazard overflow-x-hidden font-sans">
-                    <Navbar links={NAV} bookHref={book} bookLocation="trades-nav" />
+                    <Navbar links={NAV} homeHref="#hero" bookHref={book} bookLocation="trades-nav" />
                     <RingBackdrop activeSection={activeSection} />
 
                     <main className="relative z-10 flex flex-col w-full">
@@ -295,7 +297,7 @@ const TradesPage: React.FC = () => {
                                 </Reveal>
                             </div>
                         </section>
-                        <Footer bookHref={book} bookLocation="trades-footer" />
+                        <Footer bookHref={book} bookLocation="trades-footer" landing />
                     </main>
 
                     <Grain />
