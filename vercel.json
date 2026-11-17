@@ -9,6 +9,10 @@
       "destination": "/index.html"
     },
     {
+      "source": "/trades",
+      "destination": "/index.html"
+    },
+    {
       "source": "/demos",
       "destination": "/index.html"
     },
@@ -38,6 +42,11 @@
     }
   ],
   "redirects": [
+    {
+      "source": "/hvac",
+      "destination": "/trades",
+      "permanent": false
+    },
     {
       "source": "/demos-b",
       "destination": "/demos",
