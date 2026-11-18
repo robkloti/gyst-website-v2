@@ -52,7 +52,7 @@ export const CaseLayout: React.FC<{ slug: string; title: string; nav: [string, s
                         {nav.map(([href, label]) => (
                             <a key={href} href={href} className="hidden sm:inline text-steel hover:text-paper no-underline">{label}</a>
                         ))}
-                        <a href="/#work" className="hidden md:inline text-steel hover:text-paper no-underline">All work</a>
+                        <a href="/#demos" className="hidden md:inline text-steel hover:text-paper no-underline">All work</a>
                         <a href={BOOK_URL} onClick={() => trackBookClick(`${slug}_nav`)} className="text-paper border border-paper/30 px-3 py-1.5 no-underline hover:bg-paper/10">
                             Book a call
                         </a>

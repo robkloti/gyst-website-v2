@@ -4,7 +4,7 @@ import { Lockup } from '../ui/Lockup';
 import { trackBookClick } from '../../lib/track';
 import { BOOK_LABEL, BOOK_URL } from '../../constants';
 
-const HOME_LINKS: [string, string][] = [['#work', 'The work'], ['#offer', 'The offer']];
+const HOME_LINKS: [string, string][] = [['#demos', 'The work'], ['#offer', 'The offer']];
 
 // The landing pages pass their own anchors, a logo link that stays on the page, and a booking link that carries their UTM tags.
 export const Navbar: React.FC<{ links?: [string, string][]; homeHref?: string; bookHref?: string; bookLocation?: string }> = ({ links = HOME_LINKS, homeHref = '/', bookHref = BOOK_URL, bookLocation = 'home_nav' }) => {

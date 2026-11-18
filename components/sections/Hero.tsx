@@ -97,7 +97,7 @@ export const HeroSection: React.FC<{ onInView: (id: SectionId) => void }> = ({ o
                     <a href={BOOK_URL} onClick={() => trackBookClick('home_hero')} className="no-underline">
                         <Button variant="primary" className="w-full">{BOOK_LABEL}</Button>
                     </a>
-                    <a href="#work" className="no-underline">
+                    <a href="#demos" className="no-underline">
                         <Button variant="secondary" className="w-full pl-6 pr-4">
                             See the work <Icon name="ArrowRight" size={14} className="ml-2 rotate-90" />
                         </Button>

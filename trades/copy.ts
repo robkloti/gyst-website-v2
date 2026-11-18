@@ -19,7 +19,7 @@ export const NIGHT_LOG: { time: string; who: string; text: string }[] = [
 export const TRADES_ORBIT = {
     eyebrow: 'See it running',
     title: 'Open a shop like yours.',
-    sub: 'Copperjack is a made-up heating and air shop with a working dispatch board. Open it and press the buttons. The others are the same idea for other kinds of business, and four are real builds.',
+    sub: 'Copperjack is a made-up heating and air shop with a working dispatch board. Open it and press the buttons. The others are the same idea for other kinds of business. The ones marked real build are running today.',
 };
 
 export const LEAKS: { title: string; pain: string; fix: string }[] = [
