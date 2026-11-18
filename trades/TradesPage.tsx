@@ -1,10 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { MotionConfig, motion } from 'framer-motion';
-import { BOOK_LABEL, BOOK_URL, OFFER_BRAIN } from '../constants';
+import { BOOK_LABEL, BOOK_URL, OFFER_MODULES } from '../constants';
 import { Grain, RingBackdrop } from '../components/layout/Backdrop';
 import { Footer } from '../components/layout/Footer';
 import { Navbar } from '../components/layout/Navbar';
 import { DemoOrbit } from '../components/sections/DemoOrbit';
+import { SkillTree } from '../components/sections/SkillTree';
 import { Button } from '../components/ui/Button';
 import { Reveal } from '../components/ui/Reveal';
 import { WorkerRoom } from '../rooms/WorkerRoom';
@@ -13,7 +14,7 @@ import { track, trackBookClick } from '../lib/track';
 import { useSection } from '../lib/useSection';
 import { VerticalContext, verticalByKey } from '../lib/vertical';
 import { SectionId } from '../types';
-import { LEAKS, NIGHT_LOG, OWNER_WORDS, PROOF, STACK, STEPS, TRADES_FAQ, TRADES_FINAL, TRADES_HERO, TRADES_ORBIT } from './copy';
+import { LEAKS, NIGHT_LOG, OWNER_WORDS, PROOF, STEPS, TRADES_FAQ, TRADES_FINAL, TRADES_HERO, TRADES_ORBIT } from './copy';
 import { bookUrl, shopFromSearch } from './shop';
 
 const LABEL = 'font-mono text-[10px] uppercase tracking-[0.16em]';
@@ -81,6 +82,7 @@ const TradesPage: React.FC = () => {
     const shop = useMemo(() => shopFromSearch(window.location.search), []);
     const book = useMemo(() => bookUrl(BOOK_URL, window.location.search), []);
     const trades = TRADES.vertical;
+    const modules = trades.modules.map((id) => OFFER_MODULES.find((m) => m.id === id)!);
 
     // Each section tells the ring behind the page what to draw, the same way the homepage does.
     const [activeSection, setActiveSection] = useState<SectionId>(SectionId.HERO);
@@ -185,39 +187,11 @@ const TradesPage: React.FC = () => {
                                 <Reveal>
                                     <div className={`${LABEL} text-steel mb-4`}>The Trades stack</div>
                                     <h2 className={`${H2} max-w-3xl`}>Write the shop down once. Build on it.</h2>
-                                    <p className="text-steel text-lg mt-5 max-w-2xl">The front desk can only quote your price if it has read your price book. So that comes first. Everything else plugs into it.</p>
+                                    <p className="text-steel text-lg mt-5 max-w-2xl">The front desk can only quote your price if it has read your price book. So that comes first. Everything else plugs into it. Pick a module to see the skills inside it and what it reads.</p>
                                 </Reveal>
 
                                 <Reveal>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 mt-12">
-                                        {STACK.map((part, i) => (
-                                            <div key={part.name} className="relative bg-[#202124] border border-paper/20 p-5 lg:min-h-[176px]">
-                                                <div className={`${LABEL} tracking-[0.14em] text-steel`}>Built on top {String(i + 1).padStart(2, '0')}</div>
-                                                <h3 className="text-paper text-[18px] font-semibold leading-tight mt-2">{part.name}</h3>
-                                                <p className="text-steel text-[14px] leading-snug mt-2">{part.line}</p>
-                                                <span aria-hidden="true" className="hidden lg:block absolute left-1/2 -bottom-[11px] w-[2px] h-[10px] bg-paper/25" />
-                                            </div>
-                                        ))}
-                                    </div>
-
-                                    <div className="bg-paper text-charcoal mt-2.5 p-6 md:p-8 grid grid-cols-1 lg:grid-cols-[330px_1fr] gap-7 lg:gap-10">
-                                        <div>
-                                            <span className={`inline-block bg-charcoal text-paper ${LABEL} px-2 py-1`}>Underneath &middot; start here</span>
-                                            <h3 className="font-display text-[44px] md:text-[60px] text-charcoal mt-4">{OFFER_BRAIN.name}</h3>
-                                            <p className="text-[#4A4D54] text-[15px] leading-relaxed mt-3">{trades.pack} Written down once, in files you own.</p>
-                                            <a href={book} onClick={() => trackBookClick('trades-stack')} className="inline-flex mt-5 no-underline border border-charcoal bg-charcoal text-paper hover:bg-transparent hover:text-charcoal transition-colors font-mono font-bold text-[11px] uppercase tracking-[0.12em] px-7 py-3.5 rounded-sm">
-                                                {BOOK_LABEL}
-                                            </a>
-                                        </div>
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-charcoal/15 border border-charcoal/15 self-start">
-                                            {OFFER_BRAIN.inside.map(([name, note]) => (
-                                                <div key={name} className="bg-paper px-4 py-3">
-                                                    <div className="text-[14.5px] font-semibold">{name}</div>
-                                                    <div className="text-[#5C6068] text-[13px] leading-snug mt-0.5">{note}</div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
+                                    <SkillTree modules={modules} brainLine={`${trades.pack} Written down once, in files you own.`} bookHref={book} bookLocation="trades-stack" showLive={false} />
                                 </Reveal>
 
                                 <Reveal>
