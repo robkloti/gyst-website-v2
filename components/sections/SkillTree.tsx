@@ -22,7 +22,16 @@ const at = (el: HTMLElement, root: HTMLElement) => {
 
 // The brain on the left, the modules in the middle, the picked module's skill folders on the right.
 // Picking a module lights the brain files it reads, and lines on wide screens show the wiring.
-export const SkillTree: React.FC<{ modules: OfferModule[] }> = ({ modules }) => {
+type Props = {
+    modules: OfferModule[];
+    // A landing page passes its own brain line and tracked booking link, and can keep visitors on the page.
+    brainLine?: string;
+    bookHref?: string;
+    bookLocation?: string;
+    showLive?: boolean;
+};
+
+export const SkillTree: React.FC<Props> = ({ modules, brainLine = `Your AI operating system. ${OFFER_BRAIN.line}`, bookHref = BOOK_URL, bookLocation = 'home_offer', showLive = true }) => {
     // Held by id: the hero's business picker reorders the modules, and the pick should stay put.
     const [selId, setSelId] = useState<ModuleId>(modules[0].id);
     const [touched, setTouched] = useState(false);
@@ -95,7 +104,7 @@ export const SkillTree: React.FC<{ modules: OfferModule[] }> = ({ modules }) => 
             <div ref={brain} className="order-3 lg:order-1 bg-paper text-charcoal p-6 flex flex-col">
                 <span className={`self-start bg-charcoal text-paper ${LABEL} tracking-[0.16em] px-2 py-1`}>The flagship &middot; start here</span>
                 <h3 className="font-display text-[44px] lg:text-[50px] text-charcoal mt-4">{OFFER_BRAIN.name}</h3>
-                <p className="text-[#4A4D54] text-[14.5px] leading-relaxed mt-2">Your AI operating system. {OFFER_BRAIN.line}</p>
+                <p className="text-[#4A4D54] text-[14.5px] leading-relaxed mt-2">{brainLine}</p>
                 <ul className="list-none m-0 p-0 mt-5 border-t border-charcoal/15">
                     {BRAIN_FILES.map((f) => {
                         const on = lit.has(f.id);
@@ -114,7 +123,7 @@ export const SkillTree: React.FC<{ modules: OfferModule[] }> = ({ modules }) => 
                         );
                     })}
                 </ul>
-                <a href={BOOK_URL} onClick={() => trackBookClick('home_offer')} className="self-start inline-flex mt-6 no-underline border border-charcoal bg-charcoal text-paper hover:bg-transparent hover:text-charcoal transition-colors font-mono font-bold text-[11px] uppercase tracking-[0.12em] px-7 py-3.5 rounded-sm">
+                <a href={bookHref} onClick={() => trackBookClick(bookLocation)} className="self-start inline-flex mt-6 no-underline border border-charcoal bg-charcoal text-paper hover:bg-transparent hover:text-charcoal transition-colors font-mono font-bold text-[11px] uppercase tracking-[0.12em] px-7 py-3.5 rounded-sm">
                     {BOOK_LABEL}
                 </a>
             </div>
@@ -185,7 +194,7 @@ export const SkillTree: React.FC<{ modules: OfferModule[] }> = ({ modules }) => 
                             <div className="text-hazard text-[15px] font-semibold leading-snug mt-2">{tree.out}</div>
                         </div>
                     </div>
-                    {tree.live && (
+                    {showLive && tree.live && (
                         <a href={tree.live[1]} onClick={() => track('skill_tree_live', { module: m.id })} className="inline-flex items-center gap-2 mt-4 text-paper text-[14.5px] font-semibold no-underline border-b border-paper/40 pb-0.5 hover:border-paper">
                             {tree.live[0]} <span aria-hidden="true">&rarr;</span>
                         </a>

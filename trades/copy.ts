@@ -46,13 +46,6 @@ export const OWNER_WORDS = [
     'Everything depended on me being present at every step.',
 ];
 
-export const STACK: { name: string; line: string }[] = [
-    { name: 'Front Desk', line: 'Answers calls and texts around the clock, in your shop’s voice. Flags emergencies, screens out jobs outside your area, books the rest.' },
-    { name: 'Quote follow-up', line: 'Works through the quotes that never went ahead. A text, then a call, at the right time of year.' },
-    { name: 'Quote builder', line: 'A small tool on your website. The homeowner gets a ballpark, you get a lead with the answers already filled in.' },
-    { name: 'Review chaser', line: 'Asks for the review after every finished job, so the count climbs without anyone chasing it.' },
-];
-
 export const STEPS: { when: string; what: string }[] = [
     { when: 'Mapping call', what: '30 minutes. We go through how the shop runs today and where jobs get lost.' },
     { when: 'Day 14', what: 'Your shop is written down, and the system that reads it is installed and running.' },
