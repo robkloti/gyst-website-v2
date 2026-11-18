@@ -1,4 +1,4 @@
-import { OfferModule, Vertical, WorkCard } from './types';
+import { BrainFileId, ModuleId, ModuleTree, OfferModule, Vertical } from './types';
 
 // Homepage copy. Plain words, short sentences, no prices: every button books a mapping call.
 
@@ -33,7 +33,6 @@ export const VERTICALS: Vertical[] = [
         pack: 'Your price book, service area, dispatch rules, how you quote, and every old quote in the CRM.',
         build: 'A front desk that answers after hours, follow-up on dead quotes, a review chaser, a lead calculator.',
         room: 'hvac',
-        proof: 'calculator',
         modules: ['desk', 'lead', 'apps', 'console', 'content', 'ads'],
     },
     {
@@ -43,7 +42,6 @@ export const VERTICALS: Vertical[] = [
         pack: 'Your listings and fact sheets, buyer profiles, brand voice and the lines legal will not let you say.',
         build: 'A sales console, script and carousel apps, a review desk, a page for each seller.',
         room: 'shang',
-        proof: 'shang-case',
         modules: ['content', 'console', 'apps', 'lead', 'desk', 'ads'],
     },
     {
@@ -53,7 +51,6 @@ export const VERTICALS: Vertical[] = [
         pack: 'Your products, who you prospect, compliance wording and how your advisors open a conversation.',
         build: 'A prospecting desk, opener drafts ready each morning, a carousel maker, a booking page.',
         room: 'caelum',
-        proof: 'caelum',
         modules: ['lead', 'content', 'console', 'apps', 'desk', 'ads'],
     },
     {
@@ -63,7 +60,6 @@ export const VERTICALS: Vertical[] = [
         pack: 'Your brand rules, offers, past winners, and the ad accounts and folders you already have.',
         build: 'A content engine, an ads engine, a voice check, a console for approvals.',
         room: 'marketing',
-        proof: 'hq',
         modules: ['content', 'ads', 'console', 'lead', 'apps', 'desk'],
     },
     {
@@ -73,7 +69,6 @@ export const VERTICALS: Vertical[] = [
         pack: 'Your class schedule, pay rules, enrolment steps and the plan for the next campaign.',
         build: 'A trial booker, an enrolment chaser, a campaign sequencer, a payout counter.',
         room: 'ggc',
-        proof: 'ggc',
         modules: ['desk', 'content', 'apps', 'console', 'lead', 'ads'],
     },
 ];
@@ -101,27 +96,6 @@ export const HOW_APPS: [string, string][] = [
 ];
 
 // Order set by Rob, 2026-11-13. Do not reorder.
-export const WORK: WorkCard[] = [
-    { id: 'shang-console', tag: 'Real estate', kind: 'Console', title: 'Shang Agentic OS console', line: 'The sales team’s home screen: an orb of micro apps, what needs review, this month’s numbers.', cta: 'Watch it run', href: '#hero-console', image: '/hero/shang-console.jpg', span: 'wide' },
-    { id: 'shang-case', tag: 'Real estate', kind: 'Case study', title: 'Shang case study and demo', line: 'Thirteen desks, two of them people. Pick a path and watch a carousel get made.', cta: 'Try the demo', href: '/work/shang', image: '/work/home/shang-room.jpg', span: 'narrow' },
-    { id: 'hq', tag: 'GYST', kind: 'Console', title: 'GYST HQ', line: 'How GYST runs itself. Mission Control, outbound, content and builds.', cta: 'Open HQ', href: '/hq', image: '/work/home/gyst-hq.jpg', span: 'narrow' },
-    { id: 'caelum', tag: 'Insurance', kind: 'Case study', title: 'Caelum', line: 'Ten agents and one prospector. Leads found and openers drafted before the day starts.', cta: 'Read the case study', href: '/work/caelum', image: '/work/home/caelum-room.jpg', span: 'narrow' },
-    { id: 'calculator', tag: 'HVAC', kind: 'Micro app', title: 'HVAC lead calculator', line: 'Four questions, four minutes, and a dollar figure for the leads a shop is losing.', cta: 'Try it', href: '/find-leaks', image: '/work/home/find-leaks.jpg', span: 'narrow' },
-    { id: 'engine', tag: 'GYST', kind: 'In build', title: 'Pipeline Engine', line: 'All your GTM on one board. Signals in, booked calls out. The full dashboard is in build, so this opens the outbound board in HQ.', cta: 'See the outbound board', href: '/hq?view=outbound', span: 'wide' },
-    { id: 'ggc', tag: 'Dance studio', kind: 'Manila', title: 'Good Girls Club', line: 'A studio’s front desk, campaigns and payouts, run from one room.', cta: 'Walk the room', href: '#rooms', image: '/work/home/ggc-room.jpg', span: 'narrow' },
-];
-
-// Numbers on the engine card are sample data and are labelled that way on the card.
-export const ENGINE_FLOW: { label: string; n: string }[] = [
-    { label: 'Signals', n: '212' },
-    { label: 'Score', n: '61' },
-    { label: 'Tiers', n: '14 / 47' },
-    { label: 'Loom', n: '14' },
-    { label: 'Email', n: '47' },
-    { label: 'Setter', n: '2' },
-    { label: 'Booked', n: '1' },
-];
-
 export const OFFER_BRAIN = {
     name: 'The Business Brain',
     line: 'Your business, written down once, in files you own. Every module reads it.',
@@ -143,6 +117,89 @@ export const OFFER_MODULES: OfferModule[] = [
     { id: 'console', name: 'Console', line: 'Your dashboard. What ran today and what needs you.' },
     { id: 'apps', name: 'Micro Apps', line: 'Small tools for one job: a quote builder, a calculator, a payout counter.' },
 ];
+
+// The skill tree in the offer section. Each module reads some of the brain's files and is made of skills,
+// one folder per job, the way Claude Code skills are laid out.
+export const BRAIN_FILES: { id: BrainFileId; path: string; note: string }[] = [
+    { id: 'map', path: 'business-map/', note: 'Offers, prices and services, one room each.' },
+    { id: 'voice', path: 'voice.md', note: 'How you really talk, built from recordings.' },
+    { id: 'rules', path: 'rules.md', note: 'What never ships. The things your best person just knows.' },
+    { id: 'customers', path: 'customers/', note: 'History, past jobs, old quotes.' },
+    { id: 'skills', path: 'skills/', note: 'A written playbook for each task. New ones get added as it works.' },
+    { id: 'memory', path: 'memory/', note: 'What it learned. Month two is easier than month one.' },
+];
+
+export const MODULE_TREES: Record<ModuleId, ModuleTree> = {
+    lead: {
+        reads: ['map', 'customers', 'voice', 'memory'],
+        skills: [
+            ['signal-scout', 'Finds businesses with a reason to buy this week: hiring, new reviews, a new location.'],
+            ['icp-score', 'Scores and tiers each one against who you actually sell to.'],
+            ['video-cut', 'Records a short personal video on their own website.'],
+            ['opener-write', 'Writes the first email in your voice.'],
+            ['reply-route', 'Sorts the replies and puts the yeses on your calendar.'],
+        ],
+        out: 'Booked calls on your calendar',
+        live: ['Caelum runs one', '/work/caelum'],
+    },
+    desk: {
+        reads: ['map', 'customers', 'rules', 'voice'],
+        skills: [
+            ['answer', 'Picks up calls and texts, nights and weekends.'],
+            ['intake', 'Asks what a good dispatcher would ask.'],
+            ['book', 'Puts the job on the board in the right slot.'],
+            ['quote-chase', 'Calls back the old quotes sitting in your CRM.'],
+            ['review-ask', 'Asks for a review once the job is done.'],
+        ],
+        out: 'Jobs on the board, nobody woken up',
+        live: ['See it in the Copperjack demo', '/demos/hvac'],
+    },
+    content: {
+        reads: ['voice', 'rules', 'map', 'memory'],
+        skills: [
+            ['topic-rank', 'Picks what is working from the posts it collects.'],
+            ['script-write', 'Writes reel scripts and hooks in your voice.'],
+            ['carousel-build', 'Lays out carousels in your brand.'],
+            ['rules-check', 'Checks every rule before a person sees it.'],
+            ['video-cut', 'Turns renders and raw footage into reels.'],
+        ],
+        out: 'A month of posts, approved in one sitting',
+        live: ['Shang runs one', '/work/shang'],
+    },
+    ads: {
+        reads: ['map', 'voice', 'rules', 'memory'],
+        skills: [
+            ['ad-research', 'Reads what competitors run and what is working.'],
+            ['ad-plan', 'Locks the angles and variants before anything is made.'],
+            ['ad-make', 'Makes the images, video and copy.'],
+            ['ad-check', 'Checks headline length, banned words and honesty.'],
+            ['winner-loop', 'Keeps the winners and retires the rest each week.'],
+        ],
+        out: 'Ads tested, winners kept',
+    },
+    console: {
+        reads: ['map', 'customers', 'memory'],
+        skills: [
+            ['morning-brief', 'What ran overnight, in one paragraph.'],
+            ['needs-you', 'The few things waiting on your yes.'],
+            ['numbers', 'This month against target.'],
+            ['app-dock', 'Every micro app one click away.'],
+        ],
+        out: 'One screen each morning',
+        live: ['Open GYST HQ', '/hq'],
+    },
+    apps: {
+        reads: ['map', 'customers'],
+        skills: [
+            ['lead-calculator', 'Shows a shop the leads it is losing.'],
+            ['quote-builder', 'Builds a quote from your price book.'],
+            ['payout-counter', 'Works out who gets paid what.'],
+            ['teleprompter', 'Puts the script on screen on recording day.'],
+        ],
+        out: 'Small tools your team actually opens',
+        live: ['Try the calculator', '/find-leaks'],
+    },
+};
 
 export const OFFER_STACKS: { name: string; parts: string[]; line: string }[] = [
     { name: 'Trades stack', parts: ['Front Desk', 'Lead Engine', 'Quote builder app'], line: 'For HVAC and trades shops that lose jobs to missed calls and old quotes.' },

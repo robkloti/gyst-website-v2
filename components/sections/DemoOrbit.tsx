@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { DEMOS, REAL, Showcase } from '../../demos/list';
+import { ORBIT, REAL, Showcase } from '../../demos/list';
 import { track } from '../../lib/track';
 import { useVertical } from '../../lib/vertical';
 import { VerticalKey } from '../../types';
@@ -20,7 +20,7 @@ const DEG_PER_MS = 360 / 110000; // one lap of the outer ring takes 110 seconds
 const TOP = -90;
 
 // The tile that swings to the top when a visitor picks a vertical in the hero.
-const NEAREST: Partial<Record<VerticalKey, string>> = { trades: 'hvac', marketing: 'agency', realestate: 'shang', insurance: 'caelum' };
+const NEAREST: Partial<Record<VerticalKey, string>> = { trades: 'hvac', marketing: 'agency', realestate: 'shang-os', insurance: 'caelum' };
 
 // `card` is set for a real-build plate: where its card opens, in stage coordinates.
 type Active = { slug: string; card?: React.CSSProperties };
@@ -35,7 +35,7 @@ const centre = (base: number, i: number, n: number, rx: number, ry: number) => {
 const INTRO = {
     eyebrow: 'What goes on top',
     title: 'One brain. Every kind of business.',
-    sub: 'Once a business is written down, the software on top can look like anything. Here are five demo dashboards, each for a different kind of business, and four builds that are already running.',
+    sub: 'Once a business is written down, the software on top can look like anything. Shang is a real build: its console and the room of agents behind it. Around it are four demo dashboards for other kinds of business, and three more real builds.',
 };
 
 // A landing page can pass its own words. The orbit itself is the same everywhere.
@@ -131,7 +131,7 @@ export const DemoOrbit: React.FC<{ intro?: typeof INTRO }> = ({ intro = INTRO })
             const now = base + (i * 360) / list.length;
             return ((((TOP - now) % 360) + 540) % 360) - 180;
         };
-        const o = swing(DEMOS, s.out);
+        const o = swing(ORBIT, s.out);
         const n = swing(REAL, s.inn);
         if (o !== null) s.nudgeOut = o;
         if (n !== null) s.nudgeIn = n;
@@ -182,7 +182,7 @@ export const DemoOrbit: React.FC<{ intro?: typeof INTRO }> = ({ intro = INTRO })
                                 See all five demos <span aria-hidden="true">&rarr;</span>
                             </a>
                             <span className="hidden lg:flex items-center gap-2 text-[13px] text-paper/80"><i className="w-6 h-4 border border-paper/50 bg-[#202124]" />Demo</span>
-                            <span className="hidden lg:flex items-center gap-2 text-[13px] text-paper/80"><i className="w-6 h-4 bg-paper" />Real build</span>
+                            <span className="hidden lg:flex items-center gap-2 text-[13px] text-paper/80"><i className="w-6 h-4 border-2 border-hazard bg-[#202124]" />Real build</span>
                         </div>
                     </div>
                 </Reveal>
@@ -209,8 +209,9 @@ export const DemoOrbit: React.FC<{ intro?: typeof INTRO }> = ({ intro = INTRO })
                             <span className="font-mono text-[6.5px] uppercase tracking-[0.12em] leading-[1.5] text-paper text-center">The Business<br />Brain</span>
                         </div>
 
-                        {DEMOS.map((d, i) => {
+                        {ORBIT.map((d, i) => {
                             const on = active?.slug === d.slug;
+                            const kind = d.real ? 'Real build' : 'Demo';
                             return (
                                 <a
                                     key={d.slug}
@@ -222,19 +223,19 @@ export const DemoOrbit: React.FC<{ intro?: typeof INTRO }> = ({ intro = INTRO })
                                     onPointerLeave={close}
                                     onFocus={openDemo(d.slug)}
                                     onBlur={close}
-                                    aria-label={`${d.short}, ${d.tag} demo. ${d.runs} Try it.`}
+                                    aria-label={`${d.name}, ${d.real ? 'real build' : `${d.tag} demo`}. ${d.runs} ${d.real ? 'Open it.' : 'Try it.'}`}
                                     className={`absolute block no-underline will-change-transform transition-opacity duration-200 ${on ? 'z-30' : 'z-10'} ${fade(d.slug, false)} ${FOCUS}`}
                                     style={{ left: CX, top: CY, width: OUT.w }}
                                 >
                                     <span className="block relative transition-transform duration-300" style={{ transform: on ? `scale(${GROW})` : undefined }}>
-                                        <span className={`block relative overflow-hidden bg-[#111] border shadow-[0_10px_30px_rgba(0,0,0,.45)] transition-colors ${on ? 'border-paper' : 'border-paper/30'}`} style={{ height: OUT.h }}>
+                                        <span className={`block relative overflow-hidden bg-[#111] shadow-[0_10px_30px_rgba(0,0,0,.45)] transition-colors ${d.real ? 'border-2 border-hazard' : `border ${on ? 'border-paper' : 'border-paper/30'}`}`} style={{ height: OUT.h }}>
                                             <img src={d.thumb} alt="" width={640} height={400} loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover object-left-top" />
                                         </span>
                                         {on && (
                                         <span data-card className="absolute left-0 right-0 bg-paper text-charcoal text-left" style={{ bottom: -OUT.label, padding: '10px 12px 11px' }}>
                                             <span className="flex justify-between gap-3 font-mono text-[9px] uppercase tracking-[0.14em] text-steel-dark whitespace-nowrap">
-                                                <span>Demo &middot; {d.tag}</span>
-                                                <span className="text-charcoal font-medium">Try it &rarr;</span>
+                                                <span>{kind} &middot; {d.tag}</span>
+                                                <span className="text-charcoal font-medium">{d.real ? 'Open it' : 'Try it'} &rarr;</span>
                                             </span>
                                             <span className="block text-[16px] font-semibold leading-tight mt-1.5">{d.name.startsWith(d.short) ? d.name : `${d.short} - ${d.name}`}</span>
                                             <span className="block text-[12.5px] leading-snug text-charcoal/75 mt-1">{d.runs}</span>
@@ -243,7 +244,7 @@ export const DemoOrbit: React.FC<{ intro?: typeof INTRO }> = ({ intro = INTRO })
                                     </span>
                                     <span className={`absolute left-0 right-0 top-full mt-1.5 flex justify-between gap-2 font-mono text-[9.5px] uppercase tracking-[0.12em] text-steel whitespace-nowrap transition-opacity ${on ? 'opacity-0' : ''}`}>
                                         <span className="text-paper">{d.short} <span className="text-steel">&middot; {d.tag}</span></span>
-                                        <span>{near === d.slug ? 'Closest to you' : 'Demo'}</span>
+                                        <span className={d.real ? 'text-hazard' : ''}>{near === d.slug ? 'Closest to you' : kind}</span>
                                     </span>
                                 </a>
                             );
@@ -264,7 +265,7 @@ export const DemoOrbit: React.FC<{ intro?: typeof INTRO }> = ({ intro = INTRO })
                                 className={`group absolute block no-underline will-change-transform transition-opacity duration-200 ${active?.slug === d.slug ? 'z-50' : 'z-20'} ${fade(d.slug, true)} ${FOCUS}`}
                                 style={{ left: CX, top: CY, width: INN.w }}
                             >
-                                <span className="flex flex-col justify-center px-2.5 bg-paper text-charcoal transition-transform duration-300 group-hover:scale-105 group-focus-visible:scale-105" style={{ height: INN.h }}>
+                                <span className="flex flex-col justify-center px-2.5 bg-paper text-charcoal border-2 border-hazard transition-transform duration-300 group-hover:scale-105 group-focus-visible:scale-105" style={{ height: INN.h }}>
                                     <span className="font-mono text-[7.5px] uppercase tracking-[0.14em] text-steel-dark leading-none">{near === d.slug ? 'Nearest you' : 'Real build'}</span>
                                     <span className="text-[12px] font-semibold leading-none mt-1 whitespace-nowrap">{d.short}</span>
                                 </span>
@@ -284,7 +285,7 @@ export const DemoOrbit: React.FC<{ intro?: typeof INTRO }> = ({ intro = INTRO })
                     </div>
                 </div>
 
-                {/* Phone and tablet: an orbit this small cannot be read, so the same nine become a swipeable row. */}
+                {/* Phone and tablet: an orbit this small cannot be read, so the same tiles become a swipeable row. */}
                 <div className="lg:hidden mt-10 min-w-0">
                     <div className="flex items-center gap-3">
                         <span className="shrink-0 flex items-center gap-2.5 bg-[#202124] border border-paper/40 px-3 h-11">
@@ -295,17 +296,17 @@ export const DemoOrbit: React.FC<{ intro?: typeof INTRO }> = ({ intro = INTRO })
                         <span className="font-mono text-[9px] uppercase tracking-[0.14em] text-steel">Swipe</span>
                     </div>
                     <ul className="flex gap-3 mt-4 -mx-4 sm:-mx-6 md:-mx-12 px-4 sm:px-6 md:px-12 pb-2 overflow-x-auto snap-x snap-mandatory scroll-px-4 sm:scroll-px-6 md:scroll-px-12 list-none [scrollbar-width:none]" aria-label="Demo dashboards and real builds">
-                        {DEMOS.map((d) => (
+                        {ORBIT.map((d) => (
                             <li key={d.slug} className="snap-start shrink-0 w-[78%] max-w-[340px]">
-                                <a href={d.href} onClick={go(d.slug)} className={`flex flex-col h-full no-underline bg-[#202124] border border-paper/20 ${FOCUS}`}>
+                                <a href={d.href} onClick={go(d.slug)} className={`flex flex-col h-full no-underline bg-[#202124] ${d.real ? 'border-2 border-hazard' : 'border border-paper/20'} ${FOCUS}`}>
                                     <span className="block relative aspect-[16/10] overflow-hidden bg-[#111] border-b border-paper/10">
                                         <img src={d.thumb} alt="" width={640} height={400} loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover object-left-top" />
                                     </span>
                                     <span className="flex flex-col flex-1 p-4">
-                                        <span className="font-mono text-[9.5px] uppercase tracking-[0.14em] text-steel">Demo &middot; {d.tag}</span>
-                                        <span className="text-paper text-[18px] font-semibold leading-tight mt-1.5">{d.short}</span>
+                                        <span className={`font-mono text-[9.5px] uppercase tracking-[0.14em] ${d.real ? 'text-hazard' : 'text-steel'}`}>{d.real ? 'Real build' : 'Demo'} &middot; {d.tag}</span>
+                                        <span className="text-paper text-[18px] font-semibold leading-tight mt-1.5">{d.real ? d.name : d.short}</span>
                                         <span className="text-steel text-[14px] leading-snug mt-1.5">{d.runs}</span>
-                                        <span className="mt-auto pt-3 text-paper text-[14px] font-semibold">Try it <span aria-hidden="true">&rarr;</span></span>
+                                        <span className="mt-auto pt-3 text-paper text-[14px] font-semibold">{d.real ? 'Open it' : 'Try it'} <span aria-hidden="true">&rarr;</span></span>
                                     </span>
                                 </a>
                             </li>

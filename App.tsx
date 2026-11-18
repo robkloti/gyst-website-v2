@@ -5,7 +5,6 @@ import { Footer } from './components/layout/Footer';
 import { Grain, RingBackdrop } from './components/layout/Backdrop';
 import { HeroSection } from './components/sections/Hero';
 import { HowItWorks } from './components/sections/HowItWorks';
-import { WorkGrid } from './components/sections/WorkGrid';
 import { DemoOrbit } from './components/sections/DemoOrbit';
 import { Rooms } from './components/sections/Rooms';
 import { Offer } from './components/sections/Offer';
@@ -70,7 +69,6 @@ const MainApp = () => {
                 <main className="relative z-10 flex flex-col w-full">
                     <HeroSection onInView={setActiveSection} />
                     <HowItWorks onInView={setActiveSection} />
-                    <WorkGrid onInView={setActiveSection} />
                     <DemoOrbit />
                     <Rooms />
                     <Offer onInView={setActiveSection} />

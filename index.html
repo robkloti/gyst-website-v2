@@ -88,6 +88,9 @@
       @keyframes roomBob { 50% { transform: translateY(-1.5px); } }
       @keyframes roomSway { 0%, 100% { transform: rotate(-1.6deg); } 50% { transform: rotate(1.6deg); } }
       @keyframes roomBlink { 50% { opacity: .25; } }
+      @keyframes skillwire { from { opacity: 0; } to { opacity: 1; } }
+      @keyframes skillin { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+      @media (prefers-reduced-motion: reduce) { [class*="animate-[skill"] { animation: none !important; } }
       @media (prefers-reduced-motion: reduce) { .room-pulse, .room-dash, .room-bob, .room-busy, .room-sway, .room-blink { animation: none; } }
       .mask-image-gradient { mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent); }
     </style>
